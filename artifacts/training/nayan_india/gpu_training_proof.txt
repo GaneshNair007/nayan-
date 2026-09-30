@@ -1,7 +1,10 @@
-GPU: NVIDIA GeForce RTX 4050 Laptop GPU
-CUDA: 12.4
-PyTorch: 2.6.0+cu124
-Device: cuda:0
+=== NAYAN REAL GPU TRAINING PROOF ===
+GPU Name: NVIDIA GeForce RTX 4050 Laptop GPU
+CUDA Version: 12.4
+PyTorch Version: 2.6.0+cu124
+Target Device: cuda:0
+Epochs Completed: 40
+Training Duration: 7199.22 s
 Pretrained SHA256: f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36
-Trained SHA256: c0a8721207aa66cb9ce9345c4f194352e071184f427ee46e84b211c0d3f34c4f
-Differs: True
+Trained best.pt SHA256: 8a876b93871b2b91ac3ed5a3ea02df63dba98a01cb1406b0ca5ed53f0d0199a4
+Hash Difference Verified: True

@@ -1,90 +1,49 @@
 {
   "CAM-01": {
     "video_file": "cam01_normal_intersection.mp4",
-    "detections_count": 1,
-    "detections": [
-      {
-        "class": "ambulance",
-        "confidence": 0.42,
-        "bbox": [
-          2.6,
-          18.9,
-          1276.0,
-          720.0
-        ]
-      }
-    ],
-    "has_ambulance": true
-  },
-  "CAM-02": {
-    "video_file": "cam02_congestion.mp4",
-    "detections_count": 2,
-    "detections": [
-      {
-        "class": "auto_rickshaw",
-        "confidence": 0.321,
-        "bbox": [
-          536.6,
-          82.9,
-          668.1,
-          202.0
-        ]
-      },
-      {
-        "class": "auto_rickshaw",
-        "confidence": 0.257,
-        "bbox": [
-          536.4,
-          90.0,
-          622.1,
-          203.4
-        ]
-      }
-    ],
-    "has_ambulance": false
-  },
-  "CAM-03": {
-    "video_file": "cam03_ambulance.mp4",
     "detections_count": 0,
     "detections": [],
     "has_ambulance": false
   },
-  "CAM-04": {
-    "video_file": "cam04_collision.mp4",
-    "detections_count": 3,
+  "CAM-02": {
+    "video_file": "cam02_congestion.mp4",
+    "detections_count": 0,
+    "detections": [],
+    "has_ambulance": false
+  },
+  "CAM-03": {
+    "video_file": "cam03_ambulance.mp4",
+    "detections_count": 1,
     "detections": [
       {
-        "class": "auto_rickshaw",
-        "confidence": 0.575,
-        "bbox": [
-          512.6,
-          327.0,
-          889.4,
-          488.0
-        ]
-      },
-      {
         "class": "ambulance",
-        "confidence": 0.484,
+        "confidence": 0.276,
         "bbox": [
-          1127.5,
-          5.2,
-          1276.9,
-          147.5
-        ]
-      },
-      {
-        "class": "auto_rickshaw",
-        "confidence": 0.264,
-        "bbox": [
-          303.3,
-          332.1,
-          686.2,
-          486.6
+          669.5,
+          174.1,
+          1280.0,
+          717.2
         ]
       }
     ],
     "has_ambulance": true
+  },
+  "CAM-04": {
+    "video_file": "cam04_collision.mp4",
+    "detections_count": 1,
+    "detections": [
+      {
+        "class": "auto_rickshaw",
+        "confidence": 0.48,
+        "bbox": [
+          552.9,
+          324.9,
+          884.8,
+          482.7
+        ]
+      }
+    ],
+    "has_ambulance": false
   },
   "CAM-05": {
     "video_file": "cam05_night_traffic.mp4",

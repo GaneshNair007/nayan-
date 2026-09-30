@@ -1,0 +1,83 @@
+[
+  {
+    "iteration": 1,
+    "timestamp": "2026-09-30 18:40:53",
+    "telemetry": {
+      "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "driver_version": "591.66",
+      "temperature_c": 53.0,
+      "utilization_pct": 52.0,
+      "vram_used_mb": 3424.0,
+      "vram_total_mb": 6141.0,
+      "power_draw_w": 17.28
+    },
+    "latest_epoch": {
+      "epoch": 35,
+      "elapsed_time_s": 6282.91,
+      "train_box_loss": 0.46423,
+      "train_cls_loss": 0.28944,
+      "val_precision": 0.97672,
+      "val_recall": 0.97954,
+      "val_mAP50": 0.98864,
+      "val_mAP50_95": 0.83509
+    },
+    "best_checkpoint_sha256": "2defb0ba6b16824125e1c7af0742411ed899a34f9c22c2e79918005eced11348",
+    "best_mtime": "Wed Sep 30 18:39:13 2026",
+    "pytest_exit_code": 0,
+    "actual_training_verified": true
+  },
+  {
+    "iteration": 2,
+    "timestamp": "2026-09-30 18:41:11",
+    "telemetry": {
+      "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "driver_version": "591.66",
+      "temperature_c": 53.0,
+      "utilization_pct": 3.0,
+      "vram_used_mb": 3460.0,
+      "vram_total_mb": 6141.0,
+      "power_draw_w": 11.61
+    },
+    "latest_epoch": {
+      "epoch": 35,
+      "elapsed_time_s": 6282.91,
+      "train_box_loss": 0.46423,
+      "train_cls_loss": 0.28944,
+      "val_precision": 0.97672,
+      "val_recall": 0.97954,
+      "val_mAP50": 0.98864,
+      "val_mAP50_95": 0.83509
+    },
+    "best_checkpoint_sha256": "2defb0ba6b16824125e1c7af0742411ed899a34f9c22c2e79918005eced11348",
+    "best_mtime": "Wed Sep 30 18:39:13 2026",
+    "pytest_exit_code": 0,
+    "actual_training_verified": true
+  },
+  {
+    "iteration": 3,
+    "timestamp": "2026-09-30 18:41:30",
+    "telemetry": {
+      "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "driver_version": "591.66",
+      "temperature_c": 53.0,
+      "utilization_pct": 25.0,
+      "vram_used_mb": 3472.0,
+      "vram_total_mb": 6141.0,
+      "power_draw_w": 15.06
+    },
+    "latest_epoch": {
+      "epoch": 35,
+      "elapsed_time_s": 6282.91,
+      "train_box_loss": 0.46423,
+      "train_cls_loss": 0.28944,
+      "val_precision": 0.97672,
+      "val_recall": 0.97954,
+      "val_mAP50": 0.98864,
+      "val_mAP50_95": 0.83509
+    },
+    "best_checkpoint_sha256": "2defb0ba6b16824125e1c7af0742411ed899a34f9c22c2e79918005eced11348",
+    "best_mtime": "Wed Sep 30 18:39:13 2026",
+    "pytest_exit_code": 0,
+    "actual_training_verified": true
+  }
+]

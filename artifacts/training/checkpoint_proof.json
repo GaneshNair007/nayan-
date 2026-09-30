@@ -1,31 +1,14 @@
 {
-  "model_name": "NAYAN India Emergency Road Traffic Detector",
   "base_model": "yolov8n.pt",
   "base_model_sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36",
-  "trained_checkpoint": "artifacts/models/nayan_india/best.pt",
-  "trained_checkpoint_sha256": "892a51e21dcf9f430702a98f72e0e16b72771473eafab2f320dacb7594ca4e48",
-  "hashes_differ": true,
-  "hardware": {
-    "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
-    "cuda_version": "12.4",
-    "pytorch_version": "2.6.0+cu124",
-    "device": "cuda:0"
-  },
-  "training_metrics_val": {
-    "epochs_completed": 10,
-    "val_precision": 0.93466,
-    "val_recall": 0.92693,
-    "val_mAP50": 0.96741,
-    "val_mAP50_95": 0.76738
-  },
-  "dataset": "datasets/nayan_india",
-  "target_classes": [
-    "ambulance",
-    "car",
-    "motorcycle",
-    "auto_rickshaw",
-    "bus",
-    "truck"
-  ],
-  "timestamp": "2026-09-30 17:24:43"
+  "trained_model": "artifacts/models/nayan_india/best.pt",
+  "trained_model_sha256": "8a876b93871b2b91ac3ed5a3ea02df63dba98a01cb1406b0ca5ed53f0d0199a4",
+  "different": true,
+  "device": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "vram_gb": 6.0,
+  "cuda_version": "12.4",
+  "pytorch_version": "2.6.0+cu124",
+  "epochs_completed": 40,
+  "training_duration_s": 7199.22,
+  "is_sanity_run": false
 }

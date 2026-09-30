@@ -1,10 +1,10 @@
-Timestamp: 2026-09-30 17:33:13
+Timestamp: 2026-09-30 18:54:16
 PyTorch CUDA Available: True
 Device Name: NVIDIA GeForce RTX 4050 Laptop GPU
-Allocated VRAM: 590.99 MB
-Reserved VRAM: 1452.00 MB
+Allocated VRAM: 144.05 MB
+Reserved VRAM: 1474.00 MB
 
-Wed Sep 30 17:33:13 2026       
+Wed Sep 30 18:54:16 2026       
 +-----------------------------------------------------------------------------------------+
 | NVIDIA-SMI 591.66                 Driver Version: 591.66         CUDA Version: 13.1     |
 +-----------------------------------------+------------------------+----------------------+
@@ -13,7 +13,7 @@ Wed Sep 30 17:33:13 2026
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
 |   0  NVIDIA GeForce RTX 4050 ...  WDDM  |   00000000:01:00.0  On |                  N/A |
-| N/A   51C    P0             13W /   50W |    3314MiB /   6141MiB |     52%      Default |
+| N/A   49C    P4              8W /  105W |    3308MiB /   6141MiB |      0%      Default |
 |                                         |                        |                  N/A |
 +-----------------------------------------+------------------------+----------------------+
 
@@ -45,10 +45,10 @@ Wed Sep 30 17:33:13 2026
 |    0   N/A  N/A           34348    C+G   ...1g1gvanyjgm\WhatsApp.Root.exe      N/A      |
 |    0   N/A  N/A           36348    C+G   ...\codex-computer-use-swift.exe      N/A      |
 |    0   N/A  N/A           37280    C+G   ...2p2nqsd0c76g0\app\ChatGPT.exe      N/A      |
+|    0   N/A  N/A           39968    C+G   ...lot\Application\mscopilot.exe      N/A      |
 |    0   N/A  N/A           43172    C+G   ...Chrome\Application\chrome.exe      N/A      |
 |    0   N/A  N/A           44068    C+G   ...Chrome\Application\chrome.exe      N/A      |
 |    0   N/A  N/A           45060    C+G   ...y\StartMenuExperienceHost.exe      N/A      |
-|    0   N/A  N/A           46228    C+G   ...lot\Application\mscopilot.exe      N/A      |
 |    0   N/A  N/A           47036    C+G   ....0.4234.48\msedgewebview2.exe      N/A      |
 |    0   N/A  N/A           48856    C+G   ...xyewy\ShellExperienceHost.exe      N/A      |
 |    0   N/A  N/A           55268    C+G   ..._pzs8sxrjxfjjc\app\claude.exe      N/A      |
