@@ -1,23 +1,22 @@
 """
-Database and Repository Manager (SQLite/In-Memory Repository)
+Database and Repository Manager (In-Memory & SQLite Repository)
 """
 from typing import Dict, List, Optional
-import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.models.camera import Camera, CameraStatus, CameraLocation
 from app.models.incident import (
-    Incident, IncidentType, IncidentState, IncidentSeverity,
+    Incident, IncidentType, VerificationState, ResponseState, IncidentSeverity,
     IncidentLocation, EvidenceItem, EvidenceCapsule, StateTransition
 )
 from app.models.mobility import Junction, JunctionLocation, SignalPhase, TrafficApproach, SafetyConstraints
-from app.models.response import Resource, ResourceStatus, ResourceType, LocationPoint, DispatchResponse, CorridorPlan
-from app.models.event import AuditEvent
+from app.models.response import Resource, ResourceStatus, ResourceType, LocationPoint, CorridorPlan, CorridorStatus
+from app.models.event import AuditEvent, DataProvenance
 
 class Database:
     """
-    In-Memory & SQLite Repository Storage for AEGIS GRID.
-    Provides synchronous & thread-safe access to domain entities.
+    Repository Storage for AEGIS GRID.
+    Provides thread-safe access to domain entities and audit history.
     """
     def __init__(self):
         self.cameras: Dict[str, Camera] = {}
@@ -39,7 +38,8 @@ class Database:
                 feed_url="/assets/feeds/cam-01.mp4",
                 fps=30,
                 health_score=0.98,
-                current_detections_count=14
+                current_detections_count=14,
+                provenance=DataProvenance.REPLAY_FIXTURE
             ),
             Camera(
                 id="CAM-02",
@@ -49,7 +49,8 @@ class Database:
                 feed_url="/assets/feeds/cam-02.mp4",
                 fps=30,
                 health_score=0.95,
-                current_detections_count=18
+                current_detections_count=18,
+                provenance=DataProvenance.REPLAY_FIXTURE
             ),
             Camera(
                 id="CAM-03",
@@ -59,7 +60,8 @@ class Database:
                 feed_url="/assets/feeds/cam-03.mp4",
                 fps=30,
                 health_score=0.99,
-                current_detections_count=22
+                current_detections_count=22,
+                provenance=DataProvenance.REPLAY_FIXTURE
             ),
             Camera(
                 id="CAM-04",
@@ -69,7 +71,8 @@ class Database:
                 feed_url="/assets/feeds/cam-04-collision.mp4",
                 fps=30,
                 health_score=1.0,
-                current_detections_count=9
+                current_detections_count=9,
+                provenance=DataProvenance.REPLAY_FIXTURE
             ),
             Camera(
                 id="CAM-05",
@@ -79,7 +82,8 @@ class Database:
                 feed_url="/assets/feeds/cam-05-crowd.mp4",
                 fps=30,
                 health_score=0.92,
-                current_detections_count=45
+                current_detections_count=45,
+                provenance=DataProvenance.REPLAY_FIXTURE
             ),
             Camera(
                 id="CAM-06",
@@ -89,7 +93,8 @@ class Database:
                 feed_url="/assets/feeds/cam-06-baggage.mp4",
                 fps=15,
                 health_score=0.75,
-                current_detections_count=8
+                current_detections_count=8,
+                provenance=DataProvenance.REPLAY_FIXTURE
             )
         ]
         for c in cams:
@@ -123,7 +128,7 @@ class Database:
             ],
             pressure=0.78,
             current_phase=SignalPhase(phase_id=1, name="North-South Green", duration_seconds=60, active_approaches=["Northbound", "Southbound"]),
-            proposed_phase=SignalPhase(phase_id=3, name="Northbound Extended Green (Incident Pressure)", duration_seconds=75, active_approaches=["Northbound"])
+            proposed_phase=SignalPhase(phase_id=3, name="Northbound Extended Green", duration_seconds=75, active_approaches=["Northbound"])
         )
 
         jnc3 = Junction(
@@ -152,21 +157,24 @@ class Database:
                 callsign="Medic 01",
                 type=ResourceType.AMBULANCE,
                 status=ResourceStatus.AVAILABLE,
-                location=LocationPoint(lat=12.9680, lon=77.5900, address="City General Hospital Station 1")
+                location=LocationPoint(lat=12.9680, lon=77.5900, address="City General Hospital Station 1"),
+                provenance=DataProvenance.SIMULATOR
             ),
             Resource(
                 id="AMB-03",
                 callsign="Medic 03 (Fast Response)",
                 type=ResourceType.AMBULANCE,
                 status=ResourceStatus.AVAILABLE,
-                location=LocationPoint(lat=12.9700, lon=77.5920, address="Central Fire & Rescue Hub")
+                location=LocationPoint(lat=12.9700, lon=77.5920, address="Central Fire & Rescue Hub"),
+                provenance=DataProvenance.SIMULATOR
             ),
             Resource(
                 id="POL-02",
                 callsign="Patrol Unit 02",
                 type=ResourceType.POLICE,
                 status=ResourceStatus.AVAILABLE,
-                location=LocationPoint(lat=12.9760, lon=77.5950, address="Sector 4 Precinct")
+                location=LocationPoint(lat=12.9760, lon=77.5950, address="Sector 4 Precinct"),
+                provenance=DataProvenance.SIMULATOR
             )
         ]
         for r in res:
@@ -178,17 +186,45 @@ class Database:
                 event_type="SYSTEM_BOOT",
                 actor="SYSTEM",
                 action="AEGIS GRID Kernel Initialized",
+                entityType="SYSTEM",
+                entityId="KERNEL",
+                reason="System startup and data store initialization",
+                source="kernel",
+                scenarioId="initial",
+                provenance=DataProvenance.SIMULATOR,
+                result="SUCCESS",
                 details={"version": "1.0.0", "cameras": len(cams), "junctions": len(self.junctions)}
             )
         )
 
-    def log_audit(self, event_type: str, action: str, details: dict, actor: str = "OPERATOR", incident_id: Optional[str] = None):
+    def log_audit(
+        self,
+        action: str,
+        entity_type: str,
+        entity_id: str,
+        actor: str = "OPERATOR",
+        previous_state: Optional[str] = None,
+        next_state: Optional[str] = None,
+        reason: Optional[str] = None,
+        source: str = "incident-engine",
+        scenario_id: Optional[str] = "golden-demo",
+        provenance: DataProvenance = DataProvenance.USER_INPUT,
+        result: str = "SUCCESS",
+        details: Optional[dict] = None
+    ) -> AuditEvent:
         evt = AuditEvent(
-            event_type=event_type,
             actor=actor,
             action=action,
-            details=details,
-            incident_id=incident_id
+            entityType=entity_type,
+            entityId=entity_id,
+            previousState=previous_state,
+            nextState=next_state,
+            reason=reason,
+            source=source,
+            scenarioId=scenario_id,
+            provenance=provenance,
+            result=result,
+            details=details or {}
         )
         self.audit_events.insert(0, evt)
         return evt

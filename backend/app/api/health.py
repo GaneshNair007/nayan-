@@ -2,7 +2,7 @@
 Health check endpoint
 """
 from fastapi import APIRouter
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter()
 
@@ -12,5 +12,5 @@ def health_check():
         "status": "healthy",
         "service": "AEGIS GRID API Engine",
         "version": "1.0.0",
-        "timestamp": datetime.utcnow().isoformat() + "Z"
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }

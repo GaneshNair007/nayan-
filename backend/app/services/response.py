@@ -2,15 +2,16 @@
 Response Bounded Service: Emergency Resource Selection, Routing Adapter, Multi-Junction Green Corridor
 """
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 import httpx
 
 from app.models.response import (
-    Resource, ResourceStatus, DispatchResponse, CorridorPlan,
+    Resource, ResourceStatus, CorridorStatus, DispatchResponse, CorridorPlan,
     Route, RouteWaypoint, JunctionCorridorStatus, LocationPoint
 )
-from app.models.incident import IncidentState
+from app.models.incident import ResponseState
+from app.models.event import DataProvenance
 from app.database import db
 from app.services.incident import IncidentService
 
@@ -30,7 +31,6 @@ class ResponseService:
         """
         Computes emergency response route using OSRM with deterministic fallback.
         """
-        # Try OSRM API if available, else use high-fidelity deterministic fallback
         try:
             url = f"http://router.project-osrm.org/route/v1/driving/{origin.lon},{origin.lat};{destination.lon},{destination.lat}?overview=full&geometries=geojson"
             async with httpx.AsyncClient(timeout=3.0) as client:
@@ -50,12 +50,13 @@ class ResponseService:
                             ],
                             geometry_geojson=coords,
                             distance_meters=r["distance"],
-                            duration_seconds=r["duration"]
+                            duration_seconds=r["duration"],
+                            provenance=DataProvenance.INFERENCE
                         )
         except Exception:
             pass
 
-        # Deterministic Mock Fallback for Hackathon Golden Demo
+        # Deterministic Mock Fallback for Golden Demo (Network-Independent)
         coords_fallback = [
             [origin.lon, origin.lat],
             [77.5930, 12.9705],
@@ -75,24 +76,25 @@ class ResponseService:
             ],
             geometry_geojson=coords_fallback,
             distance_meters=2450.0,
-            duration_seconds=195.0
+            duration_seconds=195.0,
+            provenance=DataProvenance.MOCK
         )
 
     @staticmethod
     async def create_dispatch(incident_id: str, resource_id: Optional[str] = None) -> DispatchResponse:
         inc = IncidentService.get_incident(incident_id)
 
-        # Select resource
+        # Select available resource
         if resource_id:
             res = ResponseService.get_resource(resource_id)
         else:
             available = [r for r in db.resources.values() if r.status == ResourceStatus.AVAILABLE]
             if not available:
-                res = list(db.resources.values())[0]  # Fallback to first
+                res = list(db.resources.values())[0]
             else:
                 res = available[0]
 
-        # Update resource status
+        # Transition resource status to DISPATCHED
         res.status = ResourceStatus.DISPATCHED
         res.eta_seconds = 180
         db.resources[res.id] = res
@@ -115,7 +117,8 @@ class ResponseService:
                 JunctionCorridorStatus(junction_id="JNC-03", junction_name="Plaza Blvd & Metro Entrance", readiness="STANDBY", eta_seconds=180)
             ],
             route=route,
-            status="ACTIVE"
+            status=CorridorStatus.ACTIVE,
+            provenance=DataProvenance.SIMULATOR
         )
         db.corridor_plans[corridor_plan.id] = corridor_plan
 
@@ -123,19 +126,24 @@ class ResponseService:
         inc.dispatch_id = dispatch_id
         db.incidents[inc.id] = inc
 
-        # Transition Incident State to DISPATCHED
-        IncidentService.transition_state(
+        # Transition Incident Response State to DISPATCHED
+        IncidentService.transition_response_state(
             incident_id=inc.id,
-            new_state=IncidentState.DISPATCHED,
+            new_state=ResponseState.DISPATCHED,
             reason=f"Emergency resource {res.callsign} ({res.id}) dispatched with Green Corridor {corridor_plan.id}"
         )
 
         db.log_audit(
-            event_type="DISPATCH_CREATED",
-            action=f"Dispatched {res.callsign} to Incident {incident_id}",
-            details={"dispatch_id": dispatch_id, "corridor_id": corridor_plan.id, "resource_id": res.id},
+            action=f"Dispatched {res.callsign} ({res.id}) to Incident {incident_id}",
+            entity_type="DISPATCH",
+            entity_id=dispatch_id,
+            previous_state=ResponseState.AUTHORIZED.value,
+            next_state=ResponseState.DISPATCHED.value,
+            reason=f"Emergency dispatch authorized with Green Corridor {corridor_plan.id}",
             actor="OPERATOR",
-            incident_id=incident_id
+            source="response-engine",
+            provenance=DataProvenance.USER_INPUT,
+            details={"dispatch_id": dispatch_id, "corridor_id": corridor_plan.id, "resource_id": res.id}
         )
 
         return DispatchResponse(
@@ -143,7 +151,8 @@ class ResponseService:
             incident_id=incident_id,
             resource=res,
             corridor_plan=corridor_plan,
-            dispatched_at=datetime.utcnow().isoformat() + "Z"
+            dispatched_at=datetime.now(timezone.utc).isoformat(),
+            provenance=DataProvenance.SIMULATOR
         )
 
     @staticmethod

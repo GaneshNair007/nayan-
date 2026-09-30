@@ -26,7 +26,7 @@ Use the supplied reference guide as inspiration for quality, polish, hierarchy, 
 - Borders and shadows should be quiet; let spacing and alignment create hierarchy.
 
 ## Main shell
-- Left navigation: Command Center, Camera Intelligence, Traffic Control, Emergency Corridor, Incident Detail, Digital Twin.
+- Left navigation: Command Center, Incidents, Camera Intelligence, Traffic Control, Emergency Corridor, Digital Twin.
 - Top bar: AEGIS GRID mark, DEMO/SIMULATION badge, system time, WebSocket status, operator profile.
 - Main area: responsive grid; desktop-first for command-centre use, usable down to tablet width.
 - Global emergency banner only for confirmed critical events; do not create alert fatigue.

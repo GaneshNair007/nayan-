@@ -4,7 +4,8 @@ Emergency Response, Dispatch, and Green Corridor Domain Models
 from enum import Enum
 from typing import List, Dict, Optional
 from pydantic import BaseModel, Field
-from datetime import datetime
+from datetime import datetime, timezone
+from app.models.event import DataProvenance
 
 class ResourceType(str, Enum):
     AMBULANCE = "AMBULANCE"
@@ -13,9 +14,19 @@ class ResourceType(str, Enum):
 
 class ResourceStatus(str, Enum):
     AVAILABLE = "AVAILABLE"
+    RESERVED = "RESERVED"
     DISPATCHED = "DISPATCHED"
     EN_ROUTE = "EN_ROUTE"
-    ON_SCENE = "ON_SCENE"
+    ARRIVED = "ARRIVED"
+    UNAVAILABLE = "UNAVAILABLE"
+
+class CorridorStatus(str, Enum):
+    NOT_PLANNED = "NOT_PLANNED"
+    PLANNED = "PLANNED"
+    READY = "READY"
+    ACTIVE = "ACTIVE"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
 
 class LocationPoint(BaseModel):
     lat: float
@@ -29,6 +40,7 @@ class Resource(BaseModel):
     status: ResourceStatus = ResourceStatus.AVAILABLE
     location: LocationPoint
     eta_seconds: Optional[int] = 0
+    provenance: DataProvenance = DataProvenance.SIMULATOR
 
 class RouteWaypoint(BaseModel):
     lat: float
@@ -43,6 +55,7 @@ class Route(BaseModel):
     geometry_geojson: List[List[float]] = []  # [[lon, lat], ...]
     distance_meters: float
     duration_seconds: float
+    provenance: DataProvenance = DataProvenance.MOCK  # OSRM or MOCK
 
 class JunctionCorridorStatus(BaseModel):
     junction_id: str
@@ -57,8 +70,9 @@ class CorridorPlan(BaseModel):
     incident_id: str
     junction_sequence: List[JunctionCorridorStatus] = []
     route: Route
-    status: str = "PLANNED"  # PLANNED, ACTIVE, COMPLETED
-    created_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat() + "Z")
+    status: CorridorStatus = CorridorStatus.PLANNED
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    provenance: DataProvenance = DataProvenance.SIMULATOR
 
 class DispatchRequest(BaseModel):
     resource_id: Optional[str] = None  # If null, auto-select nearest available
@@ -69,3 +83,4 @@ class DispatchResponse(BaseModel):
     resource: Resource
     corridor_plan: CorridorPlan
     dispatched_at: str
+    provenance: DataProvenance = DataProvenance.SIMULATOR

@@ -1,47 +1,75 @@
 """
-Incident Engine: Temporal Verification, Priority Scoring, State Transitions, Evidence Fusion
+Incident Engine: Decoupled Verification & Response State Machines, Evidence Scoring, Priority Scoring
 """
-from typing import List, Dict, Any, Optional
-from datetime import datetime
+from typing import List, Dict, Any, Optional, Tuple
+from datetime import datetime, timezone
 from app.models.incident import (
-    Incident, IncidentState, IncidentSeverity, IncidentType,
+    Incident, VerificationState, ResponseState, IncidentSeverity, IncidentType,
     EvidenceItem, EvidenceCapsule, StateTransition, IncidentLocation
 )
+from app.models.event import DataProvenance
 from app.database import db
 
 class IncidentService:
     @staticmethod
-    def calculate_priority_score(
+    def calculate_priority(
         severity: IncidentSeverity,
-        confidence: float,
+        evidence_score: float,
         estimated_people_affected: int,
         affected_lanes_count: int,
-        evidence_count: int
-    ) -> float:
+        evidence_count: int,
+        emergency_involved: bool = False
+    ) -> Tuple[str, float, List[str]]:
         """
-        Deterministic formula for operational priority score (0.0 to 100.0).
-        Prioritizes severity, confidence, lane obstruction, affected count, and evidence strength.
+        Deterministic formula for operational priority.
+        Returns: (priority_tier, priority_score, priority_reasons)
         """
+        reasons = []
         severity_weights = {
             IncidentSeverity.LOW: 0.25,
             IncidentSeverity.MEDIUM: 0.50,
             IncidentSeverity.HIGH: 0.75,
             IncidentSeverity.CRITICAL: 1.00
         }
-        sev_part = severity_weights.get(severity, 0.5) * 35.0
-        conf_part = confidence * 25.0
-        people_part = min(20.0, (estimated_people_affected / 50.0) * 20.0)
-        lane_part = min(10.0, affected_lanes_count * 5.0)
-        evidence_part = min(10.0, evidence_count * 2.5)
+        sev_val = severity_weights.get(severity, 0.5)
+        sev_part = sev_val * 35.0
+        reasons.append(f"Severity level {severity.value} contributes {sev_part:.1f}pts")
 
-        total = sev_part + conf_part + people_part + lane_part + evidence_part
-        return round(min(100.0, max(0.0, total)), 1)
+        ev_part = evidence_score * 25.0
+        if evidence_score >= 0.80:
+            reasons.append(f"+ High evidence completeness ({evidence_score*100:.0f}%)")
+
+        people_part = min(20.0, (estimated_people_affected / 50.0) * 20.0)
+        if estimated_people_affected > 0:
+            reasons.append(f"+ {estimated_people_affected} estimated individuals affected")
+
+        lane_part = min(10.0, affected_lanes_count * 5.0)
+        if affected_lanes_count > 0:
+            reasons.append(f"+ Severe lane obstruction ({affected_lanes_count} lanes blocked)")
+
+        ev_count_part = min(10.0, evidence_count * 2.5)
+
+        total = sev_part + ev_part + people_part + lane_part + ev_count_part
+        if emergency_involved:
+            total += 10.0
+            reasons.append("+ Emergency vehicle preemption active")
+
+        score = round(min(100.0, max(0.0, total)), 1)
+
+        # Tier assignment
+        if score >= 80.0:
+            tier = "P1"
+        elif score >= 60.0:
+            tier = "P2"
+        elif score >= 40.0:
+            tier = "P3"
+        else:
+            tier = "P4"
+
+        return tier, score, reasons
 
     @staticmethod
     def get_all_incidents() -> List[Incident]:
-        """
-        Returns all incidents sorted by priority score descending (highest priority first).
-        """
         incidents = list(db.incidents.values())
         return sorted(incidents, key=lambda x: x.priority_score, reverse=True)
 
@@ -52,30 +80,80 @@ class IncidentService:
         return db.incidents[incident_id]
 
     @staticmethod
-    def transition_state(incident_id: str, new_state: IncidentState, reason: str, actor: str = "SYSTEM") -> Incident:
+    def transition_verification_state(
+        incident_id: str,
+        new_state: VerificationState,
+        reason: str,
+        actor: str = "SYSTEM"
+    ) -> Incident:
         inc = IncidentService.get_incident(incident_id)
-        old_state = inc.state
+        old_state = inc.verification_state
         if old_state == new_state:
             return inc
 
-        now_iso = datetime.utcnow().isoformat() + "Z"
-        transition = StateTransition(
-            from_state=old_state,
-            to_state=new_state,
-            timestamp=now_iso,
-            reason=reason
+        now_iso = datetime.now(timezone.utc).isoformat()
+        inc.state_history.append(
+            StateTransition(
+                dimension="VERIFICATION",
+                from_state=old_state.value,
+                to_state=new_state.value,
+                timestamp=now_iso,
+                reason=reason
+            )
         )
-        inc.state = new_state
-        inc.state_history.append(transition)
+        inc.verification_state = new_state
         inc.updated_at = now_iso
-
         db.incidents[incident_id] = inc
+
         db.log_audit(
-            event_type="INCIDENT_STATE_TRANSITION",
-            action=f"Incident {incident_id} state changed from {old_state.value} to {new_state.value}",
-            details={"reason": reason, "from_state": old_state.value, "to_state": new_state.value},
+            action=f"Incident {incident_id} verification state changed: {old_state.value} -> {new_state.value}",
+            entity_type="INCIDENT",
+            entity_id=incident_id,
+            previous_state=old_state.value,
+            next_state=new_state.value,
+            reason=reason,
             actor=actor,
-            incident_id=incident_id
+            source="incident-engine",
+            provenance=DataProvenance.INFERENCE if actor == "SYSTEM" else DataProvenance.USER_INPUT
+        )
+        return inc
+
+    @staticmethod
+    def transition_response_state(
+        incident_id: str,
+        new_state: ResponseState,
+        reason: str,
+        actor: str = "OPERATOR"
+    ) -> Incident:
+        inc = IncidentService.get_incident(incident_id)
+        old_state = inc.response_state
+        if old_state == new_state:
+            return inc
+
+        now_iso = datetime.now(timezone.utc).isoformat()
+        inc.state_history.append(
+            StateTransition(
+                dimension="RESPONSE",
+                from_state=old_state.value,
+                to_state=new_state.value,
+                timestamp=now_iso,
+                reason=reason
+            )
+        )
+        inc.response_state = new_state
+        inc.updated_at = now_iso
+        db.incidents[incident_id] = inc
+
+        db.log_audit(
+            action=f"Incident {incident_id} response state changed: {old_state.value} -> {new_state.value}",
+            entity_type="INCIDENT",
+            entity_id=incident_id,
+            previous_state=old_state.value,
+            next_state=new_state.value,
+            reason=reason,
+            actor=actor,
+            source="operator-console",
+            provenance=DataProvenance.USER_INPUT
         )
         return inc
 
@@ -83,32 +161,41 @@ class IncidentService:
     def add_evidence(incident_id: str, item: EvidenceItem) -> Incident:
         inc = IncidentService.get_incident(incident_id)
         inc.evidence.append(item)
-        
-        # Recalculate confidence based on evidence scores
+
+        # Multi-signal probabilistic evidence fusion formula: 1 - prod(1 - c)
         if inc.evidence:
             conf_scores = [ev.confidence_score for ev in inc.evidence]
-            # Simple soft max / probabilistic combination formula: 1 - prod(1 - c)
             prod = 1.0
             for c in conf_scores:
                 prod *= (1.0 - c)
-            inc.confidence = round(1.0 - prod, 2)
+            inc.evidence_score = round(1.0 - prod, 2)
 
-        # Recalculate priority
-        inc.priority_score = IncidentService.calculate_priority_score(
+        # Update priority tier, score, and explanation
+        tier, score, reasons = IncidentService.calculate_priority(
             severity=inc.severity,
-            confidence=inc.confidence,
+            evidence_score=inc.evidence_score,
             estimated_people_affected=inc.estimated_people_affected,
             affected_lanes_count=len(inc.affected_lanes),
-            evidence_count=len(inc.evidence)
+            evidence_count=len(inc.evidence),
+            emergency_involved=(inc.response_state == ResponseState.DISPATCHED)
         )
-        inc.updated_at = datetime.utcnow().isoformat() + "Z"
+        inc.priority_tier = tier
+        inc.priority_score = score
+        inc.priority_reasons = reasons
+        inc.updated_at = datetime.now(timezone.utc).isoformat()
 
-        # Auto transition from VERIFYING to CONFIRMED if confidence >= 0.80
-        if inc.state in [IncidentState.OBSERVED, IncidentState.SUSPECTED, IncidentState.VERIFYING] and inc.confidence >= 0.80:
-            IncidentService.transition_state(
+        # Automatic verification threshold:
+        # High model confidence alone NEVER confirms an incident.
+        # Requires evidence_score >= 0.80 AND at least 3 distinct evidence items.
+        if (
+            inc.verification_state in [VerificationState.OBSERVED, VerificationState.SUSPECTED, VerificationState.VERIFYING]
+            and inc.evidence_score >= 0.80
+            and len(inc.evidence) >= 3
+        ):
+            IncidentService.transition_verification_state(
                 incident_id=incident_id,
-                new_state=IncidentState.CONFIRMED,
-                reason=f"Evidence threshold reached (confidence: {inc.confidence*100:.0f}%)"
+                new_state=VerificationState.CONFIRMED,
+                reason=f"Multi-frame temporal evidence threshold met (evidence score: {inc.evidence_score*100:.0f}%, {len(inc.evidence)} signals)"
             )
 
         db.incidents[incident_id] = inc
@@ -117,14 +204,29 @@ class IncidentService:
     @staticmethod
     def acknowledge_incident(incident_id: str, actor: str = "OPERATOR") -> Incident:
         inc = IncidentService.get_incident(incident_id)
-        inc.acknowledged = True
-        inc.updated_at = datetime.utcnow().isoformat() + "Z"
-        db.incidents[incident_id] = inc
-        db.log_audit(
-            event_type="INCIDENT_ACKNOWLEDGED",
-            action=f"Incident {incident_id} acknowledged by operator",
-            details={"title": inc.title, "state": inc.state.value},
-            actor=actor,
-            incident_id=incident_id
+        return IncidentService.transition_response_state(
+            incident_id=incident_id,
+            new_state=ResponseState.ACKNOWLEDGED,
+            reason="Operator acknowledged incident notification",
+            actor=actor
         )
-        return inc
+
+    @staticmethod
+    def propose_response(incident_id: str, actor: str = "SYSTEM") -> Incident:
+        inc = IncidentService.get_incident(incident_id)
+        return IncidentService.transition_response_state(
+            incident_id=incident_id,
+            new_state=ResponseState.RESPONSE_PROPOSED,
+            reason="Response orchestrator generated emergency dispatch recommendation",
+            actor=actor
+        )
+
+    @staticmethod
+    def authorize_response(incident_id: str, actor: str = "OPERATOR") -> Incident:
+        inc = IncidentService.get_incident(incident_id)
+        return IncidentService.transition_response_state(
+            incident_id=incident_id,
+            new_state=ResponseState.AUTHORIZED,
+            reason="Operator formally authorized emergency resource dispatch and green corridor",
+            actor=actor
+        )
