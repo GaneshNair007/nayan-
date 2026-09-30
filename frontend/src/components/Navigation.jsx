@@ -1,73 +1,15 @@
-import React from 'react';
-import { 
-  LayoutDashboard, 
-  Video, 
-  GitFork, 
-  Ambulance, 
-  Cpu, 
-  ScrollText 
-} from 'lucide-react';
-
-export default function Navigation({ activeTab, onSelectTab, incidentCount, criticalCount }) {
-  const tabs = [
-    { id: 'command-center', label: 'Command Center', icon: LayoutDashboard },
-    { id: 'camera-intel', label: 'Camera Intelligence & Demo Feeds', icon: Video, badge: '8 FEEDS' },
-    { id: 'traffic', label: 'Traffic & Signals', icon: GitFork },
-    { id: 'corridor', label: 'Emergency Corridor', icon: Ambulance },
-    { id: 'digital-twin', label: 'Digital Twin', icon: Cpu },
-    { id: 'audit', label: 'Audit Trail', icon: ScrollText }
-  ];
-
-  return (
-    <nav style={{ 
-      display: 'flex', 
-      alignItems: 'center', 
-      gap: '8px', 
-      padding: '0 16px 8px 16px',
-      borderBottom: '1px solid var(--border-subtle)',
-      overflowX: 'auto'
-    }}>
-      {tabs.map((tab) => {
-        const Icon = tab.icon;
-        const isActive = activeTab === tab.id;
-
-        return (
-          <button
-            key={tab.id}
-            onClick={() => onSelectTab(tab.id)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '8px 16px',
-              borderRadius: '8px',
-              border: isActive ? '1px solid var(--accent-cyan)' : '1px solid transparent',
-              background: isActive ? 'rgba(0, 229, 255, 0.1)' : 'transparent',
-              color: isActive ? '#fff' : 'var(--text-secondary)',
-              fontWeight: isActive ? '600' : '500',
-              fontSize: '13px',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            <Icon size={16} color={isActive ? 'var(--accent-cyan)' : 'var(--text-muted)'} />
-            <span>{tab.label}</span>
-
-            {tab.badge && (
-              <span className="badge badge-cyan" style={{ fontSize: '9px', padding: '1px 5px' }}>
-                {tab.badge}
-              </span>
-            )}
-
-            {tab.id === 'command-center' && criticalCount > 0 && (
-              <span className="badge badge-critical" style={{ fontSize: '9px', padding: '1px 6px' }}>
-                {criticalCount} P1
-              </span>
-            )}
-          </button>
-        );
-      })}
-    </nav>
-  );
+export const modules = [
+  { id: 'command-center', label: 'Command', title: 'COMMAND CENTER', description: 'A single operational view of observations, verified incidents and available response resources.' },
+  { id: 'camera-intel', label: 'Cameras', title: 'SEE. VERIFY.', description: 'Staged CCTV. Actual backend tracking. Evidence and confidence remain separate.' },
+  { id: 'traffic', label: 'Traffic', title: 'TRAFFIC CONTROL', description: 'Understand junction pressure and request a safe signal recommendation. Simulation only.' },
+  { id: 'corridor', label: 'Corridor', title: 'DYNAMIC YIELD CORRIDOR', description: 'Create passage through heterogeneous traffic. Inspect clearance, compression and routing decisions.' },
+  { id: 'digital-twin', label: 'Twin', title: 'FIXED VS ADAPTIVE', description: 'Compare identical demand using the backend’s deterministic demonstration. Results are explicitly mocked.' },
+  { id: 'audit', label: 'Audit', title: 'EVERY DECISION.', description: 'Trace the observations, state transitions and operator decisions behind each response.' },
+];
+export default function Navigation({ activeTab, onSelectTab, criticalCount, cameraCount }) {
+  return <nav className="nav-strip" aria-label="Operational modules">{modules.map((tab, index) => <button key={tab.id} className="nav-link" onClick={() => onSelectTab(tab.id)} aria-label={tab.label} aria-current={activeTab === tab.id ? 'page' : undefined}>
+    <span className="nav-index">0{index + 1}</span><span className="swap"><span className="swap-inner"><span>{tab.label.toUpperCase()}</span><span aria-hidden="true">{tab.label.toUpperCase()} ↗</span></span></span>
+    {tab.id === 'command-center' && criticalCount > 0 && <span className="nav-count">{criticalCount} P1</span>}
+    {tab.id === 'camera-intel' && cameraCount != null && <span className="nav-index">{cameraCount}</span>}
+  </button>)}</nav>;
 }
