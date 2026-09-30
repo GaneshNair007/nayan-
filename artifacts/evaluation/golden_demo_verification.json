@@ -1,0 +1,217 @@
+{
+  "timestamp": "2026-09-30 17:06:23",
+  "model_path": "C:\\nayan\\artifacts\\models\\nayan_india\\best.pt",
+  "model_sha256": "4adaced3b9bf339984ca05a8fa9ba1bbd188503b4eb87417d142fb885e09cbd6",
+  "cuda_device": "cuda:0",
+  "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "cameras": {
+    "CAM-03": {
+      "video_path": "data/demo/cam03_ambulance.mp4",
+      "total_frames_audited": 60,
+      "unique_track_ids": [
+        "V-001",
+        "V-002"
+      ],
+      "ambulance_detected": false,
+      "ambulance_track_ids": [],
+      "calibrated_homography": true,
+      "frame_samples": [
+        {
+          "frame_idx": 0,
+          "timestamp_s": 0.0,
+          "detections_count": 2,
+          "detected_classes": [
+            "car",
+            "car"
+          ],
+          "active_tracks": [
+            "V-001"
+          ],
+          "corridor_feasibility": "LOW",
+          "corridor_action": "MAINTAIN",
+          "cctv_clearance_state": "CLEARED",
+          "clearance_width_meters": 12.0,
+          "calibrated": true
+        },
+        {
+          "frame_idx": 15,
+          "timestamp_s": 0.5,
+          "detections_count": 2,
+          "detected_classes": [
+            "car",
+            "car"
+          ],
+          "active_tracks": [
+            "V-001"
+          ],
+          "corridor_feasibility": "LOW",
+          "corridor_action": "MAINTAIN",
+          "cctv_clearance_state": "CLEARED",
+          "clearance_width_meters": 12.0,
+          "calibrated": true
+        },
+        {
+          "frame_idx": 30,
+          "timestamp_s": 1.0,
+          "detections_count": 3,
+          "detected_classes": [
+            "car",
+            "car",
+            "car"
+          ],
+          "active_tracks": [
+            "V-001"
+          ],
+          "corridor_feasibility": "LOW",
+          "corridor_action": "MAINTAIN",
+          "cctv_clearance_state": "CLEARED",
+          "clearance_width_meters": 12.0,
+          "calibrated": true
+        },
+        {
+          "frame_idx": 45,
+          "timestamp_s": 1.5,
+          "detections_count": 2,
+          "detected_classes": [
+            "car",
+            "car"
+          ],
+          "active_tracks": [
+            "V-001",
+            "V-002"
+          ],
+          "corridor_feasibility": "LOW",
+          "corridor_action": "MAINTAIN",
+          "cctv_clearance_state": "CLEARED",
+          "clearance_width_meters": 12.0,
+          "calibrated": true
+        },
+        {
+          "frame_idx": 59,
+          "timestamp_s": 1.97,
+          "detections_count": 1,
+          "detected_classes": [
+            "car"
+          ],
+          "active_tracks": [
+            "V-001",
+            "V-002"
+          ],
+          "corridor_feasibility": "LOW",
+          "corridor_action": "MAINTAIN",
+          "cctv_clearance_state": "CLEARED",
+          "clearance_width_meters": 12.0,
+          "calibrated": true
+        }
+      ]
+    },
+    "CAM-04": {
+      "video_path": "data/demo/cam04_collision.mp4",
+      "total_frames_audited": 60,
+      "unique_track_ids": [
+        "AMB-001",
+        "AMB-002",
+        "V-003"
+      ],
+      "ambulance_detected": true,
+      "ambulance_track_ids": [
+        "AMB-001",
+        "AMB-002"
+      ],
+      "calibrated_homography": false,
+      "frame_samples": [
+        {
+          "frame_idx": 0,
+          "timestamp_s": 0.0,
+          "detections_count": 2,
+          "detected_classes": [
+            "ambulance",
+            "ambulance"
+          ],
+          "active_tracks": [
+            "AMB-001",
+            "AMB-002"
+          ],
+          "corridor_feasibility": "HIGH",
+          "corridor_action": "PROCEED_NORMAL",
+          "cctv_clearance_state": "CLEARED",
+          "clearance_width_meters": null,
+          "calibrated": false
+        },
+        {
+          "frame_idx": 15,
+          "timestamp_s": 0.5,
+          "detections_count": 2,
+          "detected_classes": [
+            "ambulance",
+            "ambulance"
+          ],
+          "active_tracks": [
+            "AMB-001",
+            "AMB-002",
+            "V-003"
+          ],
+          "corridor_feasibility": "HIGH",
+          "corridor_action": "PROCEED_NORMAL",
+          "cctv_clearance_state": "CLEARED",
+          "clearance_width_meters": null,
+          "calibrated": false
+        },
+        {
+          "frame_idx": 30,
+          "timestamp_s": 1.0,
+          "detections_count": 2,
+          "detected_classes": [
+            "ambulance",
+            "ambulance"
+          ],
+          "active_tracks": [
+            "AMB-001",
+            "AMB-002"
+          ],
+          "corridor_feasibility": "HIGH",
+          "corridor_action": "PROCEED_NORMAL",
+          "cctv_clearance_state": "CLEARED",
+          "clearance_width_meters": null,
+          "calibrated": false
+        },
+        {
+          "frame_idx": 45,
+          "timestamp_s": 1.5,
+          "detections_count": 2,
+          "detected_classes": [
+            "ambulance",
+            "ambulance"
+          ],
+          "active_tracks": [
+            "AMB-001",
+            "AMB-002"
+          ],
+          "corridor_feasibility": "HIGH",
+          "corridor_action": "PROCEED_NORMAL",
+          "cctv_clearance_state": "CLEARED",
+          "clearance_width_meters": null,
+          "calibrated": false
+        },
+        {
+          "frame_idx": 59,
+          "timestamp_s": 1.97,
+          "detections_count": 2,
+          "detected_classes": [
+            "ambulance",
+            "ambulance"
+          ],
+          "active_tracks": [
+            "AMB-001",
+            "AMB-002"
+          ],
+          "corridor_feasibility": "HIGH",
+          "corridor_action": "PROCEED_NORMAL",
+          "cctv_clearance_state": "CLEARED",
+          "clearance_width_meters": null,
+          "calibrated": false
+        }
+      ]
+    }
+  }
+}

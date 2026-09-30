@@ -97,22 +97,27 @@ class YOLOv8DetectorAdapter(BaseDetector):
         device: Optional[str] = None
     ):
         from ultralytics import YOLO
+        from app.config import settings
+        import hashlib
 
         # Resolve weights path
         if not model_path:
-            # Check fine-tuned model first
-            finetuned_model = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), "..", "..", "models", "training", "india_emergency", "weights", "best.pt"
-            ))
-            artifact_model = os.path.abspath(os.path.join(
-                os.path.dirname(__file__), "..", "..", "artifacts", "models", "yolov8n.pt"
-            ))
-            if os.path.exists(finetuned_model):
-                model_path = finetuned_model
-            elif os.path.exists(artifact_model):
-                model_path = artifact_model
+            config_model = getattr(settings, "NAYAN_DETECTOR_MODEL", None)
+            if config_model and os.path.exists(config_model):
+                model_path = config_model
             else:
-                model_path = "yolov8n.pt"
+                trained_model = os.path.abspath(os.path.join(
+                    os.path.dirname(__file__), "..", "..", "..", "artifacts", "models", "nayan_india", "best.pt"
+                ))
+                artifact_model = os.path.abspath(os.path.join(
+                    os.path.dirname(__file__), "..", "..", "..", "artifacts", "models", "yolov8n.pt"
+                ))
+                if os.path.exists(trained_model):
+                    model_path = trained_model
+                elif os.path.exists(artifact_model):
+                    model_path = artifact_model
+                else:
+                    model_path = "yolov8n.pt"
 
         # Determine target device
         if device is None:
@@ -125,13 +130,31 @@ class YOLOv8DetectorAdapter(BaseDetector):
         self.model = YOLO(model_path)
         if "cuda" in device and torch.cuda.is_available():
             self.model.to(device)
-            # Enable half precision (FP16) on CUDA for maximum performance
             self.use_half = True
         else:
             self.use_half = False
 
         self.model_path = model_path
         self._last_latency_ms = 0.0
+
+        # Calculate model SHA256
+        hasher = hashlib.sha256()
+        if os.path.exists(model_path):
+            with open(model_path, 'rb') as f:
+                while chunk := f.read(65536):
+                    hasher.update(chunk)
+            self.model_sha256 = hasher.hexdigest()
+        else:
+            self.model_sha256 = "unknown"
+
+        # Model startup logging (Phase 24 requirement)
+        print("=" * 60)
+        print("[NAYAN PERCEPTION] ACTIVE DETECTOR INITIALIZED")
+        print(f"  MODEL PATH:    {self.model_path}")
+        print(f"  MODEL SHA256:  {self.model_sha256}")
+        print(f"  MODEL CLASSES: {list(self.model.names.values())}")
+        print(f"  DEVICE:        {self.device_str} (FP16: {self.use_half})")
+        print("=" * 60)
 
     def detect(self, frame: np.ndarray) -> List[DetectionResult]:
         """Run real forward-pass detection on the frame."""
@@ -162,19 +185,33 @@ class YOLOv8DetectorAdapter(BaseDetector):
         classes = res.boxes.cls.int().cpu().numpy()
 
         for xyxy, conf, cls_id in zip(boxes_xyxy, confs, classes):
-            # Check if this class is relevant to urban monitoring
-            if cls_id in self.COCO_DOMAIN_MAP:
-                class_name, domain_type = self.COCO_DOMAIN_MAP[cls_id]
-                bbox = (float(xyxy[0]), float(xyxy[1]), float(xyxy[2]), float(xyxy[3]))
-                det = DetectionResult(
-                    class_id=int(cls_id),
-                    class_name=class_name,
-                    domain_type=domain_type,
-                    confidence=float(conf),
-                    bbox=bbox,
-                    provenance=DataProvenance.INFERENCE
-                )
-                detections.append(det)
+            cls_int = int(cls_id)
+            cname = self.model.names.get(cls_int, f"class_{cls_int}").lower()
+
+            # Dynamic domain categorization
+            if "ambulance" in cname:
+                domain_type = "ambulance"
+            elif any(k in cname for k in ["car", "motorcycle", "bike", "auto_rickshaw", "rickshaw", "bus", "truck", "van", "vehicle"]):
+                domain_type = "vehicle"
+            elif any(k in cname for k in ["person", "pedestrian"]):
+                domain_type = "pedestrian"
+            elif any(k in cname for k in ["luggage", "backpack", "suitcase", "handbag", "bag"]):
+                domain_type = "baggage"
+            elif cls_int in self.COCO_DOMAIN_MAP:
+                cname, domain_type = self.COCO_DOMAIN_MAP[cls_int]
+            else:
+                continue
+
+            bbox = (float(xyxy[0]), float(xyxy[1]), float(xyxy[2]), float(xyxy[3]))
+            det = DetectionResult(
+                class_id=cls_int,
+                class_name=cname,
+                domain_type=domain_type,
+                confidence=float(conf),
+                bbox=bbox,
+                provenance=DataProvenance.INFERENCE
+            )
+            detections.append(det)
 
         return detections
 

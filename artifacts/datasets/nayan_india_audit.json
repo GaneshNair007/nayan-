@@ -1,0 +1,37 @@
+{
+  "dataset_name": "nayan_india",
+  "splits": {
+    "train": {
+      "image_count": 4520,
+      "label_count": 4520,
+      "instances": 5312
+    },
+    "val": {
+      "image_count": 1268,
+      "label_count": 1268,
+      "instances": 1499
+    },
+    "test": {
+      "image_count": 1173,
+      "label_count": 1173,
+      "instances": 1262
+    }
+  },
+  "class_totals": {
+    "0_ambulance": 1107,
+    "1_car": 3378,
+    "2_motorcycle": 799,
+    "3_auto_rickshaw": 1326,
+    "4_bus": 798,
+    "5_truck": 665
+  },
+  "issues": {
+    "corrupt_images": 0,
+    "missing_labels": 0,
+    "invalid_class_ids": 0,
+    "boxes_outside_bounds": 294,
+    "zero_area_boxes": 0,
+    "empty_annotations": 0
+  },
+  "quality_gate_passed": true
+}

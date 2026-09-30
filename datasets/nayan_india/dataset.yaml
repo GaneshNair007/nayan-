@@ -1,0 +1,16 @@
+# NAYAN India Emergency Traffic Dataset
+# Built autonomously for transfer learning on Indian mixed traffic & emergency corridors
+
+path: C:\nayan\datasets\nayan_india
+train: images/train
+val: images/val
+test: images/test
+
+nc: 6
+names:
+  0: ambulance
+  1: car
+  2: motorcycle
+  3: auto_rickshaw
+  4: bus
+  5: truck

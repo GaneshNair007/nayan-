@@ -1,0 +1,5 @@
+Device Name: NVIDIA GeForce RTX 4050 Laptop GPU
+Total Memory: 6.00 GB
+PyTorch: 2.6.0+cu124
+CUDA: 12.4
+Tensor Device: cuda:0

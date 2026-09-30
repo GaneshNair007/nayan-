@@ -13,5 +13,9 @@ class Settings(BaseModel):
     OSRM_URL: str = os.getenv("OSRM_URL", "http://router.project-osrm.org")
     SUMO_ENABLED: bool = os.getenv("SUMO_ENABLED", "false").lower() == "true"
     DEMO_MODE: bool = True
+    NAYAN_DETECTOR_MODEL: str = os.getenv(
+        "NAYAN_DETECTOR_MODEL",
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "artifacts", "models", "nayan_india", "best.pt"))
+    )
 
 settings = Settings()

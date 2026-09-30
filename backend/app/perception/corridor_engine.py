@@ -116,42 +116,68 @@ class DynamicCorridorEngine:
     def verify_segment_cctv(self, camera_id: str, current_tracks: List[TrackedEntity]) -> Dict[str, Any]:
         """
         Implements real-time CCTV verification for a specific road segment.
-        Analyzes the active camera feed to determine if the 3.0m minimum clearance
-        is actually achieved by calculating lane elasticity and blockages.
+        Uses CameraCalibration planar homography for calibrated cameras to measure
+        exact ground clearance in meters. For uncalibrated cameras, returns normalized
+        clearance without fabricating physical metric units.
         """
-        # Count vehicles in the camera's FOV
+        from app.perception.calibration import DEMO_CALIBRATIONS, CameraCalibration
+
         vehicles = [t for t in current_tracks if t.domain_type in ["car", "bus", "truck", "van"]]
         two_wheelers = [t for t in current_tracks if t.domain_type in ["motorcycle", "scooter", "auto-rickshaw"]]
         
-        # Calculate theoretical clearance based on bounding boxes
-        total_vehicle_width_px = sum([v.width for v in vehicles]) + sum([w.width * 0.5 for w in two_wheelers])
-        
-        # Assume FOV is roughly 12 meters wide
-        pixels_per_meter = self.grid_width / 12.0
-        used_width_meters = total_vehicle_width_px / pixels_per_meter
-        available_width_meters = 12.0 - used_width_meters
-        
-        # Are there stationary vehicles blocking the center?
+        # Vehicle bottom centers (ground contact points) and widths
+        vehicle_bottom_centers = [(v.current_centroid[0], v.bbox[3]) for v in vehicles + two_wheelers]
+        vehicle_widths = [v.width for v in vehicles] + [w.width * 0.5 for w in two_wheelers]
+
+        calib = DEMO_CALIBRATIONS.get(camera_id, CameraCalibration(camera_id=camera_id))
+        clearance_data = calib.calculate_corridor_clearance(
+            vehicle_bottom_centers=vehicle_bottom_centers,
+            vehicle_widths_px=vehicle_widths,
+            image_width=self.grid_width
+        )
+
+        # Center obstruction check
         center_blocked = False
         center_x = self.grid_width / 2.0
         for v in vehicles:
             if v.stationary_duration_s > 2.0 and abs(v.current_centroid[0] - center_x) < (self.grid_width * 0.2):
                 center_blocked = True
-                
-        # Determine status
-        clearance_width = max(0.0, available_width_meters)
-        if center_blocked or clearance_width < 3.0:
-            status = "FAILED"
-        elif clearance_width >= 3.5:
-            status = "CLEARED"
+
+        if clearance_data["calibrated"]:
+            clearance_val = clearance_data["clearance_meters"]
+            if center_blocked or clearance_val < 3.0:
+                status = "FAILED"
+            elif clearance_val >= 3.5:
+                status = "CLEARED"
+            else:
+                status = "COMPRESSING"
         else:
-            status = "COMPRESSING"
-            
-        return {
+            norm_clearance = clearance_data["normalized_clearance"]
+            if center_blocked or norm_clearance < 0.25:
+                status = "FAILED"
+            elif norm_clearance >= 0.35:
+                status = "CLEARED"
+            else:
+                status = "COMPRESSING"
+
+        res = {
             "camera_id": camera_id,
             "verified_by_cctv": True,
-            "clearance_width_meters": round(clearance_width, 1),
+            "calibrated": clearance_data["calibrated"],
+            "physical_units_valid": clearance_data["physical_units_valid"],
             "traffic_compression_state": status,
-            "center_blocked": center_blocked
+            "center_blocked": center_blocked,
+            "normalized_clearance": clearance_data["normalized_clearance"]
         }
+
+        if clearance_data["calibrated"]:
+            res["clearance_width_meters"] = clearance_data["clearance_meters"]
+            res["road_width_meters"] = clearance_data["road_width_meters"]
+            res["calibration_error_m"] = clearance_data.get("calibration_error_m", 0.0)
+        else:
+            res["clearance_width_meters"] = None
+            res["note"] = clearance_data.get("note", "Uncalibrated camera")
+
+        return res
+
 

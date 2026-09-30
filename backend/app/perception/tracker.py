@@ -31,7 +31,14 @@ class TrackedEntity:
         self.provenance = detection.provenance
 
         # Privacy-Preserving Ephemeral Anonymous Identifier
-        prefix = "V" if self.domain_type == "vehicle" else ("P" if self.domain_type == "pedestrian" else "BAG")
+        if self.domain_type == "ambulance":
+            prefix = "AMB"
+        elif self.domain_type in ["vehicle", "car", "motorcycle", "auto-rickshaw", "bus", "truck", "van"]:
+            prefix = "V"
+        elif self.domain_type == "pedestrian":
+            prefix = "P"
+        else:
+            prefix = "BAG"
         self.anonymous_id = f"{prefix}-{track_id:03d}"
 
         # Temporal History

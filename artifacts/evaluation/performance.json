@@ -1,0 +1,11 @@
+{
+  "device": "cuda:0",
+  "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "input_resolution": "640x640",
+  "benchmark_runs": 50,
+  "average_inference_ms": 21.74,
+  "min_inference_ms": 17.29,
+  "max_inference_ms": 25.07,
+  "end_to_end_fps": 46.0,
+  "vram_allocated_mb": 23.3
+}

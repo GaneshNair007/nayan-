@@ -19,6 +19,11 @@ dist/
 # Datasets (raw / processed)
 datasets/raw/
 datasets/processed/
+datasets/downloads/
+datasets/nayan_india/images/
+datasets/nayan_india/labels/
 artifacts/raw/
+artifacts/models/nayan_india_run/
+artifacts/models/nayan_sanity_run/
 yolov8n.pt
 backend/yolov8n.pt

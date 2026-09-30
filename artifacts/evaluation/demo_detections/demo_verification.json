@@ -1,0 +1,75 @@
+{
+  "CAM-01": {
+    "video_file": "cam01_normal_intersection.mp4",
+    "detections_count": 1,
+    "detections": [
+      {
+        "class": "ambulance",
+        "confidence": 0.493,
+        "bbox": [
+          7.6,
+          11.2,
+          1273.3,
+          717.5
+        ]
+      }
+    ],
+    "has_ambulance": true
+  },
+  "CAM-02": {
+    "video_file": "cam02_congestion.mp4",
+    "detections_count": 0,
+    "detections": [],
+    "has_ambulance": false
+  },
+  "CAM-03": {
+    "video_file": "cam03_ambulance.mp4",
+    "detections_count": 1,
+    "detections": [
+      {
+        "class": "car",
+        "confidence": 0.59,
+        "bbox": [
+          153.6,
+          0.0,
+          225.7,
+          79.1
+        ]
+      }
+    ],
+    "has_ambulance": false
+  },
+  "CAM-04": {
+    "video_file": "cam04_collision.mp4",
+    "detections_count": 2,
+    "detections": [
+      {
+        "class": "ambulance",
+        "confidence": 0.899,
+        "bbox": [
+          1129.6,
+          12.6,
+          1277.9,
+          153.8
+        ]
+      },
+      {
+        "class": "car",
+        "confidence": 0.303,
+        "bbox": [
+          1052.1,
+          233.6,
+          1278.6,
+          425.3
+        ]
+      }
+    ],
+    "has_ambulance": true
+  },
+  "CAM-05": {
+    "video_file": "cam05_night_traffic.mp4",
+    "detections_count": 0,
+    "detections": [],
+    "has_ambulance": false
+  }
+}

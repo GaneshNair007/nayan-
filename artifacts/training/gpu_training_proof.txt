@@ -1,0 +1,13 @@
+GPU TRAINING PROOF
+==================
+GPU Name: NVIDIA GeForce RTX 4050 Laptop GPU
+CUDA Version: 12.4
+PyTorch Version: 2.6.0+cu124
+Device: cuda:0
+Peak VRAM Allocated: 0.00 MB
+Peak VRAM Reserved: 0.00 MB
+Base Model SHA256: f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36
+Trained Model SHA256: 4adaced3b9bf339984ca05a8fa9ba1bbd188503b4eb87417d142fb885e09cbd6
+Completed Epochs: 3
+Best Val mAP50: 0.80174
+Status: VERIFIED REAL GPU TRAINING

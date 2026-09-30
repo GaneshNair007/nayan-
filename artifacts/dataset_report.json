@@ -1,0 +1,45 @@
+{
+  "total_images": 6961,
+  "train_images": 4520,
+  "val_images": 1268,
+  "test_images": 1173,
+  "class_counts": {
+    "ambulance": 1107,
+    "car": 3378,
+    "motorcycle": 799,
+    "auto_rickshaw": 1326,
+    "bus": 798,
+    "truck": 665
+  },
+  "dataset_sources": [
+    {
+      "name": "Omer Aucmq Ambulance Detection",
+      "license": "CC BY 4.0",
+      "focus": "Ambulance in urban emergency scenarios",
+      "url": "https://universe.roboflow.com/omer-aucmq/ambulance_detection-z5tqb-wwpbw/dataset/2"
+    },
+    {
+      "name": "Najmus Sabir Emergency Vehicle & Density Dataset",
+      "license": "CC BY 4.0",
+      "focus": "Ambulance, fire trucks, mixed traffic density",
+      "url": "https://universe.roboflow.com/emergency-vehicle-detection-sabir/vehicle-detc./dataset/1"
+    },
+    {
+      "name": "Ayush Das Auto Rickshaw Dataset",
+      "license": "CC BY 4.0",
+      "focus": "Indian auto-rickshaws in street traffic",
+      "url": "https://universe.roboflow.com/ayush-das/imt2019014auto"
+    },
+    {
+      "name": "Akashkg03 Indian Vehicle Traffic Dataset",
+      "license": "Open Source / Permissive Research",
+      "focus": "Motorcycles, auto-rickshaws, ambassador taxis, buses, trucks, vans in Indian road conditions",
+      "url": "https://github.com/Akashkg03/VEHICLE-OBJECT-DETECTION-USING-YOLOv8n"
+    }
+  ],
+  "duplicate_count": 121,
+  "corrupt_count": 0,
+  "missing_labels": 0,
+  "malformed_labels": 0,
+  "empty_images": 997
+}

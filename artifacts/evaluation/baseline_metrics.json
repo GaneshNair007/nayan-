@@ -1,0 +1,76 @@
+{
+  "model": "yolov8n.pt (Pretrained Baseline)",
+  "eval_split": "held_out_test",
+  "total_test_images": 1173,
+  "device": "cuda:0",
+  "metrics": {
+    "precision": 0.2619,
+    "recall": 0.2638,
+    "mAP50": 0.0789,
+    "mAP50-95": 0.0513
+  },
+  "target_classes_breakdown": {
+    "ambulance_precision": 0.0,
+    "ambulance_recall": 0.0,
+    "ambulance_ap50": 0.0,
+    "auto_rickshaw_precision": 0.0,
+    "auto_rickshaw_recall": 0.0,
+    "auto_rickshaw_ap50": 0.0
+  },
+  "per_class": {
+    "ambulance": {
+      "gt_count": 65,
+      "tp": 0,
+      "fp": 0,
+      "fn": 65,
+      "precision": 0.0,
+      "recall": 0.0,
+      "ap50": 0.0
+    },
+    "car": {
+      "gt_count": 529,
+      "tp": 64,
+      "fp": 108,
+      "fn": 465,
+      "precision": 0.3721,
+      "recall": 0.121,
+      "ap50": 0.045
+    },
+    "motorcycle": {
+      "gt_count": 158,
+      "tp": 31,
+      "fp": 9,
+      "fn": 127,
+      "precision": 0.775,
+      "recall": 0.1962,
+      "ap50": 0.1521
+    },
+    "auto_rickshaw": {
+      "gt_count": 233,
+      "tp": 0,
+      "fp": 0,
+      "fn": 233,
+      "precision": 0.0,
+      "recall": 0.0,
+      "ap50": 0.0
+    },
+    "bus": {
+      "gt_count": 147,
+      "tp": 108,
+      "fp": 324,
+      "fn": 39,
+      "precision": 0.25,
+      "recall": 0.7347,
+      "ap50": 0.1837
+    },
+    "truck": {
+      "gt_count": 130,
+      "tp": 69,
+      "fp": 327,
+      "fn": 61,
+      "precision": 0.1742,
+      "recall": 0.5308,
+      "ap50": 0.0925
+    }
+  }
+}
