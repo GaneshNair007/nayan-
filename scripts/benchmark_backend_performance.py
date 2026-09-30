@@ -34,7 +34,9 @@ def benchmark_pipeline():
 
     # 1. Model Load Time
     t_load0 = time.perf_counter()
-    model_path = os.path.abspath("artifacts/models/nayan_india/best.pt")
+    model_path = os.path.abspath("artifacts/models/nayan_india_v2/best.pt")
+    if not os.path.exists(model_path):
+        model_path = os.path.abspath("artifacts/models/nayan_india/best.pt")
     detector = YOLOv8DetectorAdapter(model_path=model_path, conf_threshold=0.25)
     t_load1 = time.perf_counter()
     model_load_time_s = round(t_load1 - t_load0, 3)
@@ -120,6 +122,8 @@ def benchmark_pipeline():
             "tracking_mean": round(float(np.mean(tracking_times)), 3),
             "temporal_and_corridor_mean": round(float(np.mean(temporal_times)), 3),
             "end_to_end_frame_mean": round(avg_e2e, 2),
+            "end_to_end_frame_median": round(float(np.median(e2e_times)), 2),
+            "end_to_end_frame_p95": round(float(np.percentile(e2e_times, 95)), 2),
             "end_to_end_frame_min": round(float(np.min(e2e_times)), 2),
             "end_to_end_frame_max": round(float(np.max(e2e_times)), 2)
         },

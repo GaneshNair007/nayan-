@@ -1,3 +1,11 @@
+"""
+DEPRECATED AND INVALIDATED SCRIPT - DO NOT USE
+This script created the invalid v1 dataset with synthetic frame-modulo relabeling.
+It has been superseded by scripts/prepare_nayan_v2_dataset.py and nayan_india_v2.
+"""
+import sys
+raise RuntimeError("scripts/create_indian_dataset.py is INVALIDATED. Use scripts/prepare_nayan_v2_dataset.py instead.")
+
 import os
 import cv2
 import yaml

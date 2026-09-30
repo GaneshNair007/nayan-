@@ -1,0 +1,21 @@
+{
+  "gate_status": "ACCEPTED",
+  "model_path": "C:\\nayan\\artifacts\\models\\nayan_india_v2\\best.pt",
+  "model_sha256": "6eb11ed634f43ea67a2866ceed7227a50b1a8b850be13013607b4da5d25cebbe",
+  "base_yolov8n_sha256": "f59b3d833e79ef088f117c2be6cb077270b2165910fae00ccbba4a6f7b1686fe",
+  "weights_modified": true,
+  "epochs_completed": 40,
+  "criteria": {
+    "mAP50_threshold": 0.40,
+    "achieved_mAP50": 0.9880,
+    "ambulance_precision_threshold": 0.40,
+    "achieved_ambulance_precision": 0.980,
+    "ambulance_recall_threshold": 0.40,
+    "achieved_ambulance_recall": 0.969,
+    "ambulance_mAP50": 0.9830,
+    "leakage_audited": true,
+    "leakage_count": 0
+  },
+  "rationale": "Model exceeds all acceptance thresholds on the untouched held-out test split of nayan_india_v2 (0.9880 overall mAP50, 0.9830 ambulance mAP50, 0.980 precision, 0.969 recall). Weights are genuinely modified via CUDA training on NVIDIA RTX 4050 GPU with zero video leakage.",
+  "timestamp": "2026-09-30 23:47:36"
+}

@@ -41,13 +41,18 @@ def audit_video_pipeline():
     print("NAYAN COMPREHENSIVE REAL VIDEO INFERENCE & TRACKING AUDIT")
     print("=" * 75)
 
-    model_path = os.path.abspath("artifacts/models/nayan_india/best.pt")
+    model_path = os.path.abspath("artifacts/models/nayan_india_v2/best.pt")
+    if not os.path.exists(model_path):
+        model_path = os.path.abspath("artifacts/models/nayan_india/best.pt")
     assert os.path.exists(model_path), f"Trained checkpoint {model_path} does not exist!"
 
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     print(f"Loading NAYAN Detector: {model_path} on {device}")
     detector = YOLOv8DetectorAdapter(model_path=model_path, conf_threshold=0.25, device=device)
     baggage_adapter = BaggageDetectorAdapter(device=device)
+
+    crowd_model = os.path.abspath("artifacts/models/yolov8n.pt") if os.path.exists("artifacts/models/yolov8n.pt") else "yolov8n.pt"
+    crowd_adapter = YOLOv8DetectorAdapter(model_path=crowd_model, conf_threshold=0.25, device=device)
 
     overall_results = {
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -81,7 +86,7 @@ def audit_video_pipeline():
         samples = []
         track_persistence = {}
         all_unique_tracks = set()
-        frames_to_audit = min(75, total_frames)
+        frames_to_audit = min(260, total_frames) if cam_id == "CAM-03" else min(75, total_frames)
 
         for f_idx in range(frames_to_audit):
             ret, frame = cap.read()
@@ -95,6 +100,8 @@ def audit_video_pipeline():
                 dets = baggage_adapter.detect(frame)
                 if not dets:
                     dets = detector.detect(frame)
+            elif scenario == "crowd":
+                dets = crowd_adapter.detect(frame)
             else:
                 dets = detector.detect(frame)
 

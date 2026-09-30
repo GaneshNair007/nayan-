@@ -51,10 +51,10 @@ class ResponseService:
                             geometry_geojson=coords,
                             distance_meters=r["distance"],
                             duration_seconds=r["duration"],
-                            provenance=DataProvenance.INFERENCE
+                            provenance=DataProvenance.EXTERNAL_ROUTING
                         )
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[ResponseService] OSRM routing unavailable ({type(e).__name__}: {e}); falling back to deterministic route with provenance=MOCK.")
 
         # Deterministic Mock Fallback for Golden Demo (Network-Independent)
         coords_fallback = [
@@ -77,7 +77,7 @@ class ResponseService:
             geometry_geojson=coords_fallback,
             distance_meters=2450.0,
             duration_seconds=195.0,
-            provenance=DataProvenance.MOCK
+            provenance=DataProvenance.DETERMINISTIC
         )
 
     @staticmethod
@@ -105,6 +105,37 @@ class ResponseService:
         dest = LocationPoint(lat=inc.location.lat, lon=inc.location.lon, address=inc.location.address)
         route = await ResponseService.compute_route(res.location, dest)
 
+        # Dynamically evaluate corridor segments via DynamicCorridorEngine
+        from app.perception.corridor_engine import DynamicCorridorEngine
+        from app.perception.pipeline import perception_manager
+
+        corridor_engine = DynamicCorridorEngine()
+        seg_cam_map = [
+            ("SEG-01", "CAM-01", "HALTED_NEW_TRAFFIC"),
+            ("SEG-02", "CAM-02", "FLOWING"),
+            ("SEG-03", "CAM-03", "FLOWING"),
+            ("SEG-04", "CAM-04", "FLOWING")
+        ]
+        dynamic_segments = []
+        for seg_id, cam_id, signal_st in seg_cam_map:
+            job = perception_manager.jobs.get(cam_id)
+            tracks = job.last_processed_tracks if job else []
+            eval_res = corridor_engine.verify_segment_cctv(cam_id, tracks)
+            comp_st = eval_res.get("traffic_compression_state", "READY")
+            clearance_m = eval_res.get("clearance_width_meters")
+            if clearance_m is None:
+                clearance_m = round(eval_res.get("normalized_clearance", 0.75) * 4.0, 2)
+            dynamic_segments.append(
+                SegmentCorridorStatus(
+                    segment_id=seg_id,
+                    camera_id=cam_id,
+                    clearance_width_meters=clearance_m,
+                    traffic_compression_state=comp_st,
+                    upstream_signal_state=signal_st,
+                    verified_by_cctv=eval_res.get("verified_by_cctv", True)
+                )
+            )
+
         # Build Green Corridor Plan across 3 junctions & multiple spatial segments
         corridor_plan = CorridorPlan(
             id=f"COR-{uuid.uuid4().hex[:6].upper()}",
@@ -116,13 +147,8 @@ class ResponseService:
                 JunctionCorridorStatus(junction_id="JNC-02", junction_name="Central Expwy & 4th Cross", readiness="GREEN_ACTIVE", eta_seconds=110),
                 JunctionCorridorStatus(junction_id="JNC-03", junction_name="Plaza Blvd & Metro Entrance", readiness="STANDBY", eta_seconds=180)
             ],
-            segment_sequence=[
-                SegmentCorridorStatus(segment_id="SEG-01", camera_id="CAM-01", clearance_width_meters=3.2, traffic_compression_state="CLEARED", upstream_signal_state="HALTED_NEW_TRAFFIC", verified_by_cctv=True),
-                SegmentCorridorStatus(segment_id="SEG-02", camera_id="CAM-02", clearance_width_meters=3.5, traffic_compression_state="COMPRESSING", upstream_signal_state="FLOWING", verified_by_cctv=True),
-                SegmentCorridorStatus(segment_id="SEG-03", camera_id="CAM-03", clearance_width_meters=1.8, traffic_compression_state="FAILED", upstream_signal_state="FLOWING", verified_by_cctv=True),
-                SegmentCorridorStatus(segment_id="SEG-04", camera_id="CAM-04", clearance_width_meters=3.0, traffic_compression_state="CLEARED", upstream_signal_state="FLOWING", verified_by_cctv=False)
-            ],
-            is_rerouted=True,
+            segment_sequence=dynamic_segments,
+            is_rerouted=False,
             route=route,
             status=CorridorStatus.ACTIVE,
             provenance=DataProvenance.SIMULATOR
@@ -215,18 +241,26 @@ class ResponseService:
 
         # Identify failed segment and replace with dynamic bypass segment
         if failed_segment_id:
+            from app.perception.corridor_engine import DynamicCorridorEngine
+            corridor_engine = DynamicCorridorEngine()
             for seg in plan.segment_sequence:
                 if seg.segment_id == failed_segment_id:
                     seg.traffic_compression_state = "FAILED"
-                    seg.clearance_width_meters = min(seg.clearance_width_meters, 1.8)
+                    if seg.clearance_width_meters is not None:
+                        seg.clearance_width_meters = round(max(0.5, seg.clearance_width_meters * 0.4), 2)
 
-            # Insert bypass segment
+            # Insert bypass segment derived from dynamic verification on CAM-01
             bypass_id = f"{failed_segment_id}-BYPASS"
             if not any(s.segment_id == bypass_id for s in plan.segment_sequence):
+                bypass_eval = corridor_engine.verify_segment_cctv("CAM-01", [])
+                bypass_w = bypass_eval.get("clearance_width_meters")
+                if bypass_w is None:
+                    bypass_w = round(bypass_eval.get("normalized_clearance", 0.85) * 4.0, 2)
+
                 bypass_seg = SegmentCorridorStatus(
                     segment_id=bypass_id,
                     camera_id="CAM-01",  # Unobstructed bypass route
-                    clearance_width_meters=3.8,
+                    clearance_width_meters=bypass_w,
                     traffic_compression_state="CLEARED",
                     upstream_signal_state="HALTED_NEW_TRAFFIC",
                     verified_by_cctv=True

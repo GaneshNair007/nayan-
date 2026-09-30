@@ -1,0 +1,19 @@
+{
+  "model_name": "nayan_india_v2_detector",
+  "checkpoint": "c:\\nayan\\artifacts\\models\\nayan_india_v2\\best.pt",
+  "sha256": "6eb11ed634f43ea67a2866ceed7227a50b1a8b850be13013607b4da5d25cebbe",
+  "base_architecture": "YOLOv8n",
+  "training_dataset": "datasets/nayan_india_v2",
+  "classes": [
+    "ambulance",
+    "car",
+    "motorcycle",
+    "auto_rickshaw",
+    "bus",
+    "truck"
+  ],
+  "device": "cuda:0",
+  "training_epochs": 40,
+  "fine_tuned": true,
+  "created_at": "2026-09-30T23:47:11.999128"
+}

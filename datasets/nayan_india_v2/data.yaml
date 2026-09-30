@@ -1,0 +1,12 @@
+path: c:\nayan\datasets\nayan_india_v2
+train: images/train
+val: images/val
+test: images/test
+nc: 6
+names:
+  0: ambulance
+  1: car
+  2: motorcycle
+  3: auto_rickshaw
+  4: bus
+  5: truck

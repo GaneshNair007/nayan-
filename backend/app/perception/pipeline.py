@@ -80,6 +80,10 @@ class PerceptionPipelineManager:
         self.detector = YOLOv8DetectorAdapter(conf_threshold=0.25)
         print("Perception Pipeline Manager initialized on:", self.detector.get_hardware_info()["gpu_name"])
 
+    @property
+    def jobs(self) -> Dict[str, VideoAnalysisJob]:
+        return self.active_jobs
+
     def start_job(self, camera_id: str, video_path: str, loop_video: bool = True) -> VideoAnalysisJob:
         """Start a real video analysis background processing job."""
         if camera_id in self.active_jobs and self.active_jobs[camera_id].is_running:
@@ -227,18 +231,18 @@ class PerceptionPipelineManager:
                 # 4. Multi-Signal Evidence Fusion & State Machine Transitions
                 mean_model_conf = float(np.mean([d.confidence for d in detections])) if detections else 0.50
 
-                # Determine which incident engine applies based on scenario / detections
-                if camera_id == "CAM-04" or collision_features.confidence_score > 0.40:
+                # Evaluator selection based purely on active kinematic/feature signals
+                if collision_features.confidence_score > 0.20 or (len(collision_features.involved_track_ids) >= 2 and collision_features.confidence_score > 0.10):
                     ev_result = evidence_engine.process_collision_features(collision_features, curr_timestamp, mean_model_conf)
                     inc_type = IncidentType.COLLISION
                     title = "Multi-Vehicle Traffic Collision"
                     desc = "Real-time collision verified via trajectory convergence, rapid deceleration, and persistent stoppage."
-                elif camera_id == "CAM-07" or crowd_features.person_count > 8:
+                elif crowd_features.person_count > 4 or crowd_features.density_growth_rate > 15.0:
                     ev_result = evidence_engine.process_crowd_features(crowd_features, curr_timestamp, mean_model_conf)
                     inc_type = IncidentType.CROWD_ANOMALY
                     title = "Rapid Crowd Density Surge"
                     desc = "Pedestrian flow anomaly detected: abnormal concentration and directional turbulence."
-                elif camera_id == "CAM-11" or baggage_features.unattended_detected:
+                elif baggage_features.unattended_detected or baggage_features.stationary_duration_s > 2.0:
                     ev_result = evidence_engine.process_baggage_features(baggage_features, curr_timestamp, mean_model_conf)
                     inc_type = IncidentType.UNATTENDED_BAGGAGE
                     title = "Unattended Luggage Anomaly"

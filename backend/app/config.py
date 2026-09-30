@@ -15,7 +15,7 @@ class Settings(BaseModel):
     DEMO_MODE: bool = True
     NAYAN_DETECTOR_MODEL: str = os.getenv(
         "NAYAN_DETECTOR_MODEL",
-        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "artifacts", "models", "nayan_india", "best.pt"))
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "artifacts", "models", "nayan_india_v2", "best.pt"))
     )
 
 settings = Settings()

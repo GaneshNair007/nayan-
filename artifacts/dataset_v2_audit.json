@@ -1,0 +1,63 @@
+{
+  "dataset": "nayan_india_v2",
+  "timestamp": "2026-09-30",
+  "critical_issues": 0,
+  "warnings": 0,
+  "splits_summary": {
+    "train": {
+      "image_count": 4520,
+      "label_count": 4520,
+      "valid_pairs": 4520,
+      "class_counts": {
+        "0": 920,
+        "1": 2162,
+        "2": 480,
+        "3": 833,
+        "4": 509,
+        "5": 408
+      }
+    },
+    "val": {
+      "image_count": 1268,
+      "label_count": 1268,
+      "valid_pairs": 1268,
+      "class_counts": {
+        "0": 122,
+        "1": 687,
+        "2": 161,
+        "3": 260,
+        "4": 142,
+        "5": 127
+      }
+    },
+    "test": {
+      "image_count": 1173,
+      "label_count": 1173,
+      "valid_pairs": 1173,
+      "class_counts": {
+        "0": 65,
+        "1": 529,
+        "2": 158,
+        "3": 233,
+        "4": 147,
+        "5": 130
+      }
+    }
+  },
+  "file_integrity": {
+    "missing_images": 0,
+    "missing_labels": 0,
+    "empty_labels": 0,
+    "corrupt_images": 0
+  },
+  "bbox_integrity": {
+    "invalid_boxes": 0,
+    "invalid_class_ids": 0
+  },
+  "overlap_audit": {
+    "train_val_overlap": 0,
+    "train_test_overlap": 0,
+    "val_test_overlap": 0
+  },
+  "issues_detail": []
+}

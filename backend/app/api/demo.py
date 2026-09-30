@@ -38,17 +38,17 @@ def list_scenarios():
     ]
 
 @router.post("/scenarios/{scenario}/start")
-async def start_scenario(scenario: str):
+async def start_scenario(scenario: str, mode: str = "REPLAY"):
     s_clean = scenario.lower().strip()
     if s_clean in ["golden", "golden-demo", "collision"]:
-        inc = await SimulationService.run_golden_demo()
-        return {"status": "started", "scenario": "golden-demo", "incident": inc}
+        inc = await SimulationService.run_golden_demo(mode=mode)
+        return {"status": "started", "scenario": "golden-demo", "mode": mode, "incident": inc}
     elif s_clean in ["crowd", "crowd-anomaly"]:
-        inc = await SimulationService.run_crowd_scenario()
-        return {"status": "started", "scenario": "crowd-anomaly", "incident": inc}
+        inc = await SimulationService.run_crowd_scenario(mode=mode)
+        return {"status": "started", "scenario": "crowd-anomaly", "mode": mode, "incident": inc}
     elif s_clean in ["baggage", "unattended-baggage"]:
-        inc = await SimulationService.run_baggage_scenario()
-        return {"status": "started", "scenario": "unattended-baggage", "incident": inc}
+        inc = await SimulationService.run_baggage_scenario(mode=mode)
+        return {"status": "started", "scenario": "unattended-baggage", "mode": mode, "incident": inc}
     else:
         raise HTTPException(status_code=400, detail=f"Unknown scenario '{scenario}'. Supported: 'golden', 'crowd', 'baggage'")
 

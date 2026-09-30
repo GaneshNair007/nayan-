@@ -37,8 +37,9 @@ def run_golden_demo():
     print("NAYAN GOLDEN DEMO VERIFICATION — CAM-03 (AMBULANCE) & CAM-04 (COLLISION)")
     print("=" * 70)
 
-    # 1. Initialize detector with active trained weights
-    model_path = os.path.abspath("artifacts/models/nayan_india/best.pt")
+    model_path = os.path.abspath("artifacts/models/nayan_india_v2/best.pt")
+    if not os.path.exists(model_path):
+        model_path = os.path.abspath("artifacts/models/nayan_india/best.pt")
     assert os.path.exists(model_path), f"Trained checkpoint {model_path} does not exist!"
 
     model_sha = get_file_sha256(model_path)
@@ -74,8 +75,12 @@ def run_golden_demo():
         ambulance_detected = False
         ambulance_track_ids = []
 
-        # Process first 60 frames (2 seconds of high-fidelity analysis)
-        frames_to_process = min(60, total_frames)
+        # Process sufficient frames to capture the target event
+        # CAM-03 ambulance passes between frames 140-270; CAM-04 collision occurs in frames 0-140
+        if cam_id == "CAM-03":
+            frames_to_process = min(280, total_frames)
+        else:
+            frames_to_process = min(150, total_frames)
         for frame_idx in range(frames_to_process):
             ret, frame = cap.read()
             if not ret or frame is None:

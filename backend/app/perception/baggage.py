@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Optional
 import numpy as np
 import torch
 from app.models.event import DataProvenance
-from app.perception.detector import BaseDetector, DetectionResult
+from app.perception.detector import BaseDetector, DetectionResult, ModelMetadata
 
 class BaggageDetectorAdapter(BaseDetector):
     """
@@ -93,3 +93,16 @@ class BaggageDetectorAdapter(BaseDetector):
             "device": self.device_str,
             "last_latency_ms": round(self._last_latency_ms, 2)
         }
+
+    def get_model_metadata(self) -> ModelMetadata:
+        return ModelMetadata(
+            model_name="Korzo Research Baggage Detector",
+            model_path=self.model_path,
+            sha256="external_korzo_model",
+            class_names=["luggage", "people"],
+            fine_tuned=False,
+            base_model="yolov8-korzo",
+            device=self.device_str,
+            training_run_id="external_research",
+            metrics_source="external_benchmark"
+        )

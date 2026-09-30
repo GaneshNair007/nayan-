@@ -54,6 +54,44 @@ class DetectionResult:
         }
 
 
+class ModelMetadata:
+    """Standardized metadata representing the active vision model checkpoint."""
+    def __init__(
+        self,
+        model_name: str,
+        model_path: str,
+        sha256: str,
+        class_names: List[str],
+        fine_tuned: bool,
+        base_model: str,
+        device: str,
+        training_run_id: str = "nayan_india_v2_cuda",
+        metrics_source: str = "held_out_test"
+    ):
+        self.model_name = model_name
+        self.model_path = model_path
+        self.sha256 = sha256
+        self.class_names = class_names
+        self.fine_tuned = fine_tuned
+        self.base_model = base_model
+        self.device = device
+        self.training_run_id = training_run_id
+        self.metrics_source = metrics_source
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "model_name": self.model_name,
+            "model_path": self.model_path,
+            "sha256": self.sha256,
+            "class_names": self.class_names,
+            "fine_tuned": self.fine_tuned,
+            "base_model": self.base_model,
+            "device": self.device,
+            "training_run_id": self.training_run_id,
+            "metrics_source": self.metrics_source
+        }
+
+
 class BaseDetector(ABC):
     """Abstract Base Class for perceptual object detectors."""
 
@@ -67,6 +105,11 @@ class BaseDetector(ABC):
         """Return real hardware runtime details (device, GPU model, VRAM)."""
         pass
 
+    @abstractmethod
+    def get_model_metadata(self) -> ModelMetadata:
+        """Return standardized model metadata."""
+        pass
+
 
 class YOLOv8DetectorAdapter(BaseDetector):
     """
@@ -74,17 +117,14 @@ class YOLOv8DetectorAdapter(BaseDetector):
     Executes real deep-learning inference using PyTorch and CUDA.
     """
 
-    # COCO Class mapping to Urban Mobility Domain (Updated for India Emergency)
-    COCO_DOMAIN_MAP = {
-        0: ("car", "vehicle"),
-        1: ("motorcycle", "vehicle"),
-        2: ("scooter", "vehicle"),
-        3: ("auto-rickshaw", "vehicle"),
-        4: ("bus", "vehicle"),
-        5: ("truck", "vehicle"),
-        6: ("van", "vehicle"),
-        7: ("ambulance", "ambulance"),
-        # legacy COCO
+    # Standard COCO 80-class mapping for pretrained COCO models
+    COCO_STANDARD_MAP = {
+        0: ("person", "pedestrian"),
+        1: ("bicycle", "vehicle"),
+        2: ("car", "vehicle"),
+        3: ("motorcycle", "vehicle"),
+        5: ("bus", "vehicle"),
+        7: ("truck", "vehicle"),
         24: ("backpack", "baggage"),
         26: ("handbag", "baggage"),
         28: ("suitcase", "baggage"),
@@ -107,10 +147,10 @@ class YOLOv8DetectorAdapter(BaseDetector):
                 model_path = config_model
             else:
                 trained_model = os.path.abspath(os.path.join(
-                    os.path.dirname(__file__), "..", "..", "..", "artifacts", "models", "nayan_india", "best.pt"
+                    os.path.dirname(__file__), "..", "..", "..", "artifacts", "models", "nayan_india_v2", "best.pt"
                 ))
                 artifact_model = os.path.abspath(os.path.join(
-                    os.path.dirname(__file__), "..", "..", "..", "artifacts", "models", "yolov8n.pt"
+                    os.path.dirname(__file__), "..", "..", "..", "yolov8n.pt"
                 ))
                 if os.path.exists(trained_model):
                     model_path = trained_model
@@ -137,6 +177,42 @@ class YOLOv8DetectorAdapter(BaseDetector):
         self.model_path = model_path
         self._last_latency_ms = 0.0
 
+        # Build dynamic class ID to (class_name, domain_type) mapping based on model.names
+        self.class_map: Dict[int, tuple[str, str]] = {}
+        self.is_custom_model = False
+
+        names = self.model.names if hasattr(self.model, "names") and self.model.names else {}
+        
+        # Check if this is a standard 80-class COCO model (e.g. yolov8n.pt with names[0]=='person')
+        if len(names) == 80 and names.get(0) == "person" and names.get(2) == "car":
+            self.is_custom_model = False
+            for cid, cname in names.items():
+                cname_lower = str(cname).lower()
+                if cid in self.COCO_STANDARD_MAP:
+                    self.class_map[cid] = self.COCO_STANDARD_MAP[cid]
+                elif "person" in cname_lower:
+                    self.class_map[cid] = (cname_lower, "pedestrian")
+                elif any(k in cname_lower for k in ["car", "motorcycle", "bus", "truck", "bicycle"]):
+                    self.class_map[cid] = (cname_lower, "vehicle")
+                elif any(k in cname_lower for k in ["backpack", "handbag", "suitcase"]):
+                    self.class_map[cid] = (cname_lower, "baggage")
+        else:
+            # Custom trained model (e.g. NAYAN custom fine-tuned model)
+            self.is_custom_model = True
+            for cid, cname in names.items():
+                cname_lower = str(cname).lower().replace(" ", "_").replace("-", "_")
+                if "ambulance" in cname_lower:
+                    domain = "ambulance"
+                elif any(k in cname_lower for k in ["car", "motorcycle", "scooter", "auto_rickshaw", "rickshaw", "bus", "truck", "van", "vehicle", "bike"]):
+                    domain = "vehicle"
+                elif any(k in cname_lower for k in ["person", "pedestrian"]):
+                    domain = "pedestrian"
+                elif any(k in cname_lower for k in ["baggage", "luggage", "backpack", "suitcase"]):
+                    domain = "baggage"
+                else:
+                    domain = "other"
+                self.class_map[cid] = (cname_lower, domain)
+
         # Calculate model SHA256
         hasher = hashlib.sha256()
         if os.path.exists(model_path):
@@ -147,13 +223,15 @@ class YOLOv8DetectorAdapter(BaseDetector):
         else:
             self.model_sha256 = "unknown"
 
-        # Model startup logging (Phase 24 requirement)
+        # Model startup logging
         print("=" * 60)
         print("[NAYAN PERCEPTION] ACTIVE DETECTOR INITIALIZED")
-        print(f"  MODEL PATH:    {self.model_path}")
-        print(f"  MODEL SHA256:  {self.model_sha256}")
-        print(f"  MODEL CLASSES: {list(self.model.names.values())}")
-        print(f"  DEVICE:        {self.device_str} (FP16: {self.use_half})")
+        print(f"  MODEL PATH:        {self.model_path}")
+        print(f"  MODEL SHA256:      {self.model_sha256}")
+        print(f"  IS CUSTOM MODEL:   {self.is_custom_model}")
+        print(f"  MODEL NAMES:       {names}")
+        print(f"  RESOLVED MAPPINGS: {self.class_map}")
+        print(f"  DEVICE:            {self.device_str} (FP16: {self.use_half})")
         print("=" * 60)
 
     def detect(self, frame: np.ndarray) -> List[DetectionResult]:
@@ -186,21 +264,22 @@ class YOLOv8DetectorAdapter(BaseDetector):
 
         for xyxy, conf, cls_id in zip(boxes_xyxy, confs, classes):
             cls_int = int(cls_id)
-            cname = self.model.names.get(cls_int, f"class_{cls_int}").lower()
-
-            # Dynamic domain categorization
-            if "ambulance" in cname:
-                domain_type = "ambulance"
-            elif any(k in cname for k in ["car", "motorcycle", "bike", "auto_rickshaw", "rickshaw", "bus", "truck", "van", "vehicle"]):
-                domain_type = "vehicle"
-            elif any(k in cname for k in ["person", "pedestrian"]):
-                domain_type = "pedestrian"
-            elif any(k in cname for k in ["luggage", "backpack", "suitcase", "handbag", "bag"]):
-                domain_type = "baggage"
-            elif cls_int in self.COCO_DOMAIN_MAP:
-                cname, domain_type = self.COCO_DOMAIN_MAP[cls_int]
+            if cls_int in self.class_map:
+                cname, domain_type = self.class_map[cls_int]
             else:
-                continue
+                # Fallback to inspect model.names directly
+                raw_name = self.model.names.get(cls_int, f"class_{cls_int}").lower()
+                if "ambulance" in raw_name:
+                    domain_type = "ambulance"
+                elif any(k in raw_name for k in ["car", "motorcycle", "scooter", "auto_rickshaw", "rickshaw", "bus", "truck", "van", "vehicle"]):
+                    domain_type = "vehicle"
+                elif any(k in raw_name for k in ["person", "pedestrian"]):
+                    domain_type = "pedestrian"
+                elif any(k in raw_name for k in ["baggage", "backpack", "suitcase", "handbag"]):
+                    domain_type = "baggage"
+                else:
+                    continue
+                cname = raw_name
 
             bbox = (float(xyxy[0]), float(xyxy[1]), float(xyxy[2]), float(xyxy[3]))
             det = DetectionResult(
@@ -227,5 +306,25 @@ class YOLOv8DetectorAdapter(BaseDetector):
             "vram_allocated_mb": vram_mb,
             "half_precision": self.use_half,
             "last_inference_latency_ms": round(self._last_latency_ms, 2),
-            "model_path": self.model_path
+            "model_path": self.model_path,
+            "is_custom_model": self.is_custom_model,
+            "model_sha256": self.model_sha256,
+            "class_map": {str(k): list(v) for k, v in self.class_map.items()}
         }
+
+    def get_model_metadata(self) -> ModelMetadata:
+        model_name = "NAYAN India Detector V2" if self.is_custom_model else "YOLOv8 Pretrained Baseline"
+        base_model = "yolov8n.pt"
+        class_names = [v[0] for v in self.class_map.values()]
+        return ModelMetadata(
+            model_name=model_name,
+            model_path=self.model_path,
+            sha256=self.model_sha256,
+            class_names=class_names,
+            fine_tuned=self.is_custom_model,
+            base_model=base_model,
+            device=self.device_str,
+            training_run_id="nayan_india_v2_cuda_40ep",
+            metrics_source="held_out_test"
+        )
+

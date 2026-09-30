@@ -1,0 +1,22 @@
+{
+  "checkpoint_path": "C:\\nayan\\artifacts\\models\\nayan_india_v2\\best.pt",
+  "checkpoint_sha256": "6eb11ed634f43ea67a2866ceed7227a50b1a8b850be13013607b4da5d25cebbe",
+  "base_yolov8n_sha256": "f59b3d833e79ef088f117c2be6cb077270b2165910fae00ccbba4a6f7b1686fe",
+  "differs_from_base": true,
+  "file_size_bytes": 6249827,
+  "epochs_completed": 40,
+  "target_device": "cuda:0",
+  "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "classes": {
+    "0": "ambulance",
+    "1": "car",
+    "2": "motorcycle",
+    "3": "auto_rickshaw",
+    "4": "bus",
+    "5": "truck"
+  },
+  "training_dataset": "nayan_india_v2",
+  "held_out_test_mAP50": 0.9880,
+  "held_out_ambulance_mAP50": 0.9830,
+  "timestamp": "2026-09-30 23:47:36"
+}

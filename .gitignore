@@ -22,6 +22,8 @@ datasets/processed/
 datasets/downloads/
 datasets/nayan_india/images/
 datasets/nayan_india/labels/
+datasets/nayan_india_v2/images/
+datasets/nayan_india_v2/labels/
 artifacts/raw/
 artifacts/models/nayan_india_run/
 artifacts/models/nayan_sanity_run/

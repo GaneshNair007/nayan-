@@ -30,6 +30,42 @@ app.add_middleware(
 # Include API Routes
 app.include_router(api_router, prefix=settings.API_PREFIX)
 
+@app.on_event("startup")
+def print_startup_model_banner():
+    import os
+    import hashlib
+    import torch
+
+    model_path = getattr(settings, "NAYAN_DETECTOR_MODEL", "yolov8n.pt")
+    if not os.path.exists(model_path):
+        model_path = "yolov8n.pt"
+
+    hasher = hashlib.sha256()
+    if os.path.exists(model_path):
+        with open(model_path, 'rb') as f:
+            while chunk := f.read(65536):
+                hasher.update(chunk)
+        sha256 = hasher.hexdigest()
+    else:
+        sha256 = "not_found"
+
+    cuda_avail = torch.cuda.is_available()
+    device = "cuda:0" if cuda_avail else "cpu"
+    fine_tuned = "best.pt" in model_path or "nayan_india" in model_path
+    classes = ["ambulance", "car", "motorcycle", "auto_rickshaw", "bus", "truck"] if fine_tuned else ["person", "car", "motorcycle", "bus", "truck"]
+
+    print("=" * 60)
+    print("NAYAN ACTIVE MODEL")
+    print(f"  CHECKPOINT:    {os.path.basename(model_path)}")
+    print(f"  PATH:          {model_path}")
+    print(f"  SHA256:        {sha256}")
+    print(f"  CLASSES:       {classes}")
+    print(f"  DEVICE:        {device}")
+    print(f"  CUDA:          {cuda_avail}")
+    print(f"  FINE_TUNED:    {fine_tuned}")
+    print(f"  MODEL VERSION: 2.0.0")
+    print("=" * 60)
+
 # Realtime WebSocket Event Stream Endpoint according to architecture.md
 @app.websocket("/ws/events")
 async def websocket_endpoint(websocket: WebSocket):

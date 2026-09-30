@@ -1,0 +1,122 @@
+============================================================
+NAYAN REAL CUDA TRAINING PROOF & HARDWARE AUDIT
+============================================================
+Timestamp Start:    2026-09-30T22:13:54.863491
+Timestamp End:      2026-09-30T23:47:11.816103
+Duration Seconds:   5304.69s
+
+HARDWARE & ENVIRONMENT:
+GPU Device:         NVIDIA GeForce RTX 4050 Laptop GPU
+CUDA Version:       12.4
+PyTorch Version:    2.6.0+cu124
+Training Process PID:39460
+Target Device:      cuda:0
+
+GPU MEMORY UTILIZATION:
+VRAM Allocated:     147.93 MB
+VRAM Reserved:      274.0 MB
+
+EPOCHS COMPLETED:   40 (or early stopped)
+
+NVIDIA-SMI SNAPSHOT (BEFORE TRAINING):
+Wed Sep 30 22:18:47 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 591.66                 Driver Version: 591.66         CUDA Version: 13.1     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 4050 ...  WDDM  |   00000000:01:00.0  On |                  N/A |
+| N/A   58C    P0             14W /  103W |    1969MiB /   6141MiB |      8%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A            2360    C+G   ...aries\Win64\EpicWebHelper.exe      N/A      |
+|    0   N/A  N/A            2896    C+G   ...xyewy\ShellExperienceHost.exe      N/A      |
+|    0   N/A  N/A            3724    C+G   ....0.4258.37\msedgewebview2.exe      N/A      |
+|    0   N/A  N/A            7616    C+G   ...5n1h2txyewy\TextInputHost.exe      N/A      |
+|    0   N/A  N/A            9340    C+G   ...2txyewy\CrossDeviceResume.exe      N/A      |
+|    0   N/A  N/A           10164    C+G   ...em32\ApplicationFrameHost.exe      N/A      |
+|    0   N/A  N/A           10796    C+G   C:\Windows\explorer.exe               N/A      |
+|    0   N/A  N/A           10932    C+G   ...1g1gvanyjgm\WhatsApp.Root.exe      N/A      |
+|    0   N/A  N/A           12864    C+G   ..._cw5n1h2txyewy\SearchHost.exe      N/A      |
+|    0   N/A  N/A           12884    C+G   ...y\StartMenuExperienceHost.exe      N/A      |
+|    0   N/A  N/A           13972    C+G   ...s\Win64\EpicGamesLauncher.exe      N/A      |
+|    0   N/A  N/A           14088    C+G   ...ows\System32\NahimicSvc64.exe      N/A      |
+|    0   N/A  N/A           15628    C+G   ....0.4258.37\msedgewebview2.exe      N/A      |
+|    0   N/A  N/A           18644    C+G   ...2p2nqsd0c76g0\app\ChatGPT.exe      N/A      |
+|    0   N/A  N/A           19828    C+G   ...cord\app-1.0.9257\Discord.exe      N/A      |
+|    0   N/A  N/A           20556    C+G   ...\codex-computer-use-swift.exe      N/A      |
+|    0   N/A  N/A           20660    C+G   ...8bbwe\PhoneExperienceHost.exe      N/A      |
+|    0   N/A  N/A           24080    C+G   ...ayRenderer-Win64-Shipping.exe      N/A      |
+|    0   N/A  N/A           25940    C+G   ...Chrome\Application\chrome.exe      N/A      |
+|    0   N/A  N/A           26828    C+G   ....0.4258.37\msedgewebview2.exe      N/A      |
+|    0   N/A  N/A           29012    C+G   ...7hta09mmv6hy\Build\Lively.exe      N/A      |
+|    0   N/A  N/A           29428    C+G   ...y\Comet\Application\comet.exe      N/A      |
+|    0   N/A  N/A           29464    C+G   ...lot\Application\mscopilot.exe      N/A      |
+|    0   N/A  N/A           30588    C+G   ...Chrome\Application\chrome.exe      N/A      |
+|    0   N/A  N/A           33744    C+G   ...indows\System32\ShellHost.exe      N/A      |
+|    0   N/A  N/A           35064    C+G   ...avity IDE\Antigravity IDE.exe      N/A      |
+|    0   N/A  N/A           36452    C+G   ...avity IDE\Antigravity IDE.exe      N/A      |
+|    0   N/A  N/A           39460      C   ...s\Python\Python312\python.exe      N/A      |
+|    0   N/A  N/A           41100    C+G   ...App_cw5n1h2txyewy\LockApp.exe      N/A      |
++-----------------------------------------------------------------------------------------+
+
+
+NVIDIA-SMI SNAPSHOT (AFTER TRAINING):
+Wed Sep 30 23:47:11 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 591.66                 Driver Version: 591.66         CUDA Version: 13.1     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 4050 ...  WDDM  |   00000000:01:00.0  On |                  N/A |
+| N/A   61C    P5              8W /  105W |    2078MiB /   6141MiB |     22%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A            2360    C+G   ...aries\Win64\EpicWebHelper.exe      N/A      |
+|    0   N/A  N/A            2896    C+G   ...xyewy\ShellExperienceHost.exe      N/A      |
+|    0   N/A  N/A            3724    C+G   ....0.4258.37\msedgewebview2.exe      N/A      |
+|    0   N/A  N/A            7616    C+G   ...5n1h2txyewy\TextInputHost.exe      N/A      |
+|    0   N/A  N/A            9340    C+G   ...2txyewy\CrossDeviceResume.exe      N/A      |
+|    0   N/A  N/A           10164    C+G   ...em32\ApplicationFrameHost.exe      N/A      |
+|    0   N/A  N/A           10796    C+G   C:\Windows\explorer.exe               N/A      |
+|    0   N/A  N/A           10932    C+G   ...1g1gvanyjgm\WhatsApp.Root.exe      N/A      |
+|    0   N/A  N/A           12864    C+G   ..._cw5n1h2txyewy\SearchHost.exe      N/A      |
+|    0   N/A  N/A           12884    C+G   ...y\StartMenuExperienceHost.exe      N/A      |
+|    0   N/A  N/A           13972    C+G   ...s\Win64\EpicGamesLauncher.exe      N/A      |
+|    0   N/A  N/A           14088    C+G   ...ows\System32\NahimicSvc64.exe      N/A      |
+|    0   N/A  N/A           15628    C+G   ....0.4258.37\msedgewebview2.exe      N/A      |
+|    0   N/A  N/A           18644    C+G   ...2p2nqsd0c76g0\app\ChatGPT.exe      N/A      |
+|    0   N/A  N/A           19828    C+G   ...cord\app-1.0.9257\Discord.exe      N/A      |
+|    0   N/A  N/A           20556    C+G   ...\codex-computer-use-swift.exe      N/A      |
+|    0   N/A  N/A           20660    C+G   ...8bbwe\PhoneExperienceHost.exe      N/A      |
+|    0   N/A  N/A           24080    C+G   ...ayRenderer-Win64-Shipping.exe      N/A      |
+|    0   N/A  N/A           25940    C+G   ...Chrome\Application\chrome.exe      N/A      |
+|    0   N/A  N/A           26828    C+G   ....0.4258.37\msedgewebview2.exe      N/A      |
+|    0   N/A  N/A           29012    C+G   ...7hta09mmv6hy\Build\Lively.exe      N/A      |
+|    0   N/A  N/A           29428    C+G   ...y\Comet\Application\comet.exe      N/A      |
+|    0   N/A  N/A           29464    C+G   ...lot\Application\mscopilot.exe      N/A      |
+|    0   N/A  N/A           30588    C+G   ...Chrome\Application\chrome.exe      N/A      |
+|    0   N/A  N/A           33744    C+G   ...indows\System32\ShellHost.exe      N/A      |
+|    0   N/A  N/A           35064    C+G   ...avity IDE\Antigravity IDE.exe      N/A      |
+|    0   N/A  N/A           36452    C+G   ...avity IDE\Antigravity IDE.exe      N/A      |
+|    0   N/A  N/A           39460      C   ...s\Python\Python312\python.exe      N/A      |
+|    0   N/A  N/A           41100    C+G   ...App_cw5n1h2txyewy\LockApp.exe      N/A      |
++-----------------------------------------------------------------------------------------+
+
+============================================================
