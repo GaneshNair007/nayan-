@@ -2,10 +2,10 @@
   "base_model": "yolov8n.pt",
   "base_model_sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36",
   "trained_model": "artifacts/models/nayan_india/best.pt",
-  "trained_model_sha256": "4adaced3b9bf339984ca05a8fa9ba1bbd188503b4eb87417d142fb885e09cbd6",
+  "trained_model_sha256": "e44a2820ff5ee203b8ef82e270217833ff0c45a4025f4dbdbcec1dfa70cf31e5",
   "different": true,
   "verification": "PASS",
-  "completed_epochs": 3,
-  "best_mAP50": 0.80174,
-  "timestamp": "2026-09-30 17:03:30"
+  "completed_epochs": 5,
+  "best_mAP50": 0.94226,
+  "timestamp": "2026-09-30 17:09:28"
 }

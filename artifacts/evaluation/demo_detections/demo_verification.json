@@ -5,12 +5,12 @@
     "detections": [
       {
         "class": "ambulance",
-        "confidence": 0.493,
+        "confidence": 0.657,
         "bbox": [
-          7.6,
-          11.2,
-          1273.3,
-          717.5
+          0.0,
+          4.1,
+          1183.8,
+          666.7
         ]
       }
     ],
@@ -27,40 +27,30 @@
     "detections_count": 1,
     "detections": [
       {
-        "class": "car",
-        "confidence": 0.59,
+        "class": "ambulance",
+        "confidence": 0.306,
         "bbox": [
-          153.6,
-          0.0,
-          225.7,
-          79.1
+          764.4,
+          159.8,
+          1278.7,
+          640.7
         ]
       }
     ],
-    "has_ambulance": false
+    "has_ambulance": true
   },
   "CAM-04": {
     "video_file": "cam04_collision.mp4",
-    "detections_count": 2,
+    "detections_count": 1,
     "detections": [
       {
         "class": "ambulance",
-        "confidence": 0.899,
+        "confidence": 0.458,
         "bbox": [
-          1129.6,
-          12.6,
-          1277.9,
-          153.8
-        ]
-      },
-      {
-        "class": "car",
-        "confidence": 0.303,
-        "bbox": [
-          1052.1,
-          233.6,
-          1278.6,
-          425.3
+          1134.2,
+          9.4,
+          1276.2,
+          151.1
         ]
       }
     ],
@@ -68,8 +58,19 @@
   },
   "CAM-05": {
     "video_file": "cam05_night_traffic.mp4",
-    "detections_count": 0,
-    "detections": [],
-    "has_ambulance": false
+    "detections_count": 1,
+    "detections": [
+      {
+        "class": "ambulance",
+        "confidence": 0.337,
+        "bbox": [
+          3.0,
+          236.9,
+          1105.5,
+          702.3
+        ]
+      }
+    ],
+    "has_ambulance": true
   }
 }

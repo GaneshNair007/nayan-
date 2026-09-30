@@ -9,15 +9,15 @@ This document provides empirical, scientifically audited verification comparing 
 
 | Metric | Pretrained YOLOv8n (COCO) | NAYAN Fine-Tuned (best.pt) | Absolute Difference | Relative Change |
 |---|---|---|---|---|
-| **Overall Precision** | 0.2619 | 0.6366 | +0.3747 | +143.1% |
-| **Overall Recall** | 0.2638 | 0.8266 | +0.5628 | +213.3% |
-| **Overall mAP50** | 0.0789 | 0.5202 | +0.4413 | +559.3% |
-| **Ambulance Precision** | 0.0000 | 0.3901 | +0.3901 | **Domain Adapted** |
-| **Ambulance Recall** | 0.0000 | 0.8462 | +0.8462 | **Domain Adapted** |
-| **Ambulance AP50** | 0.0000 | 0.3301 | +0.3301 | **Domain Adapted** |
-| **Auto-Rickshaw Precision** | 0.0000 | 0.5270 | +0.5270 | **Domain Adapted** |
-| **Auto-Rickshaw Recall** | 0.0000 | 0.8369 | +0.8369 | **Domain Adapted** |
-| **Auto-Rickshaw AP50** | 0.0000 | 0.4411 | +0.4411 | **Domain Adapted** |
+| **Overall Precision** | 0.2619 | 0.8240 | +0.5621 | +214.6% |
+| **Overall Recall** | 0.2638 | 0.9219 | +0.6581 | +249.5% |
+| **Overall mAP50** | 0.0789 | 0.7600 | +0.6811 | +863.2% |
+| **Ambulance Precision** | 0.0000 | 0.6703 | +0.6703 | **Domain Adapted** |
+| **Ambulance Recall** | 0.0000 | 0.9385 | +0.9385 | **Domain Adapted** |
+| **Ambulance AP50** | 0.0000 | 0.6291 | +0.6291 | **Domain Adapted** |
+| **Auto-Rickshaw Precision** | 0.0000 | 0.8477 | +0.8477 | **Domain Adapted** |
+| **Auto-Rickshaw Recall** | 0.0000 | 0.8841 | +0.8841 | **Domain Adapted** |
+| **Auto-Rickshaw AP50** | 0.0000 | 0.7495 | +0.7495 | **Domain Adapted** |
 
 ---
 
@@ -26,32 +26,32 @@ This document provides empirical, scientifically audited verification comparing 
 ### `AMBULANCE`
 - Ground Truth instances in test set: **65**
 - Pretrained Baseline: Precision=0.0, Recall=0.0, AP50=0.0
-- NAYAN Fine-Tuned:    Precision=0.3901, Recall=0.8462, AP50=0.3301
+- NAYAN Fine-Tuned:    Precision=0.6703, Recall=0.9385, AP50=0.6291
 
 ### `CAR`
 - Ground Truth instances in test set: **529**
 - Pretrained Baseline: Precision=0.3721, Recall=0.121, AP50=0.045
-- NAYAN Fine-Tuned:    Precision=0.745, Recall=0.9112, AP50=0.6788
+- NAYAN Fine-Tuned:    Precision=0.8443, Recall=0.9735, AP50=0.8219
 
 ### `MOTORCYCLE`
 - Ground Truth instances in test set: **158**
 - Pretrained Baseline: Precision=0.775, Recall=0.1962, AP50=0.1521
-- NAYAN Fine-Tuned:    Precision=0.5922, Recall=0.9557, AP50=0.5659
+- NAYAN Fine-Tuned:    Precision=0.8441, Recall=0.9937, AP50=0.8387
 
 ### `AUTO_RICKSHAW`
 - Ground Truth instances in test set: **233**
 - Pretrained Baseline: Precision=0.0, Recall=0.0, AP50=0.0
-- NAYAN Fine-Tuned:    Precision=0.527, Recall=0.8369, AP50=0.4411
+- NAYAN Fine-Tuned:    Precision=0.8477, Recall=0.8841, AP50=0.7495
 
 ### `BUS`
 - Ground Truth instances in test set: **147**
 - Pretrained Baseline: Precision=0.25, Recall=0.7347, AP50=0.1837
-- NAYAN Fine-Tuned:    Precision=0.7933, Recall=0.8095, AP50=0.6422
+- NAYAN Fine-Tuned:    Precision=0.9507, Recall=0.9184, AP50=0.8731
 
 ### `TRUCK`
 - Ground Truth instances in test set: **130**
 - Pretrained Baseline: Precision=0.1742, Recall=0.5308, AP50=0.0925
-- NAYAN Fine-Tuned:    Precision=0.7723, Recall=0.6, AP50=0.4634
+- NAYAN Fine-Tuned:    Precision=0.7868, Recall=0.8231, AP50=0.6476
 
 ---
 
