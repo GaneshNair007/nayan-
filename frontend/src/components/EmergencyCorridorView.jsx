@@ -1,202 +1,32 @@
-import React, { useState } from 'react';
-import { 
-  Ambulance, 
-  MapPin, 
-  Clock, 
-  ShieldCheck, 
-  CheckCircle2, 
-  ArrowRight, 
-  Zap, 
-  Radio 
-} from 'lucide-react';
-
-export default function EmergencyCorridorView({ resources, corridorPlans }) {
-  const [corridorActive, setCorridorActive] = useState(true);
-
-  const units = resources || [
-    { id: 'AMB-01', callsign: 'Medic 01', status: 'DISPATCHED', location: { address: 'En Route to JNC-02 Collision' } },
-    { id: 'AMB-03', callsign: 'Medic 03 (Fast Response)', status: 'AVAILABLE', location: { address: 'Central Fire Hub' } },
-    { id: 'POL-02', callsign: 'Patrol 02', status: 'AVAILABLE', location: { address: 'Sector 4 Precinct' } }
-  ];
-
-  return (
-    <div style={{ padding: '16px', display: 'grid', gridTemplateColumns: '320px 1fr 340px', gap: '16px', height: 'calc(100vh - 120px)', overflowY: 'auto' }}>
-      
-      {/* 1. Left Column: Emergency Fleet */}
-      <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
-          <div style={{ fontWeight: '700', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Ambulance size={16} color="var(--accent-cyan)" />
-            <span>DISPATCH UNITS</span>
-          </div>
-          <span className="badge badge-cyan">{units.length} FLEET</span>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', overflowY: 'auto' }}>
-          {units.map(unit => {
-            const isDispatched = unit.status === 'DISPATCHED';
-
-            return (
-              <div 
-                key={unit.id}
-                style={{
-                  padding: '12px',
-                  borderRadius: '8px',
-                  background: isDispatched ? 'rgba(0, 229, 255, 0.08)' : 'var(--bg-secondary)',
-                  border: isDispatched ? '1px solid var(--accent-cyan)' : '1px solid var(--border-subtle)'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <span style={{ fontWeight: '700', fontSize: '13px', color: '#fff' }}>{unit.callsign}</span>
-                  <span className={`badge ${isDispatched ? 'badge-success' : 'badge-muted'}`}>
-                    {unit.status}
-                  </span>
-                </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-                  ID: {unit.id}
-                </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  {unit.location?.address}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* 2. Middle Column: Green Corridor Preemption Sequence */}
-      <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <div style={{ fontSize: '16px', fontWeight: '800', color: '#fff' }}>ACTIVE GREEN CORRIDOR: COR-AMB-01</div>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Automated signal preemption sequence towards CAM-04 impact point</div>
-          </div>
-          <span className="badge badge-success" style={{ gap: '4px' }}>
-            <span className="pulse-dot pulse-dot-green" />
-            <span>PREEMPTION ARMED</span>
-          </span>
-        </div>
-
-        {/* Travel Time Comparison Metric */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-          <div className="glass-panel-subtle" style={{ padding: '12px' }}>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>STANDARD ROUTE ETA</div>
-            <div style={{ fontSize: '20px', fontWeight: '800', color: '#f87171', fontFamily: 'var(--font-mono)' }}>5.8 min</div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Unmanaged congestion</div>
-          </div>
-
-          <div className="glass-panel-subtle" style={{ padding: '12px', border: '1px solid var(--accent-cyan)' }}>
-            <div style={{ fontSize: '10px', color: 'var(--accent-cyan)' }}>AEGIS CORRIDOR ETA</div>
-            <div style={{ fontSize: '20px', fontWeight: '800', color: '#34d399', fontFamily: 'var(--font-mono)' }}>2.4 min</div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Adaptive Green Waves</div>
-          </div>
-
-          <div className="glass-panel-subtle" style={{ padding: '12px' }}>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>TRANSIT TIME REDUCTION</div>
-            <div style={{ fontSize: '20px', fontWeight: '800', color: '#38bdf8', fontFamily: 'var(--font-mono)' }}>-58.6%</div>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>3.4 Minutes Saved</div>
-          </div>
-        </div>
-
-        {/* Signal Preemption Junction Timeline */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
-          <div style={{ fontSize: '12px', fontWeight: '700', color: '#fff' }}>
-            NAYAN DYNAMIC SPATIAL GRID & CORRIDOR SEGMENTS:
-          </div>
-
-          {[
-            { id: 'SEG-01', name: 'Main St Approach', status: 'HALTED_NEW_TRAFFIC', state: 'CLEARED', width: '3.2m', cctv: true },
-            { id: 'SEG-02', name: 'JNC-01 Entrance', status: 'FLOWING', state: 'COMPRESSING', width: '3.5m', cctv: true },
-            { id: 'SEG-03', name: 'JNC-02 Bottleneck', status: 'FLOWING', state: 'FAILED', width: '1.8m', cctv: true },
-            { id: 'SEG-04', name: 'Dynamic Reroute Path (4th Cross)', status: 'HALTED_NEW_TRAFFIC', state: 'CLEARED', width: '3.6m', cctv: true }
-          ].map((item, idx) => (
-            <div key={item.id} className="glass-panel-subtle" style={{ padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ 
-                  width: '28px', 
-                  height: '28px', 
-                  borderRadius: '50%', 
-                  background: item.state === 'FAILED' ? 'rgba(239, 68, 68, 0.2)' : (item.state === 'CLEARED' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.2)'),
-                  border: item.state === 'FAILED' ? '1px solid #ef4444' : (item.state === 'CLEARED' ? '1px solid #10b981' : '1px solid #f59e0b'),
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#fff',
-                  fontWeight: '700',
-                  fontSize: '11px'
-                }}>
-                  {idx + 1}
-                </div>
-                <div>
-                  <div style={{ fontWeight: '700', fontSize: '13px', color: '#fff' }}>
-                    {item.id} — {item.name}
-                    {item.cctv && <span style={{ marginLeft: '6px', fontSize: '10px', color: '#a78bfa' }}>(CCTV Verified)</span>}
-                  </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Upstream: {item.status.replace('_', ' ')}</div>
-                </div>
-              </div>
-
-              <div style={{ textAlign: 'right' }}>
-                <span className={`badge ${item.state === 'CLEARED' ? 'badge-success' : (item.state === 'FAILED' ? 'badge-critical' : 'badge-warning')}`}>
-                  {item.state}
-                </span>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', fontFamily: 'var(--font-mono)' }}>
-                  Clearance: <strong style={{ color: item.state === 'FAILED' ? '#f87171' : '#fff' }}>{item.width}</strong>
-                </div>
-              </div>
-            </div>
-          ))}
-          
-          <div style={{ marginTop: '4px', padding: '10px', background: 'rgba(167, 139, 250, 0.1)', border: '1px solid rgba(167, 139, 250, 0.3)', borderRadius: '6px' }}>
-             <div style={{ fontSize: '12px', fontWeight: '700', color: '#c4b5fd', marginBottom: '4px' }}>NAYAN DYNAMIC ROUTING ACTIVE</div>
-             <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Segment SEG-03 failed to achieve 3.0m minimum clearance. Ambulance dynamically rerouted through SEG-04 to bypass localized compression failure.</div>
-          </div>
-        </div>
-
-      </div>
-
-      {/* 3. Right Column: Corridor Control Actions */}
-      <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-        <div style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '8px' }}>
-          <div style={{ fontWeight: '700', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Radio size={16} color="var(--accent-cyan)" />
-            <span>OPERATOR COMMAND</span>
-          </div>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
-            Preemption overrides and safety audits
-          </div>
-        </div>
-
-        <div className="glass-panel-subtle" style={{ padding: '12px' }}>
-          <div style={{ fontSize: '11px', fontWeight: '700', color: '#fff', marginBottom: '4px' }}>
-            DISPATCH PROTOCOL
-          </div>
-          <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-            Target: Junction 2 West (CAM-04)<br/>
-            Priority: P1 Urgent Medical Response<br/>
-            Safety Invariant: Interlocking Yellow Clearances Active
-          </div>
-        </div>
-
-        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <button 
-            className="btn btn-primary"
-            style={{ width: '100%', padding: '10px' }}
-            onClick={() => alert('Corridor preemption active in simulation mode')}
-          >
-            <span>Extend Green Wave (+30s)</span>
-          </button>
-
-          <button 
-            className="btn btn-ghost"
-            style={{ width: '100%', padding: '10px' }}
-            onClick={() => alert('Corridor deactivated; returning junctions to adaptive cycle')}
-          >
-            <span>Release Corridor to Adaptive Cycle</span>
-          </button>
-        </div>
-      </div>
-
-    </div>
-  );
+import { useEffect, useState } from 'react';
+import { Metric, Notice, SectionHead, Status, Tooltip } from './UI';
+import { request, number, human } from '../design/api';
+export default function EmergencyCorridorView({ resources, auditEvents, corridorPlan }) {
+  const [selectedId, setSelectedId] = useState(null), [remotePlan, setRemotePlan] = useState(null), [error, setError] = useState(''), [loading, setLoading] = useState(false);
+  const ids = [...new Set([corridorPlan?.id, ...auditEvents.map(event => event.details?.corridor_id)].filter(Boolean))];
+  const id = ids.includes(selectedId) ? selectedId : ids[0];
+  const plan = id === corridorPlan?.id ? corridorPlan : remotePlan?.id === id ? remotePlan : null;
+  useEffect(() => {
+    if (!id || id === corridorPlan?.id) return;
+    let disposed = false, timer;
+    const controller = new AbortController(); setLoading(true); setError('');
+    const poll = async () => {
+      try { const next = await request(`/api/corridors/${id}`, { signal: controller.signal }); if (!disposed) { setRemotePlan(next); setError(''); } }
+      catch (failure) { if (!disposed) setError(failure.message); }
+      finally { if (!disposed) { setLoading(false); timer = setTimeout(poll, 3000); } }
+    };
+    poll(); return () => { disposed = true; controller.abort(); clearTimeout(timer); };
+  }, [id, corridorPlan?.id]);
+  return <div className="corridor-layout"><aside><SectionHead index="01" title="RESPONSE FLEET" /><div className="selector-list">{resources.map(resource => <div className="selector" key={resource.id}><span className="selector-title">{resource.id}</span><small>{resource.callsign}</small><Status value={resource.status} source={resource.provenance} /><small>{resource.location?.address}</small></div>)}</div>
+    {ids.length > 1 && <><SectionHead index="02" title="CORRIDOR PLANS" />{ids.map(item => <button key={item} className="selector" aria-pressed={id === item} onClick={() => setSelectedId(item)}>{item}</button>)}</>}
+  </aside><section>{loading && <Notice title="READING CORRIDOR PLAN" />}{error && <Notice error title="CORRIDOR UNAVAILABLE">{error}</Notice>}{!plan ? <Notice title="NO CORRIDOR PLANNED">Open a confirmed incident, acknowledge it, request its response plan, authorize it and dispatch a resource. The backend then creates the corridor.</Notice> : <>
+    <div className="corridor-head"><div><span className="eyebrow muted">{plan.id}</span><h2>{plan.resource_id}</h2></div><Status value={plan.status} source={plan.provenance} /></div>
+    <div className="metrics" style={{ marginTop: 25 }}><Metric index="01" label="ROUTE DURATION" value={number(plan.route?.duration_seconds, 0, ' s')} source={plan.route?.provenance} /><Metric index="02" label="DISTANCE" value={number(plan.route?.distance_meters, 0, ' m')} source={plan.route?.provenance} /><Metric index="03" label="SEGMENTS" value={plan.segment_sequence?.length} source={plan.provenance} /><Metric index="04" label="ROUTING" value={plan.is_rerouted ? 'REROUTED' : 'DIRECT'} source={plan.provenance} /></div>
+    <SectionHead index="02" title="DYNAMIC GRID SLICING"><Tooltip label="Explain corridor clearance">Backend simulation reports each segment’s available passage width and compression state. Cell occupancy is not supplied, so the marks show segment states rather than measured vehicle positions.</Tooltip></SectionHead>
+    <p className="eyebrow muted">SEGMENT STATE DIAGRAM / CELL OCCUPANCY UNAVAILABLE / SIMULATION ONLY</p>
+    <div className="segments">{plan.segment_sequence?.map(segment => <section key={segment.segment_id} className={`segment ${segment.traffic_compression_state === 'FAILED' ? 'danger' : segment.traffic_compression_state === 'CLEARED' ? 'success' : 'warning'}`}><span className="eyebrow">{segment.camera_id || 'CAMERA N/A'}</span><h3>{segment.segment_id}</h3><div className="segment-symbol" aria-hidden="true">{Array.from({ length: 5 }, (_, index) => <i key={index} />)}</div><Status value={segment.traffic_compression_state} /><div className="clearance">{number(segment.clearance_width_meters, 1, 'm')}</div><p>{human(segment.upstream_signal_state)}</p><p>CCTV FLAG / {segment.verified_by_cctv ? 'VERIFIED BY BACKEND' : 'NOT VERIFIED'}</p><small className="source">{plan.provenance}</small></section>)}</div>
+    {plan.is_rerouted && <Notice title="ROUTE REVISED">The backend marked this corridor as rerouted. Inspect failed segments and their clearance before relying on the proposed route.</Notice>}
+    <SectionHead index="03" title="JUNCTION PRE-CLEAR SEQUENCE" /><div className="route-timeline">{plan.junction_sequence?.map(junction => <div className="route-stop" key={junction.junction_id}><h3>{junction.junction_id}</h3><Status value={junction.readiness} /><p>{junction.junction_name}</p><p className="mono">ETA {number(junction.eta_seconds, 0, ' s')}</p></div>)}</div>
+    <SectionHead index="04" title="DESTINATION" /><p className="muted">{plan.route?.destination?.address || 'N/A'}</p><p className="eyebrow muted" style={{ marginTop: 22 }}>EXTEND / RELEASE CONTROLS ARE NOT AVAILABLE IN THE CURRENT BACKEND</p>
+  </>}</section></div>;
 }
