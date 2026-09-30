@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Header from './components/Header';
-import Navigation, { modules } from './components/Navigation';
+import Navigation from './components/Navigation';
+import { modules } from './design/modules';
 import LandingView from './components/LandingView';
 import CommandCenterView from './components/CommandCenterView';
 import CameraIntelligenceView from './components/CameraIntelligenceView';
@@ -120,7 +121,7 @@ export default function App() {
         <div className="module-intro"><div><span className="eyebrow">NAYAN / 0{modules.indexOf(module) + 1} / {module?.label}</span><h1 className="module-title" key={activeTab}>{module?.title}</h1></div><p className="module-description">{module?.description}</p></div>
         {syncState === 'loading' && <Notice title="CONNECTING TO THE CAMERA NETWORK">Reading authoritative snapshots.<div className="loading-line" /></Notice>}
         {activeTab === 'command-center' && <CommandCenterView {...data} available={loaded && !failedSources.some(source => ['incidents', 'cameras', 'resources', 'junctions'].includes(source))} onSelectCamera={selectCamera} onSelectIncident={setSelectedIncidentId} corridorPlan={corridorPlan} />}
-        {activeTab === 'camera-intel' && <CameraIntelligenceView selectedCameraId={selectedCameraId} onSelectCamera={setSelectedCameraId} videoCatalogue={data.videoCatalogue} incidents={data.incidents} capabilities={data.capabilities} onOpenIncident={setSelectedIncidentId} />}
+        {activeTab === 'camera-intel' && <CameraIntelligenceView key={selectedCameraId} selectedCameraId={selectedCameraId} onSelectCamera={setSelectedCameraId} videoCatalogue={data.videoCatalogue} incidents={data.incidents} capabilities={data.capabilities} onOpenIncident={setSelectedIncidentId} />}
         {activeTab === 'traffic' && <TrafficControlView junctions={data.junctions} onRefresh={fetchAllSnapshot} />}
         {activeTab === 'corridor' && <EmergencyCorridorView resources={data.resources} auditEvents={data.auditEvents} corridorPlan={corridorPlan} />}
         {activeTab === 'digital-twin' && <DigitalTwinView />}

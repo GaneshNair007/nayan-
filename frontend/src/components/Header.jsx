@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Status } from './UI';
 export default function Header({ capabilities, wsConnected, lastEventAt, onHome }) {
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(() => Date.now());
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   const age = lastEventAt ? Math.max(0, (now - lastEventAt) / 1000) : null;
   return <header className="app-header">

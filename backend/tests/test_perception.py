@@ -271,4 +271,6 @@ def test_api_capabilities_gpu_details():
     assert "gpu" in caps
     assert "vision" in caps
     assert caps["vision"]["mode"] == "video_inference"
-    assert "RTX 4050" in caps["gpu"]["name"] or "cuda" in caps["gpu"]["device"]
+    import torch
+    assert caps["gpu"]["available"] == torch.cuda.is_available()
+    assert caps["gpu"]["device"] == ("cuda:0" if torch.cuda.is_available() else "cpu")

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Action } from './UI';
-import { modules } from './Navigation';
+import { modules } from '../design/modules';
 export default function LandingView({ videoCatalogue, onSelectTab }) {
   const feed = videoCatalogue.find(video => video.cameraId === 'CAM-04') || videoCatalogue[0];
   const [failed, setFailed] = useState(false);

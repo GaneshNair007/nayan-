@@ -46,7 +46,7 @@ class SimulationService:
         now_iso = datetime.now(timezone.utc).isoformat()
 
         # Launch real GPU video analysis on cam04_collision.mp4
-        demo_video = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "demo", "cam04_collision.mp4"))
+        demo_video = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "data", "demo", "cam04_collision.mp4"))
         if use_live_inference and os.path.exists(demo_video):
             perception_manager.start_job("CAM-04", demo_video, loop_video=True)
 
@@ -184,7 +184,7 @@ class SimulationService:
         from app.perception.pipeline import perception_manager
 
         now_iso = datetime.now(timezone.utc).isoformat()
-        crowd_video = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "demo", "cam07_crowd_growth.mp4"))
+        crowd_video = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "data", "demo", "cam07_crowd_growth.mp4"))
         if os.path.exists(crowd_video):
             perception_manager.start_job("CAM-07", crowd_video, loop_video=True)
 
@@ -262,7 +262,7 @@ class SimulationService:
         from app.perception.pipeline import perception_manager
 
         now_iso = datetime.now(timezone.utc).isoformat()
-        baggage_video = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "demo", "cam11_unattended_baggage.mp4"))
+        baggage_video = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "data", "demo", "cam11_unattended_baggage.mp4"))
         if os.path.exists(baggage_video):
             perception_manager.start_job("CAM-11", baggage_video, loop_video=True)
 

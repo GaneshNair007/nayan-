@@ -10,7 +10,7 @@ export default function CameraIntelligenceView({ selectedCameraId, onSelectCamer
   const [mediaFailed, setMediaFailed] = useState(false);
   const videoRef = useRef(null), canvasRef = useRef(null);
   const status = telemetry.id === id ? telemetry.status : null;
-  const tracks = telemetry.id === id ? telemetry.tracks : [];
+  const tracks = telemetry.tracks;
   const hardware = telemetry.id === id ? telemetry.hardware : null;
   const feed = videoCatalogue.find(video => video.cameraId === id);
   const incident = incidents.find(item => item.id === status?.active_incident_id) || incidents.find(item => item.camera_id === id);
@@ -18,7 +18,6 @@ export default function CameraIntelligenceView({ selectedCameraId, onSelectCamer
   useEffect(() => {
     let disposed = false, timer;
     const controller = new AbortController();
-    setLoading(true); setError(''); setMediaFailed(false);
     const poll = async () => {
       try {
         const [nextStatus, nextTracks] = await Promise.all([request(`/api/videos/status/${id}`, { signal: controller.signal }), request(`/api/videos/tracks/${id}`, { signal: controller.signal })]);
@@ -51,7 +50,7 @@ export default function CameraIntelligenceView({ selectedCameraId, onSelectCamer
       ctx.font = '12px monospace'; ctx.fillStyle = '#080808cc'; ctx.fillRect(x1, Math.max(0, y1 - 22), ctx.measureText(label).width + 12, 20);
       ctx.fillStyle = colour; ctx.fillText(label, x1 + 6, Math.max(14, y1 - 7));
     });
-  }, [telemetry, running, error]);
+  }, [tracks, running, error]);
   const states = ['OBSERVED', 'SUSPECTED', 'VERIFYING', 'CONFIRMED'];
   const currentIndex = states.indexOf(status?.verification_state);
   const device = hardware?.device || capabilities?.gpu?.device || 'N/A';
