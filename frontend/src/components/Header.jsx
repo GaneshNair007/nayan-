@@ -9,7 +9,8 @@ import {
   RotateCcw, 
   Users, 
   Briefcase, 
-  Flame 
+  Flame,
+  Bot 
 } from 'lucide-react';
 
 export default function Header({ 
@@ -32,7 +33,7 @@ export default function Header({
     return () => clearInterval(interval);
   }, []);
 
-  const gpuName = capabilities?.gpu?.name || 'RTX 4050 (CUDA:0)';
+  const gpuName = capabilities?.gpu?.name || (capabilities?.gpu?.available ? 'CUDA Device' : 'CPU Mode');
   const gpuAvailable = capabilities?.gpu?.available !== false;
 
   return (
@@ -93,6 +94,24 @@ export default function Header({
           <div className={`badge ${wsConnected ? 'badge-success' : 'badge-critical'}`} style={{ padding: '4px 10px', fontSize: '11px', gap: '6px' }}>
             <Radio size={13} />
             <span>{wsConnected ? 'LIVE FEED WS: ACTIVE' : 'WS RECONNECTING...'}</span>
+          </div>
+
+          {/* AI Copilot Status */}
+          <div 
+            className={`badge ${capabilities?.ai_assistant?.available ? 'badge-cyan' : 'badge-ghost'}`} 
+            style={{ 
+              padding: '4px 10px', 
+              fontSize: '11px', 
+              gap: '6px', 
+              border: capabilities?.ai_assistant?.available ? '1px solid rgba(0, 229, 255, 0.4)' : '1px solid rgba(255, 255, 255, 0.1)',
+              background: capabilities?.ai_assistant?.available ? 'rgba(0, 229, 255, 0.08)' : 'rgba(255, 255, 255, 0.04)'
+            }}
+            title={capabilities?.ai_assistant?.available ? "OpenAI Responses API Decision Support Online" : "AI Copilot Offline - Fallback Telemetry Active"}
+          >
+            <Bot size={13} color={capabilities?.ai_assistant?.available ? "var(--accent-cyan)" : "#94a3b8"} />
+            <span style={{ color: capabilities?.ai_assistant?.available ? "var(--accent-cyan)" : "#94a3b8" }}>
+              {capabilities?.ai_assistant?.available ? 'AI COPILOT: READY' : 'AI COPILOT: OFFLINE'}
+            </span>
           </div>
         </div>
 

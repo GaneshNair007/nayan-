@@ -7,10 +7,12 @@ PATTERNS = [
     re.compile(r'ghp_[a-zA-Z0-9]{20,}'),
     re.compile(r'github_pat_[a-zA-Z0-9]{20,}'),
     re.compile(r'AKIA[0-9A-Z]{16}'),
+    re.compile(r'sk-[a-zA-Z0-9_\-]{20,}'),
+    re.compile(r'sk-proj-[a-zA-Z0-9_\-]{20,}'),
 ]
 
-IGNORE_DIRS = {'.git', '.venv', '__pycache__', 'node_modules', '.agents', '.gemini', 'datasets', 'labels', 'images', 'runs'}
-IGNORE_EXTS = {'.pt', '.png', '.jpg', '.jpeg', '.mp4', '.avi', '.pyc', '.zip', '.tar', '.gz'}
+IGNORE_DIRS = {'.git', '.venv', '__pycache__', 'node_modules', '.agents', '.gemini', 'datasets', 'labels', 'images', 'runs', 'dist', '.vite'}
+IGNORE_EXTS = {'.pt', '.png', '.jpg', '.jpeg', '.mp4', '.avi', '.pyc', '.zip', '.tar', '.gz', '.svg'}
 
 findings = []
 for dirpath, dirnames, filenames in os.walk('.'):

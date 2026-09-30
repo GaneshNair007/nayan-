@@ -35,6 +35,8 @@ def readiness_check():
     video_ok = perception_manager is not None
     ws_ok = ws_manager is not None
 
+    ai_configured = bool((settings.OPENAI_API_KEY or os.environ.get("OPENAI_API_KEY")) and settings.OPENAI_ENABLED)
+
     all_ready = db_ok and video_ok and ws_ok
 
     subsystems_dict = {
@@ -42,7 +44,8 @@ def readiness_check():
         "model_loaded": "OK" if model_ok else "FALLBACK",
         "cuda_available": "ACTIVE" if cuda_ok else "CPU_FALLBACK",
         "video_pipeline": "OK" if video_ok else "UNAVAILABLE",
-        "websocket_manager": "OK" if ws_ok else "UNAVAILABLE"
+        "websocket_manager": "OK" if ws_ok else "UNAVAILABLE",
+        "ai_assistant": "ACTIVE" if ai_configured else "OPTIONAL_DISABLED"
     }
 
     return {
@@ -50,6 +53,10 @@ def readiness_check():
         "ready": all_ready,
         "subsystems": subsystems_dict,
         "checks": subsystems_dict,
+        "ai_assistant": {
+            "configured": ai_configured,
+            "available": ai_configured
+        },
         "device": "cuda:0" if cuda_ok else "cpu",
         "timestamp": datetime.now(timezone.utc).isoformat()
     }

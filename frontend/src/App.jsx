@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from './components/Header';
 import Navigation from './components/Navigation';
-import PalominoLandingView from './components/PalominoLandingView';
+import PalominoLanding from './landing/PalominoLanding';
 import CommandCenterView from './components/CommandCenterView';
 import CameraIntelligenceView from './components/CameraIntelligenceView';
 import TrafficControlView from './components/TrafficControlView';
@@ -168,13 +168,7 @@ export default function App() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)' }}>
       {activeTab === 'landing' ? (
-        <PalominoLandingView 
-          capabilities={capabilities}
-          readiness={readiness}
-          cameras={cameras}
-          incidents={incidents}
-          videoCatalogue={videoCatalogue}
-          wsConnected={wsConnected}
+        <PalominoLanding 
           onEnterCommandCenter={() => setActiveTab('command-center')}
           onSelectCamera={(camId) => {
             setSelectedCameraId(camId);

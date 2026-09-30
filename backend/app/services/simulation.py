@@ -68,6 +68,14 @@ class SimulationService:
             # If not yet registered by evidence engine, return initial observation state directly from live job
             active_tracks = job.last_processed_tracks if job else []
             active_dets = job.active_detections_count if job else 0
+            live_peop = max(1, len(active_tracks))
+            p_tier, p_score, p_reasons = IncidentService.calculate_priority(
+                severity=IncidentSeverity.MEDIUM,
+                evidence_score=0.25,
+                estimated_people_affected=live_peop,
+                affected_lanes_count=1,
+                evidence_count=0
+            )
             live_inc = Incident(
                 id="INC-LIVE-CAM04",
                 type=IncidentType.COLLISION,
@@ -83,13 +91,13 @@ class SimulationService:
                 model_confidence=0.78,
                 evidence_score=0.25,
                 severity=IncidentSeverity.MEDIUM,
-                priority_tier="P3",
-                priority_score=45.0,
-                priority_reasons=["Active video inference initiated on CAM-04"],
+                priority_tier=p_tier,
+                priority_score=p_score,
+                priority_reasons=p_reasons + ["Active video inference initiated on CAM-04"],
                 title="Live Traffic Stream Observation on CAM-04",
                 description=f"Active GPU computer-vision pipeline running on CAM-04. Tracking {len(active_tracks)} live entities with {active_dets} detections.",
                 affected_lanes=["Lane 1"],
-                estimated_people_affected=2,
+                estimated_people_affected=live_peop,
                 provenance=DataProvenance.INFERENCE,
                 evidence=[]
             )
@@ -107,6 +115,13 @@ class SimulationService:
         else:
             # 2. DETERMINISTIC REPLAY FIXTURE MODE
             # Everything is strictly and truthfully labeled as REPLAY_FIXTURE
+            p_tier_rep, p_score_rep, p_reasons_rep = IncidentService.calculate_priority(
+                severity=IncidentSeverity.CRITICAL,
+                evidence_score=0.45,
+                estimated_people_affected=4,
+                affected_lanes_count=2,
+                evidence_count=1
+            )
             inc = Incident(
                 id="INC-2026-001",
                 type=IncidentType.COLLISION,
@@ -122,9 +137,9 @@ class SimulationService:
                 model_confidence=0.86,
                 evidence_score=0.45,
                 severity=IncidentSeverity.CRITICAL,
-                priority_tier="P2",
-                priority_score=62.0,
-                priority_reasons=["Severity level CRITICAL contributes 35.0pts", "+ Severe lane obstruction (2 lanes blocked)"],
+                priority_tier=p_tier_rep,
+                priority_score=p_score_rep,
+                priority_reasons=p_reasons_rep,
                 title="[REPLAY FIXTURE] Multi-Vehicle Collision on Central Expressway",
                 description="Deterministic replay fixture demonstration for hackathon resilience. Non-live demonstration state.",
                 affected_lanes=["Lane 1", "Lane 2"],
@@ -248,6 +263,13 @@ class SimulationService:
         provenance = DataProvenance.INFERENCE if is_live else DataProvenance.REPLAY_FIXTURE
         title = "Crowd Surge Pattern at Metro Plaza" if is_live else "[REPLAY FIXTURE] Crowd Surge Pattern at Metro Plaza"
 
+        p_tier_c, p_score_c, p_reasons_c = IncidentService.calculate_priority(
+            severity=IncidentSeverity.HIGH,
+            evidence_score=0.94,
+            estimated_people_affected=45,
+            affected_lanes_count=2,
+            evidence_count=2
+        )
         inc = Incident(
             id="INC-2026-002",
             type=IncidentType.CROWD_ANOMALY,
@@ -263,9 +285,9 @@ class SimulationService:
             model_confidence=0.89,
             evidence_score=0.94,
             severity=IncidentSeverity.HIGH,
-            priority_tier="P2",
-            priority_score=78.0,
-            priority_reasons=["+ High evidence completeness (94%)", "+ 45 estimated individuals affected", "+ Directional turbulence detected"],
+            priority_tier=p_tier_c,
+            priority_score=p_score_c,
+            priority_reasons=p_reasons_c,
             title=title,
             description="Perception engine detected abnormal pedestrian accumulation and vector convergence near Metro Concourse Entry B.",
             affected_lanes=["Pedestrian Plaza", "Metro Ramp"],
@@ -330,6 +352,13 @@ class SimulationService:
         provenance = DataProvenance.INFERENCE if is_live else DataProvenance.REPLAY_FIXTURE
         title = "Unattended Baggage Detected at Bus Bay 4" if is_live else "[REPLAY FIXTURE] Unattended Baggage Detected at Bus Bay 4"
 
+        p_tier_b, p_score_b, p_reasons_b = IncidentService.calculate_priority(
+            severity=IncidentSeverity.MEDIUM,
+            evidence_score=0.92,
+            estimated_people_affected=15,
+            affected_lanes_count=1,
+            evidence_count=2
+        )
         inc = Incident(
             id="INC-2026-003",
             type=IncidentType.UNATTENDED_BAGGAGE,
@@ -345,9 +374,9 @@ class SimulationService:
             model_confidence=0.84,
             evidence_score=0.92,
             severity=IncidentSeverity.MEDIUM,
-            priority_tier="P3",
-            priority_score=68.5,
-            priority_reasons=["+ High evidence completeness (92%)", "+ Persistent owner separation", "+ Stationary duration > 180s"],
+            priority_tier=p_tier_b,
+            priority_score=p_score_b,
+            priority_reasons=p_reasons_b,
             title=title,
             description="Stationary bag OBJ-309 separated from associated person OBJ-301 for over 180 seconds.",
             affected_lanes=["Platform 4 Walkway"],

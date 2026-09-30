@@ -1,0 +1,258 @@
+[
+  {
+    "camera_id": "CAM01",
+    "video_file": "cam01_normal_intersection.mp4",
+    "frame_index": 135,
+    "timestamp_sec": 4.5,
+    "still_path": "/media/nayan/stills/cam01_still_4s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM01",
+    "video_file": "cam01_normal_intersection.mp4",
+    "frame_index": 315,
+    "timestamp_sec": 10.5,
+    "still_path": "/media/nayan/stills/cam01_still_10s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM01",
+    "video_file": "cam01_normal_intersection.mp4",
+    "frame_index": 495,
+    "timestamp_sec": 16.5,
+    "still_path": "/media/nayan/stills/cam01_still_16s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM01",
+    "video_file": "cam01_normal_intersection.mp4",
+    "frame_index": 675,
+    "timestamp_sec": 22.5,
+    "still_path": "/media/nayan/stills/cam01_still_22s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM02",
+    "video_file": "cam02_congestion.mp4",
+    "frame_index": 135,
+    "timestamp_sec": 4.5,
+    "still_path": "/media/nayan/stills/cam02_still_4s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM02",
+    "video_file": "cam02_congestion.mp4",
+    "frame_index": 315,
+    "timestamp_sec": 10.5,
+    "still_path": "/media/nayan/stills/cam02_still_10s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM02",
+    "video_file": "cam02_congestion.mp4",
+    "frame_index": 495,
+    "timestamp_sec": 16.5,
+    "still_path": "/media/nayan/stills/cam02_still_16s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM02",
+    "video_file": "cam02_congestion.mp4",
+    "frame_index": 675,
+    "timestamp_sec": 22.5,
+    "still_path": "/media/nayan/stills/cam02_still_22s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM03",
+    "video_file": "cam03_ambulance.mp4",
+    "frame_index": 60,
+    "timestamp_sec": 2.0,
+    "still_path": "/media/nayan/stills/cam03_still_2s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM03",
+    "video_file": "cam03_ambulance.mp4",
+    "frame_index": 140,
+    "timestamp_sec": 4.67,
+    "still_path": "/media/nayan/stills/cam03_still_4s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM03",
+    "video_file": "cam03_ambulance.mp4",
+    "frame_index": 221,
+    "timestamp_sec": 7.37,
+    "still_path": "/media/nayan/stills/cam03_still_7s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM03",
+    "video_file": "cam03_ambulance.mp4",
+    "frame_index": 301,
+    "timestamp_sec": 10.03,
+    "still_path": "/media/nayan/stills/cam03_still_10s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM04",
+    "video_file": "cam04_collision.mp4",
+    "frame_index": 157,
+    "timestamp_sec": 5.23,
+    "still_path": "/media/nayan/stills/cam04_still_5s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM04",
+    "video_file": "cam04_collision.mp4",
+    "frame_index": 367,
+    "timestamp_sec": 12.23,
+    "still_path": "/media/nayan/stills/cam04_still_12s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM04",
+    "video_file": "cam04_collision.mp4",
+    "frame_index": 577,
+    "timestamp_sec": 19.23,
+    "still_path": "/media/nayan/stills/cam04_still_19s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM04",
+    "video_file": "cam04_collision.mp4",
+    "frame_index": 787,
+    "timestamp_sec": 26.23,
+    "still_path": "/media/nayan/stills/cam04_still_26s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM05",
+    "video_file": "cam05_night_traffic.mp4",
+    "frame_index": 135,
+    "timestamp_sec": 4.5,
+    "still_path": "/media/nayan/stills/cam05_still_4s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM05",
+    "video_file": "cam05_night_traffic.mp4",
+    "frame_index": 315,
+    "timestamp_sec": 10.5,
+    "still_path": "/media/nayan/stills/cam05_still_10s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM05",
+    "video_file": "cam05_night_traffic.mp4",
+    "frame_index": 495,
+    "timestamp_sec": 16.5,
+    "still_path": "/media/nayan/stills/cam05_still_16s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM05",
+    "video_file": "cam05_night_traffic.mp4",
+    "frame_index": 675,
+    "timestamp_sec": 22.5,
+    "still_path": "/media/nayan/stills/cam05_still_22s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM07",
+    "video_file": "cam07_crowd_growth.mp4",
+    "frame_index": 135,
+    "timestamp_sec": 4.5,
+    "still_path": "/media/nayan/stills/cam07_still_4s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM07",
+    "video_file": "cam07_crowd_growth.mp4",
+    "frame_index": 315,
+    "timestamp_sec": 10.5,
+    "still_path": "/media/nayan/stills/cam07_still_10s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM07",
+    "video_file": "cam07_crowd_growth.mp4",
+    "frame_index": 495,
+    "timestamp_sec": 16.5,
+    "still_path": "/media/nayan/stills/cam07_still_16s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM07",
+    "video_file": "cam07_crowd_growth.mp4",
+    "frame_index": 675,
+    "timestamp_sec": 22.5,
+    "still_path": "/media/nayan/stills/cam07_still_22s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM09",
+    "video_file": "cam09_normal_source.mp4",
+    "frame_index": 118,
+    "timestamp_sec": 3.93,
+    "still_path": "/media/nayan/stills/cam09_still_3s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM09",
+    "video_file": "cam09_normal_source.mp4",
+    "frame_index": 276,
+    "timestamp_sec": 9.2,
+    "still_path": "/media/nayan/stills/cam09_still_9s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM09",
+    "video_file": "cam09_normal_source.mp4",
+    "frame_index": 435,
+    "timestamp_sec": 14.5,
+    "still_path": "/media/nayan/stills/cam09_still_14s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM09",
+    "video_file": "cam09_normal_source.mp4",
+    "frame_index": 593,
+    "timestamp_sec": 19.77,
+    "still_path": "/media/nayan/stills/cam09_still_19s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM11",
+    "video_file": "cam11_unattended_baggage.mp4",
+    "frame_index": 135,
+    "timestamp_sec": 4.5,
+    "still_path": "/media/nayan/stills/cam11_still_4s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM11",
+    "video_file": "cam11_unattended_baggage.mp4",
+    "frame_index": 315,
+    "timestamp_sec": 10.5,
+    "still_path": "/media/nayan/stills/cam11_still_10s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM11",
+    "video_file": "cam11_unattended_baggage.mp4",
+    "frame_index": 495,
+    "timestamp_sec": 16.5,
+    "still_path": "/media/nayan/stills/cam11_still_16s.webp",
+    "resolution": "1280x720"
+  },
+  {
+    "camera_id": "CAM11",
+    "video_file": "cam11_unattended_baggage.mp4",
+    "frame_index": 675,
+    "timestamp_sec": 22.5,
+    "still_path": "/media/nayan/stills/cam11_still_22s.webp",
+    "resolution": "1280x720"
+  }
+]

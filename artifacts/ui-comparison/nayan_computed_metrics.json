@@ -1,0 +1,123 @@
+{
+  "header": {
+    "tagName": "HEADER",
+    "width": 1440,
+    "height": 75,
+    "fontSize": "16px",
+    "lineHeight": "24px",
+    "fontWeight": "400",
+    "fontFamily": "\"Host Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+    "color": "rgb(255, 255, 255)",
+    "backgroundColor": "rgba(0, 0, 0, 0)"
+  },
+  "heroH1": {
+    "tagName": "H1",
+    "width": 1400,
+    "height": 518.390625,
+    "fontSize": "172.8px",
+    "lineHeight": "172.8px",
+    "fontWeight": "600",
+    "fontFamily": "\"Host Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+    "color": "rgb(255, 255, 255)",
+    "backgroundColor": "rgba(0, 0, 0, 0)"
+  },
+  "networkStrip": {
+    "tagName": "SECTION",
+    "width": 1440,
+    "height": 336.59375,
+    "fontSize": "16px",
+    "lineHeight": "24px",
+    "fontWeight": "400",
+    "fontFamily": "\"Host Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+    "color": "rgb(255, 255, 255)",
+    "backgroundColor": "rgb(0, 0, 0)"
+  },
+  "selectedIntelligence": {
+    "tagName": "SECTION",
+    "width": 1440,
+    "height": 1312,
+    "fontSize": "16px",
+    "lineHeight": "24px",
+    "fontWeight": "400",
+    "fontFamily": "\"Host Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+    "color": "rgb(255, 255, 255)",
+    "backgroundColor": "rgb(0, 0, 0)"
+  },
+  "keyFigures": {
+    "tagName": "SECTION",
+    "width": 1440,
+    "height": 793.59375,
+    "fontSize": "16px",
+    "lineHeight": "24px",
+    "fontWeight": "400",
+    "fontFamily": "\"Host Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+    "color": "rgb(255, 255, 255)",
+    "backgroundColor": "rgb(0, 0, 0)"
+  },
+  "services": {
+    "tagName": "SECTION",
+    "width": 1440,
+    "height": 2526.59375,
+    "fontSize": "16px",
+    "lineHeight": "24px",
+    "fontWeight": "400",
+    "fontFamily": "\"Host Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+    "color": "rgb(255, 255, 255)",
+    "backgroundColor": "rgb(0, 0, 0)"
+  },
+  "story": {
+    "tagName": "SECTION",
+    "width": 1440,
+    "height": 801,
+    "fontSize": "16px",
+    "lineHeight": "24px",
+    "fontWeight": "400",
+    "fontFamily": "\"Host Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+    "color": "rgb(255, 255, 255)",
+    "backgroundColor": "rgb(0, 0, 0)"
+  },
+  "evidence": {
+    "tagName": "SECTION",
+    "width": 1440,
+    "height": 749.65625,
+    "fontSize": "16px",
+    "lineHeight": "24px",
+    "fontWeight": "400",
+    "fontFamily": "\"Host Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+    "color": "rgb(255, 255, 255)",
+    "backgroundColor": "rgb(0, 0, 0)"
+  },
+  "cta": {
+    "tagName": "SECTION",
+    "width": 1440,
+    "height": 900,
+    "fontSize": "16px",
+    "lineHeight": "24px",
+    "fontWeight": "400",
+    "fontFamily": "\"Host Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+    "color": "rgb(255, 255, 255)",
+    "backgroundColor": "rgb(0, 0, 0)"
+  },
+  "footer": {
+    "tagName": "FOOTER",
+    "width": 1440,
+    "height": 900,
+    "fontSize": "16px",
+    "lineHeight": "24px",
+    "fontWeight": "400",
+    "fontFamily": "\"Host Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+    "color": "rgb(0, 0, 0)",
+    "backgroundColor": "rgb(255, 255, 255)"
+  },
+  "wordmark": {
+    "tagName": "DIV",
+    "width": 1360,
+    "height": 244.796875,
+    "fontSize": "288px",
+    "lineHeight": "244.8px",
+    "fontWeight": "700",
+    "fontFamily": "\"Host Grotesk\", -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif",
+    "color": "rgb(0, 0, 0)",
+    "backgroundColor": "rgba(0, 0, 0, 0)"
+  }
+}

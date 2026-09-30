@@ -9,10 +9,14 @@ venv/
 *.sqlite
 .pytest_cache/
 .coverage
-htmlcov/
+# Environment & Secrets
+.env
+.env.*
+!.env.example
 
 # Node & Frontend
 node_modules/
+**/node_modules/
 dist/
 .vite/
 

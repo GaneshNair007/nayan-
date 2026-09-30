@@ -4,13 +4,14 @@ Response Bounded Service: Emergency Resource Selection, Routing Adapter, Multi-J
 from typing import List, Optional
 from datetime import datetime, timezone
 import uuid
+import math
 import httpx
 
 from app.models.response import (
-    Resource, ResourceStatus, CorridorStatus, DispatchResponse, CorridorPlan,
+    Resource, ResourceStatus, ResourceType, CorridorStatus, DispatchResponse, CorridorPlan,
     Route, RouteWaypoint, JunctionCorridorStatus, LocationPoint, SegmentCorridorStatus
 )
-from app.models.incident import ResponseState
+from app.models.incident import ResponseState, IncidentType
 from app.models.event import DataProvenance
 from app.database import db
 from app.services.incident import IncidentService
@@ -66,6 +67,20 @@ class ResponseService:
             [77.6005, 12.9768],
             [77.6020, 12.9780]   # JNC-03
         ]
+        # Calculate distance dynamically from coordinate polyline using Haversine formula
+        total_dist_m = 0.0
+        for i in range(len(coords_fallback) - 1):
+            p1 = coords_fallback[i]
+            p2 = coords_fallback[i+1]
+            dlat = math.radians(p2[1] - p1[1])
+            dlon = math.radians(p2[0] - p1[0])
+            a = math.sin(dlat / 2)**2 + math.cos(math.radians(p1[1])) * math.cos(math.radians(p2[1])) * math.sin(dlon / 2)**2
+            c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+            total_dist_m += 6371000.0 * c
+        calc_distance = round(total_dist_m, 1)
+        # Estimated emergency response velocity: ~45 km/h = 12.5 m/s
+        calc_duration = round(max(30.0, calc_distance / 12.5), 1)
+
         return Route(
             origin=origin,
             destination=destination,
@@ -75,8 +90,8 @@ class ResponseService:
                 RouteWaypoint(lat=12.9780, lon=77.6020, junction_id="JNC-03", name="Plaza Blvd & Metro Entrance")
             ],
             geometry_geojson=coords_fallback,
-            distance_meters=2450.0,
-            duration_seconds=195.0,
+            distance_meters=calc_distance,
+            duration_seconds=calc_duration,
             provenance=DataProvenance.DETERMINISTIC
         )
 
@@ -84,26 +99,35 @@ class ResponseService:
     async def create_dispatch(incident_id: str, resource_id: Optional[str] = None) -> DispatchResponse:
         inc = IncidentService.get_incident(incident_id)
 
-        # Select available resource
+        # Dynamic Resource Ranking based on availability status, type suitability, and geographic distance
         if resource_id:
             res = ResponseService.get_resource(resource_id)
         else:
-            available = [r for r in db.resources.values() if r.status == ResourceStatus.AVAILABLE]
-            if not available:
-                res = list(db.resources.values())[0]
-            else:
-                res = available[0]
+            def _resource_rank(r: Resource) -> tuple:
+                status_priority = 0 if r.status == ResourceStatus.AVAILABLE else (1 if r.status == ResourceStatus.EN_ROUTE else 2)
+                type_priority = 0
+                if inc.type == IncidentType.COLLISION and r.type != ResourceType.AMBULANCE:
+                    type_priority = 1
+                elif (inc.type in [IncidentType.CROWD_ANOMALY, IncidentType.UNATTENDED_BAGGAGE]) and r.type != ResourceType.POLICE:
+                    type_priority = 1
+                dist = math.sqrt((r.location.lat - inc.location.lat)**2 + (r.location.lon - inc.location.lon)**2)
+                return (status_priority, type_priority, dist)
 
-        # Transition resource status to DISPATCHED
+            sorted_resources = sorted(db.resources.values(), key=_resource_rank)
+            if not sorted_resources:
+                raise ValueError("No emergency resources registered in database.")
+            res = sorted_resources[0]
+
+        # Compute dynamic route first to derive accurate ETA
+        dest = LocationPoint(lat=inc.location.lat, lon=inc.location.lon, address=inc.location.address)
+        route = await ResponseService.compute_route(res.location, dest)
+
+        # Transition resource status to DISPATCHED with dynamic ETA
         res.status = ResourceStatus.DISPATCHED
-        res.eta_seconds = 180
+        res.eta_seconds = max(30, int(route.duration_seconds))
         db.resources[res.id] = res
 
         dispatch_id = f"DSP-{uuid.uuid4().hex[:6].upper()}"
-
-        # Compute route
-        dest = LocationPoint(lat=inc.location.lat, lon=inc.location.lon, address=inc.location.address)
-        route = await ResponseService.compute_route(res.location, dest)
 
         # Dynamically evaluate corridor segments via DynamicCorridorEngine
         from app.perception.corridor_engine import DynamicCorridorEngine

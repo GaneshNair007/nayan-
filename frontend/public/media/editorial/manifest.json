@@ -1,0 +1,46 @@
+[
+  {
+    "id": "india_urban_traffic_01",
+    "filename": "india-urban-traffic-01.webp",
+    "url": "https://images.unsplash.com/photo-1596176530529-78163a4f7af2?auto=format&fit=crop&w=1200&q=80",
+    "author": "Naveed Ahmed",
+    "license": "Unsplash License (Free to use commercial and non-commercial)",
+    "source_url": "https://unsplash.com/photos/vehicles-on-road-during-daytime-O538zL0z-7E",
+    "usage": "Our Story section / Urban transit context",
+    "local_path": "/media/editorial/india-urban-traffic-01.webp",
+    "resolution": "1200x751"
+  },
+  {
+    "id": "traffic_command_center_01",
+    "filename": "traffic-command-center-01.webp",
+    "url": "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=1200&q=80",
+    "author": "Markus Spiske",
+    "license": "Unsplash License (Free to use commercial and non-commercial)",
+    "source_url": "https://unsplash.com/photos/silhouette-of-person-using-laptop-iar-afB0QQw",
+    "usage": "Services: Simulate / Digital Twin Control Room",
+    "local_path": "/media/editorial/traffic-command-center-01.webp",
+    "resolution": "1200x800"
+  },
+  {
+    "id": "emergency_ambulance_city_01",
+    "filename": "emergency-ambulance-city-01.webp",
+    "url": "https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1200&q=80",
+    "author": "Camilo Jimenez",
+    "license": "Unsplash License (Free to use commercial and non-commercial)",
+    "source_url": "https://unsplash.com/photos/white-ambulance-van-parked-near-building-during-daytime-vGuUQviW9O4",
+    "usage": "Services: Respond / Emergency Corridors",
+    "local_path": "/media/editorial/emergency-ambulance-city-01.webp",
+    "resolution": "1200x862"
+  },
+  {
+    "id": "night_intersection_arterial_01",
+    "filename": "night-intersection-arterial-01.webp",
+    "url": "https://images.unsplash.com/photo-1494522855154-9297ac14b55f?auto=format&fit=crop&w=1200&q=80",
+    "author": "Denys Nevozhai",
+    "license": "Unsplash License (Free to use commercial and non-commercial)",
+    "source_url": "https://unsplash.com/photos/timelapse-photography-of-vehicles-on-road-7nrsVjvALnA",
+    "usage": "Services: Detect / Optical Sensor Grid",
+    "local_path": "/media/editorial/night-intersection-arterial-01.webp",
+    "resolution": "1200x800"
+  }
+]

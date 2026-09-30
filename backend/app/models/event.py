@@ -18,6 +18,7 @@ class DataProvenance(str, Enum):
     EXTERNAL_ROUTING = "EXTERNAL_ROUTING"
     ESTIMATE = "ESTIMATE"
     USER_INPUT = "USER_INPUT"
+    AI_ASSISTED = "AI_ASSISTED"
 
 class ProvenancedValue(BaseModel, Generic[T]):
     value: T

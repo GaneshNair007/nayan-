@@ -1,0 +1,279 @@
+/* ============================================================
+   NAYAN x PALOMINO HIGH-FIDELITY RECONSTRUCTION STYLESHEET
+   Strict adherence to https://palominoprod.com/en forensics
+   ============================================================ */
+
+:root {
+  --pal-bg: #000000;
+  --pal-surface: #0a0a0c;
+  --pal-text: #ffffff;
+  --pal-text-muted: rgba(255, 255, 255, 0.65);
+  --pal-text-dim: rgba(255, 255, 255, 0.35);
+  --pal-border: rgba(255, 255, 255, 0.12);
+  --pal-border-subtle: rgba(255, 255, 255, 0.06);
+  --pal-white-bg: #ffffff;
+  --pal-white-text: #000000;
+  --pal-font: 'Host Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --pal-mono: 'JetBrains Mono', monospace;
+  --pal-pad-x: 20px;
+  --pal-pad-y: 72px;
+}
+
+.pal-root {
+  background-color: var(--pal-bg);
+  color: var(--pal-text);
+  font-family: var(--pal-font);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Typography styles matching Palomino */
+.pal-h1 {
+  font-family: var(--pal-font);
+  font-size: clamp(48px, min(12vw, calc((100svh - 144px) / 3)), 240px);
+  font-weight: 600;
+  line-height: 1.0;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.pal-p1 {
+  font-family: var(--pal-font);
+  font-size: 30.7px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.pal-p2 {
+  font-family: var(--pal-font);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: #ffffff;
+}
+
+.pal-p3 {
+  font-family: var(--pal-font);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.35;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.pal-caption {
+  font-family: var(--pal-font);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--pal-text-muted);
+}
+
+/* ============================================================
+   PALOMINO CHARACTER-SWAP NAVIGATION LINK MECHANISM
+   Two duplicate layers inside clipped container (overflow: clip)
+   Layer 1 exits to +100% X, Layer 2 enters from -100% to 0% X
+   ============================================================ */
+.pal-nav-item {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  text-decoration: none;
+  color: #ffffff;
+  padding: 0 4px;
+}
+
+.pal-char-stream {
+  position: relative;
+  display: inline-block;
+  overflow: clip;
+}
+
+.pal-char-primary {
+  display: inline-block;
+  transition: transform 0.45s cubic-bezier(0.3, 1, 0.7, 1);
+  transform: translate(0%, 0%);
+}
+
+.pal-char-secondary {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  transform: translate(-100%, 0%);
+  transition: transform 0.45s cubic-bezier(0.3, 1, 0.7, 1);
+  color: #ffffff;
+}
+
+.pal-nav-item:hover .pal-char-primary {
+  transform: translate(100%, 0%);
+}
+
+.pal-nav-item:hover .pal-char-secondary {
+  transform: translate(0%, 0%);
+}
+
+/* Continuous linear marquee for Network Strip */
+@keyframes pal-marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.pal-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: pal-marquee 32s linear infinite;
+}
+
+.pal-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* Project Card & Hover Caption Rise */
+.pal-project-card {
+  position: relative;
+  overflow: hidden;
+  background: #0d0d10;
+  cursor: pointer;
+}
+
+.pal-project-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+  transform: scale(1.0);
+}
+
+.pal-project-card:hover .pal-project-media {
+  transform: scale(1.035);
+}
+
+.pal-project-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.3, 1, 0.7, 1);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 80%, transparent 100%);
+  padding: 24px;
+  z-index: 10;
+}
+
+.pal-project-card:hover .pal-project-caption {
+  transform: translateY(0%);
+}
+
+/* Floating pointer-following media preview */
+.pal-pointer-preview {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  width: 280px;
+  height: 175px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: opacity 0.25s ease;
+}
+
+/* Key Figures Grid */
+.pal-figures-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--pal-border);
+}
+
+.pal-figure-cell {
+  background: #000000;
+  padding: 48px 36px;
+  display: flex;
+  flex-direction: column;
+  justifyContent: space-between;
+  min-height: 220px;
+}
+
+/* Services Layered Pinned Stack */
+.pal-service-layer {
+  position: sticky;
+  top: 90px;
+  background: #000000;
+  border-top: 1px solid var(--pal-border);
+  padding: 48px 0;
+  min-height: 480px;
+}
+
+/* Oversized White Sticky Footer */
+.pal-white-footer {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+  color: #000000;
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justifyContent: space-between;
+  padding: 130px 40px 30px 40px;
+  box-sizing: border-box;
+}
+
+.pal-giant-wordmark {
+  font-family: var(--pal-font);
+  font-size: clamp(60px, 19vw, 290px);
+  font-weight: 700;
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  color: #000000;
+  width: 100%;
+  text-align: center;
+  user-select: none;
+  margin-top: auto;
+}
+
+/* ============================================================
+   RESPONSIVE OVERRIDES (MOBILE & TABLET VIEWPORTS)
+   ============================================================ */
+@media (max-width: 900px) {
+  .pal-figures-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pal-white-footer {
+    padding: 80px 20px 20px 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .pal-figures-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pal-service-layer {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+    min-height: auto !important;
+  }
+
+  .pal-p1 {
+    font-size: 24px !important;
+  }
+
+  .pal-h1 {
+    font-size: clamp(36px, 11vw, 84px) !important;
+  }
+}

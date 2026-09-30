@@ -28,6 +28,7 @@ from app.perception.temporal_engine import TemporalFeatureEngine
 from app.perception.evidence_engine import EvidenceEngine
 from app.perception.corridor_engine import DynamicCorridorEngine
 from app.database import db
+from app.services.incident import IncidentService
 
 class VideoAnalysisJob:
     """Represents an active or completed background video analysis job."""
@@ -259,19 +260,24 @@ class PerceptionPipelineManager:
                     inc_id = f"INC-{camera_id}-LIVE"
                     job.active_incident_id = inc_id
 
-                    # Assign priority tier based on evidence score and severity
-                    if state == VerificationState.CONFIRMED:
-                        p_tier = "P1" if inc_type == IncidentType.COLLISION else "P2"
-                        p_score = 92.0 if inc_type == IncidentType.COLLISION else 78.0
-                        sev = IncidentSeverity.CRITICAL if inc_type == IncidentType.COLLISION else IncidentSeverity.HIGH
-                    elif state == VerificationState.VERIFYING:
-                        p_tier = "P2"
-                        p_score = 70.0
-                        sev = IncidentSeverity.HIGH
+                    # Determine operational severity dynamically from verification state and incident type
+                    if inc_type == IncidentType.COLLISION:
+                        sev = IncidentSeverity.CRITICAL if state == VerificationState.CONFIRMED else (
+                            IncidentSeverity.HIGH if state == VerificationState.VERIFYING else IncidentSeverity.MEDIUM
+                        )
                     else:
-                        p_tier = "P3"
-                        p_score = 45.0
-                        sev = IncidentSeverity.MEDIUM
+                        sev = IncidentSeverity.HIGH if state == VerificationState.CONFIRMED else IncidentSeverity.MEDIUM
+
+                    # Calculate deterministic priority tier and score using verified IncidentService formula
+                    p_tier, p_score, calc_reasons = IncidentService.calculate_priority(
+                        severity=sev,
+                        evidence_score=ev_score,
+                        estimated_people_affected=max(1, len(active_tracks)),
+                        affected_lanes_count=2 if inc_type == IncidentType.COLLISION else 0,
+                        evidence_count=len(ev_items),
+                        emergency_involved=False
+                    )
+                    combined_reasons = reasons + [r for r in calc_reasons if r not in reasons]
 
                     existing_inc = db.get_incident(inc_id)
                     current_resp_state = existing_inc.response_state if existing_inc else ResponseState.UNACKNOWLEDGED

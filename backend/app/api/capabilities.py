@@ -79,5 +79,12 @@ def get_capabilities():
         "map": "leaflet_osm_with_schematic_fallback",
         "demo": settings.DEMO_MODE,
         "truthfulness_enforced": True,
-        "provenance_tracked": True
+        "provenance_tracked": True,
+        "ai_assistant": {
+            "enabled": bool(settings.OPENAI_ENABLED),
+            "provider": "openai",
+            "model": settings.OPENAI_MODEL,
+            "mode": "operator_decision_support",
+            "autonomous_actions": False
+        }
     }

@@ -12,6 +12,7 @@ import {
   Check, 
   ArrowRight 
 } from 'lucide-react';
+import AIOperatorPanel from './AIOperatorPanel';
 
 export default function IncidentDrawer({ 
   incident, 
@@ -30,14 +31,14 @@ export default function IncidentDrawer({
   const handleAuthorize = async () => {
     setActionLoading(true);
     try {
-      await fetch(`/api/incidents/${incident.id}/response-state`, {
+      const res = await fetch(`/api/incidents/${incident.id}/authorize-response`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          new_state: 'AUTHORIZED',
-          reason: 'Operator manual authorization for emergency response & corridor activation'
-        })
+        headers: { 'Content-Type': 'application/json' }
       });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || `Authorization failed (${res.status})`);
+      }
       if (onAuthorizeResponse) onAuthorizeResponse();
     } catch (err) {
       console.error('Failed to authorize:', err);
@@ -49,14 +50,15 @@ export default function IncidentDrawer({
   const handleDispatch = async () => {
     setActionLoading(true);
     try {
-      await fetch('/api/corridors/plan', {
+      const res = await fetch(`/api/incidents/${incident.id}/dispatch`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          incident_id: incident.id,
-          resource_id: 'AMB-01'
-        })
+        body: JSON.stringify({})
       });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || `Dispatch failed (${res.status})`);
+      }
       if (onDispatched) onDispatched();
     } catch (err) {
       console.error('Failed to dispatch:', err);
@@ -151,11 +153,18 @@ export default function IncidentDrawer({
         <div className="glass-panel-subtle" style={{ padding: '10px' }}>
           <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>PRIORITY TIER</div>
           <div style={{ fontSize: '14px', fontWeight: '700', color: '#f59e0b' }}>
-            {incident.priority_tier || 'P1'} ({incident.priority_score || 92}/100)
+            {incident.priority_tier || 'P1'} ({Math.round(incident.priority_score || 50)}/100)
           </div>
           <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>Resource queue rank</div>
         </div>
       </div>
+
+      {/* AI Operator Copilot Assistant */}
+      <AIOperatorPanel 
+        incident={incident} 
+        onAuthorizeDispatch={handleDispatch}
+        isDispatched={isDispatched}
+      />
 
       {/* Why this alert was created (Verifiable Evidence) */}
       <div>
