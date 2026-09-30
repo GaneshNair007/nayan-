@@ -112,3 +112,46 @@ class DynamicCorridorEngine:
         snapshot.clearance_distance = clearance_cells * self.cell_h
         
         return snapshot
+
+    def verify_segment_cctv(self, camera_id: str, current_tracks: List[TrackedEntity]) -> Dict[str, Any]:
+        """
+        Implements real-time CCTV verification for a specific road segment.
+        Analyzes the active camera feed to determine if the 3.0m minimum clearance
+        is actually achieved by calculating lane elasticity and blockages.
+        """
+        # Count vehicles in the camera's FOV
+        vehicles = [t for t in current_tracks if t.domain_type in ["car", "bus", "truck", "van"]]
+        two_wheelers = [t for t in current_tracks if t.domain_type in ["motorcycle", "scooter", "auto-rickshaw"]]
+        
+        # Calculate theoretical clearance based on bounding boxes
+        total_vehicle_width_px = sum([v.width for v in vehicles]) + sum([w.width * 0.5 for w in two_wheelers])
+        
+        # Assume FOV is roughly 12 meters wide
+        pixels_per_meter = self.grid_width / 12.0
+        used_width_meters = total_vehicle_width_px / pixels_per_meter
+        available_width_meters = 12.0 - used_width_meters
+        
+        # Are there stationary vehicles blocking the center?
+        center_blocked = False
+        center_x = self.grid_width / 2.0
+        for v in vehicles:
+            if v.stationary_duration_s > 2.0 and abs(v.current_centroid[0] - center_x) < (self.grid_width * 0.2):
+                center_blocked = True
+                
+        # Determine status
+        clearance_width = max(0.0, available_width_meters)
+        if center_blocked or clearance_width < 3.0:
+            status = "FAILED"
+        elif clearance_width >= 3.5:
+            status = "CLEARED"
+        else:
+            status = "COMPRESSING"
+            
+        return {
+            "camera_id": camera_id,
+            "verified_by_cctv": True,
+            "clearance_width_meters": round(clearance_width, 1),
+            "traffic_compression_state": status,
+            "center_blocked": center_blocked
+        }
+

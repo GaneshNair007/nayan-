@@ -51,6 +51,8 @@ class VideoAnalysisJob:
         self.latest_evidence_score: float = 0.0
         self.latest_verification_state: str = "OBSERVED"
         self.latest_corridor_action: str = "PROCEED_NORMAL"
+        self.latest_segment_clearance: float = 12.0
+        self.latest_segment_compression: str = "FLOWING"
 
 
 class PerceptionPipelineManager:
@@ -122,7 +124,9 @@ class PerceptionPipelineManager:
             "verification_state": job.latest_verification_state,
             "evidence_score": round(job.latest_evidence_score, 2),
             "active_incident_id": job.active_incident_id,
-            "corridor_action": job.latest_corridor_action
+            "corridor_action": job.latest_corridor_action,
+            "segment_clearance": job.latest_segment_clearance,
+            "segment_compression": job.latest_segment_compression
         }
 
     def get_active_tracks(self, camera_id: str) -> List[Dict[str, Any]]:
@@ -214,6 +218,11 @@ class PerceptionPipelineManager:
                 corridor_features = corridor_engine.extract_corridor_features(active_tracks, curr_timestamp)
                 if corridor_features.ambulance_track_id:
                     job.latest_corridor_action = corridor_features.recommended_action
+
+                # NAYAN - Real-Time CCTV Segment Verification
+                cctv_verification = corridor_engine.verify_segment_cctv(camera_id, active_tracks)
+                job.latest_segment_clearance = cctv_verification["clearance_width_meters"]
+                job.latest_segment_compression = cctv_verification["traffic_compression_state"]
 
                 # 4. Multi-Signal Evidence Fusion & State Machine Transitions
                 mean_model_conf = float(np.mean([d.confidence for d in detections])) if detections else 0.50

@@ -406,11 +406,13 @@ export default function CameraIntelligenceView({
           </div>
 
           <div className="glass-panel-subtle" style={{ padding: '8px 12px', background: 'rgba(56, 189, 248, 0.05)' }}>
-            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>DYNAMIC CORRIDOR</div>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>CCTV VERIFICATION</div>
             <div style={{ fontSize: '12px', fontWeight: '700', color: '#a78bfa', fontFamily: 'var(--font-mono)' }}>
               {videoStatus?.corridor_action?.replace('_', ' ') || 'STANDBY'}
             </div>
-            <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>Lane Elasticity</div>
+            <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>
+              Clearance: <span style={{ color: videoStatus?.segment_compression === 'FAILED' ? '#ef4444' : '#10b981' }}>{videoStatus?.segment_clearance ? `${videoStatus.segment_clearance.toFixed(1)}m` : 'N/A'}</span> ({videoStatus?.segment_compression || 'IDLE'})
+            </div>
           </div>
         </div>
 
