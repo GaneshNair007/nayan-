@@ -181,11 +181,15 @@ class HighPrecisionByteTracker(BaseTracker):
         self,
         fps: float = 30.0,
         iou_threshold: float = 0.30,
-        max_lost_frames: int = 30
+        max_lost_frames: int = 30,
+        high_thresh: float = 0.25,
+        low_thresh: float = 0.10
     ):
         self.fps = fps
         self.iou_threshold = iou_threshold
         self.max_lost_frames = max_lost_frames
+        self.high_thresh = high_thresh
+        self.low_thresh = low_thresh
         self.next_id = 1
         self.tracks: Dict[int, TrackedEntity] = {}
 
@@ -196,8 +200,8 @@ class HighPrecisionByteTracker(BaseTracker):
         timestamp: float
     ) -> List[TrackedEntity]:
         # Filter detections into high and low confidence groups
-        high_dets = [d for d in detections if d.confidence >= 0.40]
-        low_dets = [d for d in detections if 0.15 <= d.confidence < 0.40]
+        high_dets = [d for d in detections if d.confidence >= self.high_thresh]
+        low_dets = [d for d in detections if self.low_thresh <= d.confidence < self.high_thresh]
 
         matched_track_ids = set()
         matched_det_indices = set()

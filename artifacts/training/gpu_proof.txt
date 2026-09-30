@@ -1,10 +1,10 @@
-Timestamp: 2026-09-30 17:11:28
+Timestamp: 2026-09-30 17:33:13
 PyTorch CUDA Available: True
 Device Name: NVIDIA GeForce RTX 4050 Laptop GPU
-Allocated VRAM: 174.52 MB
-Reserved VRAM: 1428.00 MB
+Allocated VRAM: 590.99 MB
+Reserved VRAM: 1452.00 MB
 
-Wed Sep 30 17:11:28 2026       
+Wed Sep 30 17:33:13 2026       
 +-----------------------------------------------------------------------------------------+
 | NVIDIA-SMI 591.66                 Driver Version: 591.66         CUDA Version: 13.1     |
 +-----------------------------------------+------------------------+----------------------+
@@ -13,7 +13,7 @@ Wed Sep 30 17:11:28 2026
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
 |   0  NVIDIA GeForce RTX 4050 ...  WDDM  |   00000000:01:00.0  On |                  N/A |
-| N/A   50C    P0             15W /   50W |    3502MiB /   6141MiB |     43%      Default |
+| N/A   51C    P0             13W /   50W |    3314MiB /   6141MiB |     52%      Default |
 |                                         |                        |                  N/A |
 +-----------------------------------------+------------------------+----------------------+
 
@@ -22,6 +22,7 @@ Wed Sep 30 17:11:28 2026
 |  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
 |        ID   ID                                                               Usage      |
 |=========================================================================================|
+|    0   N/A  N/A            1156      C   ...s\Python\Python312\python.exe      N/A      |
 |    0   N/A  N/A            3260    C+G   ....0.4234.48\msedgewebview2.exe      N/A      |
 |    0   N/A  N/A            3768    C+G   ...crosoft OneDrive\OneDrive.exe      N/A      |
 |    0   N/A  N/A           11444    C+G   ...2p2nqsd0c76g0\app\ChatGPT.exe      N/A      |
@@ -44,7 +45,6 @@ Wed Sep 30 17:11:28 2026
 |    0   N/A  N/A           34348    C+G   ...1g1gvanyjgm\WhatsApp.Root.exe      N/A      |
 |    0   N/A  N/A           36348    C+G   ...\codex-computer-use-swift.exe      N/A      |
 |    0   N/A  N/A           37280    C+G   ...2p2nqsd0c76g0\app\ChatGPT.exe      N/A      |
-|    0   N/A  N/A           42844      C   ...s\Python\Python312\python.exe      N/A      |
 |    0   N/A  N/A           43172    C+G   ...Chrome\Application\chrome.exe      N/A      |
 |    0   N/A  N/A           44068    C+G   ...Chrome\Application\chrome.exe      N/A      |
 |    0   N/A  N/A           45060    C+G   ...y\StartMenuExperienceHost.exe      N/A      |

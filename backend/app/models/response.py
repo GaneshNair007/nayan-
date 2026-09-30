@@ -23,8 +23,11 @@ class ResourceStatus(str, Enum):
 class CorridorStatus(str, Enum):
     NOT_PLANNED = "NOT_PLANNED"
     PLANNED = "PLANNED"
+    BLOCKED = "BLOCKED"
+    FORMING = "FORMING"
     READY = "READY"
     ACTIVE = "ACTIVE"
+    PASSED = "PASSED"
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
 

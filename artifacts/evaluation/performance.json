@@ -1,11 +1,22 @@
 {
   "device": "cuda:0",
   "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
-  "input_resolution": "640x640",
-  "benchmark_runs": 50,
-  "average_inference_ms": 24.4,
-  "min_inference_ms": 18.34,
-  "max_inference_ms": 31.27,
-  "end_to_end_fps": 41.0,
-  "vram_allocated_mb": 23.3
+  "model_name": "NAYAN India Emergency Traffic Detector",
+  "model_path": "C:\\nayan\\artifacts\\models\\nayan_india\\best.pt",
+  "model_load_time_seconds": 0.724,
+  "benchmark_sample_frames": 100,
+  "latency_breakdown_ms": {
+    "preprocessing_mean": 0.001,
+    "inference_mean": 27.48,
+    "inference_min": 19.41,
+    "inference_max": 40.12,
+    "tracking_mean": 0.092,
+    "temporal_and_corridor_mean": 0.077,
+    "end_to_end_frame_mean": 27.65,
+    "end_to_end_frame_min": 19.46,
+    "end_to_end_frame_max": 40.28
+  },
+  "throughput_fps": 36.2,
+  "vram_allocated_mb": 17.5,
+  "vram_reserved_mb": 44.0
 }

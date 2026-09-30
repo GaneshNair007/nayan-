@@ -1,0 +1,145 @@
+{
+  "timestamp": "2026-09-30 17:31:41",
+  "base_url": "http://127.0.0.1:8000",
+  "ws_url": "ws://127.0.0.1:8000/ws/events",
+  "rest_endpoints": {
+    "/api/health": {
+      "status_code": 200,
+      "response": {
+        "status": "healthy",
+        "service": "AEGIS GRID API Engine",
+        "version": "1.0.0",
+        "timestamp": "2026-09-30T12:01:41.757457+00:00"
+      }
+    },
+    "/api/capabilities": {
+      "status_code": 200,
+      "model": "NAYAN India Detector",
+      "sha256": "892a51e21dcf9f430702a98f72e0e16b72771473eafab2f320dacb7594ca4e48",
+      "device": "cuda:0",
+      "classes": [
+        "ambulance",
+        "car",
+        "motorcycle",
+        "auto_rickshaw",
+        "bus",
+        "truck"
+      ]
+    },
+    "/api/cameras": {
+      "status_code": 200,
+      "cameras_count": 9
+    },
+    "/api/incidents": {
+      "status_code": 200,
+      "incidents_count": 1
+    },
+    "/api/resources": {
+      "status_code": 200,
+      "resources_count": 3
+    },
+    "/api/junctions": {
+      "status_code": 200,
+      "junctions_count": 3
+    },
+    "/api/incidents/INC-2026-001": {
+      "status_code": 200,
+      "verification_state": "CONFIRMED",
+      "response_state": "DISPATCHED"
+    }
+  },
+  "websocket": {
+    "handshake": "PASS",
+    "ping_pong": "PASS",
+    "envelope_structure_valid": true,
+    "received_event_samples": [
+      {
+        "id": "evt-6f01d622",
+        "schemaVersion": 1,
+        "sequence": 7,
+        "type": "incident.created",
+        "occurredAt": "2026-09-30T12:01:43.627543+00:00",
+        "source": "incident-engine",
+        "scenarioId": "crowd-anomaly",
+        "correlationId": "INC-2026-002",
+        "provenance": "INFERENCE",
+        "demo": true,
+        "payload": {
+          "id": "INC-2026-002",
+          "type": "CROWD_ANOMALY",
+          "camera_id": "CAM-07",
+          "location": {
+            "lat": 12.978,
+            "lon": 77.602,
+            "address": "Plaza Blvd & Metro Entrance",
+            "junction_id": "JNC-03"
+          },
+          "verification_state": "CONFIRMED",
+          "response_state": "UNACKNOWLEDGED",
+          "model_confidence": 0.89,
+          "evidence_score": 0.94,
+          "severity": "HIGH",
+          "priority_tier": "P2",
+          "priority_score": 78.0,
+          "priority_reasons": [
+            "+ High evidence completeness (94%)",
+            "+ 45 estimated individuals affected",
+            "+ Directional turbulence detected"
+          ],
+          "title": "Crowd Surge Pattern at Metro Plaza",
+          "description": "Perception engine detected abnormal pedestrian accumulation and vector convergence near Metro Concourse Entry B.",
+          "affected_lanes": [
+            "Pedestrian Plaza",
+            "Metro Ramp"
+          ],
+          "estimated_people_affected": 45,
+          "provenance": "INFERENCE",
+          "evidence": [
+            {
+              "id": "ev-c1",
+              "type": "density_spike",
+              "source": "CAM-07 Density Engine",
+              "timestamp": "2026-09-30T12:01:43.627543+00:00",
+              "confidence_score": 0.91,
+              "provenance": "INFERENCE",
+              "details": {
+                "density_persons_m2": 2.4,
+                "growth_rate_pct_min": 320.0
+              }
+            },
+            {
+              "id": "ev-c2",
+              "type": "directional_turbulence",
+              "source": "CAM-07 Optical Flow",
+              "timestamp": "2026-09-30T12:01:43.627543+00:00",
+              "confidence_score": 0.87,
+              "provenance": "INFERENCE",
+              "details": {
+                "vector_dispersion_index": 0.84,
+                "avg_pedestrian_speed_ms": 0.4
+              }
+            },
+            {
+              "id": "ev-c3",
+              "type": "spatial_persistence",
+              "source": "Temporal Association Graph",
+              "timestamp": "2026-09-30T12:01:43.627543+00:00",
+              "confidence_score": 0.93,
+              "provenance": "INFERENCE",
+              "details": {
+                "persistence_seconds": 90.0
+              }
+            }
+          ],
+          "evidence_capsule": null,
+          "state_history": [],
+          "dispatch_id": null,
+          "created_at": "2026-09-30T12:01:43.627543+00:00",
+          "updated_at": "2026-09-30T12:01:43.627543+00:00"
+        }
+      }
+    ],
+    "reconnection_recovery": "PASS"
+  },
+  "status": "PASSED_ALL_GATES"
+}

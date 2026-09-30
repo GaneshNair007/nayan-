@@ -167,3 +167,97 @@ class ResponseService:
         if corridor_id not in db.corridor_plans:
             raise KeyError(f"Corridor plan {corridor_id} not found")
         return db.corridor_plans[corridor_id]
+
+    @staticmethod
+    def get_all_corridor_plans() -> List[CorridorPlan]:
+        return list(db.corridor_plans.values())
+
+    @staticmethod
+    def update_corridor_status(corridor_id: str, new_status: CorridorStatus) -> CorridorPlan:
+        plan = ResponseService.get_corridor_plan(corridor_id)
+        plan.status = new_status
+        db.corridor_plans[corridor_id] = plan
+        return plan
+
+    @staticmethod
+    def update_segment_status(
+        corridor_id: str,
+        segment_id: str,
+        clearance_width_meters: float,
+        compression_state: str,
+        verified_by_cctv: bool = True
+    ) -> CorridorPlan:
+        plan = ResponseService.get_corridor_plan(corridor_id)
+        found = False
+        for seg in plan.segment_sequence:
+            if seg.segment_id == segment_id:
+                seg.clearance_width_meters = clearance_width_meters
+                seg.traffic_compression_state = compression_state
+                seg.verified_by_cctv = verified_by_cctv
+                found = True
+                break
+
+        if not found:
+            raise KeyError(f"Segment {segment_id} not found in corridor {corridor_id}")
+
+        # If a segment failed or clearance dropped below 2.5m, dynamically trigger rerouting!
+        if compression_state == "FAILED" or clearance_width_meters < 2.5:
+            return ResponseService.reroute_corridor(corridor_id, failed_segment_id=segment_id)
+
+        db.corridor_plans[corridor_id] = plan
+        return plan
+
+    @staticmethod
+    def reroute_corridor(corridor_id: str, failed_segment_id: Optional[str] = None) -> CorridorPlan:
+        plan = ResponseService.get_corridor_plan(corridor_id)
+        plan.is_rerouted = True
+        plan.status = CorridorStatus.ACTIVE
+
+        # Identify failed segment and replace with dynamic bypass segment
+        if failed_segment_id:
+            for seg in plan.segment_sequence:
+                if seg.segment_id == failed_segment_id:
+                    seg.traffic_compression_state = "FAILED"
+                    seg.clearance_width_meters = min(seg.clearance_width_meters, 1.8)
+
+            # Insert bypass segment
+            bypass_id = f"{failed_segment_id}-BYPASS"
+            if not any(s.segment_id == bypass_id for s in plan.segment_sequence):
+                bypass_seg = SegmentCorridorStatus(
+                    segment_id=bypass_id,
+                    camera_id="CAM-01",  # Unobstructed bypass route
+                    clearance_width_meters=3.8,
+                    traffic_compression_state="CLEARED",
+                    upstream_signal_state="HALTED_NEW_TRAFFIC",
+                    verified_by_cctv=True
+                )
+                plan.segment_sequence.append(bypass_seg)
+
+        # Update waypoints with alternate bypass geometry
+        alt_coords = [
+            [77.5930, 12.9705],
+            [77.5947, 12.9714],  # JNC-01
+            [77.5970, 12.9725],  # Bypass street
+            [77.5995, 12.9745],  # Re-entry
+            [77.6020, 12.9780]   # Destination
+        ]
+        plan.route.geometry_geojson = alt_coords
+        plan.route.distance_meters = 2780.0
+        plan.route.duration_seconds = 210.0
+
+        db.corridor_plans[corridor_id] = plan
+
+        db.log_audit(
+            action=f"Dynamic Rerouting for Green Corridor {corridor_id}",
+            entity_type="CORRIDOR",
+            entity_id=corridor_id,
+            previous_state="ACTIVE_DEFAULT",
+            next_state="ACTIVE_REROUTED",
+            reason=f"Dynamic reroute triggered due to obstruction on {failed_segment_id or 'corridor'}",
+            actor="SYSTEM",
+            source="corridor-engine",
+            provenance=DataProvenance.INFERENCE,
+            details={"corridor_id": corridor_id, "failed_segment": failed_segment_id, "rerouted": True}
+        )
+
+        return plan

@@ -4,73 +4,73 @@
   "total_test_images": 1173,
   "device": "cuda:0",
   "metrics": {
-    "precision": 0.824,
-    "recall": 0.9219,
-    "mAP50": 0.76,
-    "mAP50-95": 0.5168
+    "precision": 0.8537,
+    "recall": 0.9317,
+    "mAP50": 0.7948,
+    "mAP50-95": 0.5404
   },
   "target_classes_breakdown": {
-    "ambulance_precision": 0.6703,
-    "ambulance_recall": 0.9385,
-    "ambulance_ap50": 0.6291,
-    "auto_rickshaw_precision": 0.8477,
-    "auto_rickshaw_recall": 0.8841,
-    "auto_rickshaw_ap50": 0.7495
+    "ambulance_precision": 0.9206,
+    "ambulance_recall": 0.8923,
+    "ambulance_ap50": 0.8215,
+    "auto_rickshaw_precision": 0.6596,
+    "auto_rickshaw_recall": 0.9399,
+    "auto_rickshaw_ap50": 0.62
   },
   "per_class": {
     "ambulance": {
       "gt_count": 65,
-      "tp": 61,
-      "fp": 30,
-      "fn": 4,
-      "precision": 0.6703,
-      "recall": 0.9385,
-      "ap50": 0.6291
+      "tp": 58,
+      "fp": 5,
+      "fn": 7,
+      "precision": 0.9206,
+      "recall": 0.8923,
+      "ap50": 0.8215
     },
     "car": {
       "gt_count": 529,
       "tp": 515,
-      "fp": 95,
+      "fp": 84,
       "fn": 14,
-      "precision": 0.8443,
+      "precision": 0.8598,
       "recall": 0.9735,
-      "ap50": 0.8219
+      "ap50": 0.837
     },
     "motorcycle": {
       "gt_count": 158,
-      "tp": 157,
-      "fp": 29,
-      "fn": 1,
-      "precision": 0.8441,
-      "recall": 0.9937,
-      "ap50": 0.8387
+      "tp": 154,
+      "fp": 9,
+      "fn": 4,
+      "precision": 0.9448,
+      "recall": 0.9747,
+      "ap50": 0.9209
     },
     "auto_rickshaw": {
       "gt_count": 233,
-      "tp": 206,
-      "fp": 37,
-      "fn": 27,
-      "precision": 0.8477,
-      "recall": 0.8841,
-      "ap50": 0.7495
+      "tp": 219,
+      "fp": 113,
+      "fn": 14,
+      "precision": 0.6596,
+      "recall": 0.9399,
+      "ap50": 0.62
     },
     "bus": {
       "gt_count": 147,
-      "tp": 135,
-      "fp": 7,
-      "fn": 12,
-      "precision": 0.9507,
-      "recall": 0.9184,
-      "ap50": 0.8731
+      "tp": 145,
+      "fp": 25,
+      "fn": 2,
+      "precision": 0.8529,
+      "recall": 0.9864,
+      "ap50": 0.8413
     },
     "truck": {
       "gt_count": 130,
       "tp": 107,
-      "fp": 29,
+      "fp": 14,
       "fn": 23,
-      "precision": 0.7868,
+      "precision": 0.8843,
       "recall": 0.8231,
-      "ap50": 0.6476
+      "ap50": 0.7278
     }
   }
 }

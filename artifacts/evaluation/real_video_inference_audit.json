@@ -1,0 +1,474 @@
+{
+  "timestamp": "2026-09-30 17:29:52",
+  "model_path": "C:\\nayan\\artifacts\\models\\nayan_india\\best.pt",
+  "model_sha256": "892a51e21dcf9f430702a98f72e0e16b72771473eafab2f320dacb7594ca4e48",
+  "device": "cuda:0",
+  "gpu_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "videos": {
+    "CAM-03": {
+      "scenario": "ambulance_corridor",
+      "frames_audited": 75,
+      "unique_tracks_count": 3,
+      "stable_tracks_count": 3,
+      "stable_track_ids": [
+        "AMB-001",
+        "V-002",
+        "V-003"
+      ],
+      "sample_detections": [
+        {
+          "frame": 0,
+          "timestamp_s": 0.0,
+          "class": "ambulance",
+          "confidence": 0.278,
+          "bbox": [
+            872.0,
+            324.5,
+            1280.0,
+            720.0
+          ],
+          "track_id": "AMB-001"
+        },
+        {
+          "frame": 0,
+          "timestamp_s": 0.0,
+          "class": "auto_rickshaw",
+          "confidence": 0.257,
+          "bbox": [
+            2.7,
+            381.0,
+            68.4,
+            537.5
+          ],
+          "track_id": "V-002"
+        },
+        {
+          "frame": 1,
+          "timestamp_s": 0.03,
+          "class": "ambulance",
+          "confidence": 0.274,
+          "bbox": [
+            868.0,
+            325.0,
+            1280.0,
+            720.0
+          ],
+          "track_id": "AMB-001"
+        },
+        {
+          "frame": 1,
+          "timestamp_s": 0.03,
+          "class": "auto_rickshaw",
+          "confidence": 0.257,
+          "bbox": [
+            2.8,
+            381.5,
+            68.1,
+            537.0
+          ],
+          "track_id": "V-002"
+        },
+        {
+          "frame": 2,
+          "timestamp_s": 0.07,
+          "class": "auto_rickshaw",
+          "confidence": 0.279,
+          "bbox": [
+            2.8,
+            382.0,
+            68.1,
+            537.0
+          ],
+          "track_id": "V-002"
+        },
+        {
+          "frame": 2,
+          "timestamp_s": 0.07,
+          "class": "ambulance",
+          "confidence": 0.258,
+          "bbox": [
+            874.0,
+            324.5,
+            1280.0,
+            720.0
+          ],
+          "track_id": "AMB-001"
+        },
+        {
+          "frame": 10,
+          "timestamp_s": 0.33,
+          "class": "auto_rickshaw",
+          "confidence": 0.278,
+          "bbox": [
+            2.7,
+            380.0,
+            68.4,
+            536.5
+          ],
+          "track_id": "V-002"
+        },
+        {
+          "frame": 25,
+          "timestamp_s": 0.83,
+          "class": "auto_rickshaw",
+          "confidence": 0.306,
+          "bbox": [
+            3.2,
+            373.0,
+            67.9,
+            535.0
+          ],
+          "track_id": "V-002"
+        }
+      ]
+    },
+    "CAM-04": {
+      "scenario": "collision",
+      "frames_audited": 75,
+      "unique_tracks_count": 7,
+      "stable_tracks_count": 3,
+      "stable_track_ids": [
+        "V-001",
+        "AMB-002",
+        "V-003"
+      ],
+      "sample_detections": [
+        {
+          "frame": 0,
+          "timestamp_s": 0.0,
+          "class": "truck",
+          "confidence": 0.504,
+          "bbox": [
+            574.0,
+            314.5,
+            855.0,
+            579.5
+          ],
+          "track_id": "V-001"
+        },
+        {
+          "frame": 0,
+          "timestamp_s": 0.0,
+          "class": "ambulance",
+          "confidence": 0.351,
+          "bbox": [
+            1128.0,
+            6.9,
+            1276.0,
+            154.1
+          ],
+          "track_id": "AMB-002"
+        },
+        {
+          "frame": 1,
+          "timestamp_s": 0.03,
+          "class": "truck",
+          "confidence": 0.508,
+          "bbox": [
+            574.0,
+            314.5,
+            855.0,
+            579.5
+          ],
+          "track_id": "V-001"
+        },
+        {
+          "frame": 1,
+          "timestamp_s": 0.03,
+          "class": "ambulance",
+          "confidence": 0.35,
+          "bbox": [
+            1128.0,
+            6.9,
+            1276.0,
+            154.1
+          ],
+          "track_id": "AMB-002"
+        },
+        {
+          "frame": 2,
+          "timestamp_s": 0.07,
+          "class": "truck",
+          "confidence": 0.502,
+          "bbox": [
+            574.0,
+            314.5,
+            855.0,
+            579.5
+          ],
+          "track_id": "V-001"
+        },
+        {
+          "frame": 2,
+          "timestamp_s": 0.07,
+          "class": "ambulance",
+          "confidence": 0.35,
+          "bbox": [
+            1128.0,
+            6.9,
+            1276.0,
+            154.1
+          ],
+          "track_id": "AMB-002"
+        },
+        {
+          "frame": 10,
+          "timestamp_s": 0.33,
+          "class": "car",
+          "confidence": 0.56,
+          "bbox": [
+            581.0,
+            359.5,
+            851.0,
+            586.5
+          ],
+          "track_id": "V-006"
+        },
+        {
+          "frame": 10,
+          "timestamp_s": 0.33,
+          "class": "ambulance",
+          "confidence": 0.365,
+          "bbox": [
+            1128.0,
+            6.9,
+            1276.0,
+            154.1
+          ],
+          "track_id": "AMB-002"
+        }
+      ]
+    },
+    "CAM-07": {
+      "scenario": "crowd",
+      "frames_audited": 75,
+      "unique_tracks_count": 2,
+      "stable_tracks_count": 1,
+      "stable_track_ids": [
+        "V-001"
+      ],
+      "sample_detections": [
+        {
+          "frame": 12,
+          "timestamp_s": 0.4,
+          "class": "auto_rickshaw",
+          "confidence": 0.374,
+          "bbox": [
+            2.0,
+            0.0,
+            1280.0,
+            720.0
+          ],
+          "track_id": "V-001"
+        },
+        {
+          "frame": 13,
+          "timestamp_s": 0.43,
+          "class": "auto_rickshaw",
+          "confidence": 0.372,
+          "bbox": [
+            2.0,
+            0.0,
+            1280.0,
+            720.0
+          ],
+          "track_id": "V-001"
+        },
+        {
+          "frame": 14,
+          "timestamp_s": 0.47,
+          "class": "auto_rickshaw",
+          "confidence": 0.297,
+          "bbox": [
+            2.0,
+            0.0,
+            1280.0,
+            720.0
+          ],
+          "track_id": "V-001"
+        },
+        {
+          "frame": 15,
+          "timestamp_s": 0.5,
+          "class": "auto_rickshaw",
+          "confidence": 0.259,
+          "bbox": [
+            1.0,
+            0.0,
+            1279.0,
+            720.0
+          ],
+          "track_id": "V-001"
+        },
+        {
+          "frame": 16,
+          "timestamp_s": 0.53,
+          "class": "auto_rickshaw",
+          "confidence": 0.335,
+          "bbox": [
+            0.0,
+            0.0,
+            1280.0,
+            720.0
+          ],
+          "track_id": "V-001"
+        },
+        {
+          "frame": 25,
+          "timestamp_s": 0.83,
+          "class": "auto_rickshaw",
+          "confidence": 0.267,
+          "bbox": [
+            0.0,
+            0.0,
+            1280.0,
+            720.0
+          ],
+          "track_id": "V-001"
+        },
+        {
+          "frame": 40,
+          "timestamp_s": 1.33,
+          "class": "auto_rickshaw",
+          "confidence": 0.406,
+          "bbox": [
+            0.0,
+            0.0,
+            1279.0,
+            720.0
+          ],
+          "track_id": "V-001"
+        },
+        {
+          "frame": 55,
+          "timestamp_s": 1.83,
+          "class": "auto_rickshaw",
+          "confidence": 0.452,
+          "bbox": [
+            0.0,
+            0.0,
+            1280.0,
+            720.0
+          ],
+          "track_id": "V-001"
+        }
+      ]
+    },
+    "CAM-11": {
+      "scenario": "baggage",
+      "frames_audited": 75,
+      "unique_tracks_count": 3,
+      "stable_tracks_count": 2,
+      "stable_track_ids": [
+        "BAG-001",
+        "BAG-002"
+      ],
+      "sample_detections": [
+        {
+          "frame": 0,
+          "timestamp_s": 0.0,
+          "class": "luggage",
+          "confidence": 0.61,
+          "bbox": [
+            419.3,
+            214.4,
+            451.8,
+            259.3
+          ],
+          "track_id": "BAG-001"
+        },
+        {
+          "frame": 1,
+          "timestamp_s": 0.03,
+          "class": "luggage",
+          "confidence": 0.517,
+          "bbox": [
+            420.7,
+            213.3,
+            451.5,
+            261.1
+          ],
+          "track_id": "BAG-001"
+        },
+        {
+          "frame": 2,
+          "timestamp_s": 0.07,
+          "class": "luggage",
+          "confidence": 0.449,
+          "bbox": [
+            422.0,
+            213.5,
+            451.4,
+            261.1
+          ],
+          "track_id": "BAG-001"
+        },
+        {
+          "frame": 2,
+          "timestamp_s": 0.07,
+          "class": "luggage",
+          "confidence": 0.418,
+          "bbox": [
+            413.9,
+            214.7,
+            448.2,
+            260.2
+          ],
+          "track_id": "BAG-001"
+        },
+        {
+          "frame": 3,
+          "timestamp_s": 0.1,
+          "class": "luggage",
+          "confidence": 0.44,
+          "bbox": [
+            423.5,
+            214.4,
+            451.6,
+            261.1
+          ],
+          "track_id": "BAG-001"
+        },
+        {
+          "frame": 3,
+          "timestamp_s": 0.1,
+          "class": "luggage",
+          "confidence": 0.427,
+          "bbox": [
+            414.0,
+            214.9,
+            447.2,
+            260.3
+          ],
+          "track_id": "BAG-001"
+        },
+        {
+          "frame": 10,
+          "timestamp_s": 0.33,
+          "class": "luggage",
+          "confidence": 0.394,
+          "bbox": [
+            422.4,
+            213.1,
+            451.6,
+            261.0
+          ],
+          "track_id": "BAG-001"
+        },
+        {
+          "frame": 10,
+          "timestamp_s": 0.33,
+          "class": "luggage",
+          "confidence": 0.387,
+          "bbox": [
+            414.1,
+            214.5,
+            447.3,
+            260.2
+          ],
+          "track_id": "BAG-001"
+        }
+      ]
+    }
+  }
+}
