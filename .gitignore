@@ -22,3 +22,6 @@ datasets/processed/
 artifacts/raw/
 yolov8n.pt
 backend/yolov8n.pt
+
+# Local verification output
+output/

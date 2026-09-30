@@ -3,6 +3,7 @@ import argparse
 import os
 from pathlib import Path
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -32,7 +33,7 @@ def main():
         raise SystemExit('Frontend dependencies missing. Run: python scripts/run_local.py --setup')
     processes = []
     try:
-        backend = subprocess.Popen([args.python, '-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8000'], cwd=ROOT / 'backend')
+        backend = subprocess.Popen([args.python, '-m', 'uvicorn', 'app.main:app', '--host', '127.0.0.1', '--port', '8000'], cwd=ROOT / 'backend', start_new_session=os.name != 'nt')
         processes.append(backend)
         healthy = False
         for _ in range(120):
@@ -47,7 +48,7 @@ def main():
                 time.sleep(.5)
         if not healthy:
             raise RuntimeError('Backend did not become healthy on port 8000. Check dependencies and model availability.')
-        frontend = subprocess.Popen([NPM, 'run', 'dev', '--', '--host', '127.0.0.1', '--strictPort'], cwd=ROOT / 'frontend')
+        frontend = subprocess.Popen([NPM, 'run', 'dev', '--', '--host', '127.0.0.1', '--strictPort'], cwd=ROOT / 'frontend', start_new_session=os.name != 'nt')
         processes.append(frontend)
         print('\nNAYAN: http://localhost:5173\nBackend: http://localhost:8000/docs\nCtrl+C stops both services.\n', flush=True)
         while all(process.poll() is None for process in processes):
@@ -61,12 +62,12 @@ def main():
                 if os.name == 'nt':
                     subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 else:
-                    process.terminate()
+                    os.killpg(process.pid, signal.SIGTERM)
         for process in processes:
             try:
                 process.wait(timeout=5)
             except subprocess.TimeoutExpired:
-                process.kill()
+                os.killpg(process.pid, signal.SIGKILL) if os.name != 'nt' else process.kill()
 
 if __name__ == '__main__':
     main()

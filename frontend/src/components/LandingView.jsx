@@ -8,7 +8,7 @@ export default function LandingView({ videoCatalogue, onSelectTab }) {
     <div className="landing-meta eyebrow"><span>NETWORKED AI FOR<br />YIELDING ALERTS & NAVIGATION</span><span>COMPUTER VISION /<br />URBAN INTELLIGENCE</span></div>
     <h1 className="landing-wordmark">NAYAN</h1>
     <div className="landing-frame scroll-media">
-      {feed && !failed ? <video src={feed.video_url || `/api/videos/file/${feed.file}`} autoPlay loop muted playsInline aria-label={`${feed.cameraId} staged CCTV video`} onError={() => setFailed(true)} /> : <div className="feed-missing"><span className="eyebrow">CAMERA NETWORK / {failed ? 'MEDIA UNAVAILABLE' : 'AWAITING CATALOGUE'}</span></div>}
+      {feed && !failed ? <video src={feed.video_url || `/api/videos/file/${feed.file}`} autoPlay loop muted playsInline poster={`/media/${feed.cameraId}.jpg`} aria-label={`${feed.cameraId} staged CCTV video`} onError={() => setFailed(true)} /> : <div className="feed-missing">{feed && <img className="media-poster" src={`/media/${feed.cameraId}.jpg`} alt={`${feed.cameraId} recorded source frame`} />}<span className="eyebrow">CAMERA NETWORK / {failed ? 'MEDIA UNAVAILABLE' : 'AWAITING CATALOGUE'}</span></div>}
       <span className="eyebrow">{feed?.cameraId || 'N/A'} / STAGED CCTV / {feed?.provenance || 'N/A'}</span>
       <div className="landing-overlay"><h2>FROM OBSERVATION<br />TO ORCHESTRATION.</h2><Action onClick={() => onSelectTab('command-center')}>Enter command center</Action></div>
     </div>

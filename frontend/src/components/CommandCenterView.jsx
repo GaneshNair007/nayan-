@@ -4,7 +4,7 @@ import { Metric, SectionHead, Status, Notice } from './UI';
 import { human } from '../design/api';
 function Feed({ feed, onSelect }) {
   const [failed, setFailed] = useState(false);
-  return <button className="feed-tile" onClick={onSelect} aria-label={`Inspect ${feed.cameraId}`}><div className="feed-image">{!failed ? <video src={feed.video_url || `/api/videos/file/${feed.file}`} muted playsInline preload="metadata" onError={() => setFailed(true)} /> : <div className="feed-missing">MEDIA UNAVAILABLE</div>}</div><div className="feed-caption"><span>{feed.cameraId}</span><small>{human(feed.purpose)}</small></div></button>;
+  return <button className="feed-tile" onClick={onSelect} aria-label={`Inspect ${feed.cameraId}`}><div className="feed-image">{!failed ? <video src={feed.video_url || `/api/videos/file/${feed.file}`} poster={`/media/${feed.cameraId}.jpg`} muted playsInline preload="metadata" onError={() => setFailed(true)} /> : <img className="media-poster" src={`/media/${feed.cameraId}.jpg`} alt={`${feed.cameraId} recorded source frame; video unavailable`} />}</div><div className="feed-caption"><span>{feed.cameraId}</span><small>{human(feed.purpose)}</small></div></button>;
 }
 function CityMap({ cameras, junctions, resources, incidents, corridorPlan, onSelectCamera, onSelectIncident }) {
   const [zoom, setZoom] = useState(1);

@@ -12,7 +12,7 @@ export function SectionHead({ index, title, children }) {
   return <div className="section-head"><h2><span className="mono">{index} / </span>{title}</h2>{children}</div>;
 }
 export function Metric({ index, label, value, source, hint }) {
-  return <div className="metric"><span className="eyebrow">{index} / {label}</span><strong key={String(value)} className="metric-value">{value ?? 'N/A'}</strong><span className="metric-note">{hint || source || 'N/A'}{hint && source && <small className="source">{source}</small>}</span></div>;
+  return <div className="metric"><span className="eyebrow">{index} / {label}</span><strong key={String(value)} className={`metric-value ${typeof value === 'string' && value.length > 6 && !/\d/.test(value) ? 'metric-text' : ''}`}>{value ?? 'N/A'}</strong><span className="metric-note">{hint || source || 'N/A'}{hint && source && <small className="source">{source}</small>}</span></div>;
 }
 export function Notice({ title, children, error = false, onRetry }) {
   return <div className={`notice ${error ? 'notice-error' : ''}`} role={error ? 'alert' : 'status'}><span className="eyebrow">{title}</span>{children && <p>{children}</p>}{onRetry && <Action onClick={onRetry}>Retry connection</Action>}</div>;
