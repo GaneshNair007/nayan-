@@ -1,0 +1,115 @@
+"""
+Perception Bounded Service: Camera Health, Detection Adapters, Privacy Masking
+"""
+from typing import List, Dict, Any
+from datetime import datetime
+from app.models.camera import Camera, CameraStatus, Detection, BoundingBox
+from app.database import db
+
+class PerceptionService:
+    @staticmethod
+    def get_all_cameras() -> List[Camera]:
+        return list(db.cameras.values())
+
+    @staticmethod
+    def get_camera(camera_id: str) -> Camera:
+        if camera_id not in db.cameras:
+            raise KeyError(f"Camera {camera_id} not found")
+        return db.cameras[camera_id]
+
+    @staticmethod
+    def update_camera_status(camera_id: str, status: CameraStatus, health_score: float) -> Camera:
+        cam = PerceptionService.get_camera(camera_id)
+        cam.status = status
+        cam.health_score = max(0.0, min(1.0, health_score))
+        cam.last_ping = datetime.utcnow().isoformat() + "Z"
+        db.cameras[camera_id] = cam
+        db.log_audit(
+            event_type="CAMERA_HEALTH_UPDATE",
+            action=f"Camera {camera_id} status updated to {status}",
+            details={"health_score": health_score, "status": status.value}
+        )
+        return cam
+
+    @staticmethod
+    def generate_simulated_detections(camera_id: str) -> List[Detection]:
+        """
+        Generates privacy-preserved, anonymous detections for demonstration.
+        """
+        cam = PerceptionService.get_camera(camera_id)
+        now_iso = datetime.utcnow().isoformat() + "Z"
+
+        if camera_id == "CAM-04":
+            # Golden Demo Collision Feed: Vehicles OBJ-104 and OBJ-105 in trajectory conflict
+            return [
+                Detection(
+                    id="det-104",
+                    camera_id="CAM-04",
+                    timestamp=now_iso,
+                    anonymous_id="OBJ-104",
+                    class_name="vehicle",
+                    confidence=0.94,
+                    bbox=BoundingBox(x=320.0, y=240.0, width=80.0, height=50.0),
+                    speed_estimate_kmh=0.0,
+                    stationary_duration_s=42.0
+                ),
+                Detection(
+                    id="det-105",
+                    camera_id="CAM-04",
+                    timestamp=now_iso,
+                    anonymous_id="OBJ-105",
+                    class_name="vehicle",
+                    confidence=0.91,
+                    bbox=BoundingBox(x=390.0, y=245.0, width=75.0, height=48.0),
+                    speed_estimate_kmh=0.0,
+                    stationary_duration_s=42.0
+                )
+            ]
+        elif camera_id == "CAM-05":
+            # Crowd Anomaly Feed: High density cluster OBJ-201 to OBJ-240
+            dets = []
+            for i in range(1, 35):
+                dets.append(
+                    Detection(
+                        id=f"det-crowd-{i}",
+                        camera_id="CAM-05",
+                        timestamp=now_iso,
+                        anonymous_id=f"OBJ-2{i:02d}",
+                        class_name="pedestrian",
+                        confidence=0.88,
+                        bbox=BoundingBox(x=100.0 + (i*10), y=150.0 + (i*5), width=20.0, height=40.0),
+                        speed_estimate_kmh=1.2,
+                        stationary_duration_s=15.0
+                    )
+                )
+            return dets
+        elif camera_id == "CAM-06":
+            # Unattended Baggage Feed: Stationary object OBJ-309 separated from nearest person
+            return [
+                Detection(
+                    id="det-309",
+                    camera_id="CAM-06",
+                    timestamp=now_iso,
+                    anonymous_id="OBJ-309",
+                    class_name="baggage",
+                    confidence=0.89,
+                    bbox=BoundingBox(x=500.0, y=380.0, width=30.0, height=25.0),
+                    speed_estimate_kmh=0.0,
+                    stationary_duration_s=180.0
+                )
+            ]
+        else:
+            # Normal background flow
+            return [
+                Detection(
+                    id=f"det-norm-{camera_id}-1",
+                    camera_id=camera_id,
+                    timestamp=now_iso,
+                    anonymous_id=f"OBJ-{camera_id}-01",
+                    class_name="vehicle",
+                    confidence=0.95,
+                    bbox=BoundingBox(x=150.0, y=200.0, width=70.0, height=45.0),
+                    speed_estimate_kmh=38.0,
+                    stationary_duration_s=0.0
+                )
+            ]
