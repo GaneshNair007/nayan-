@@ -26,6 +26,7 @@ from app.perception.detector import YOLOv8DetectorAdapter, DetectionResult
 from app.perception.tracker import HighPrecisionByteTracker, TrackedEntity
 from app.perception.temporal_engine import TemporalFeatureEngine
 from app.perception.evidence_engine import EvidenceEngine
+from app.perception.corridor_engine import DynamicCorridorEngine
 from app.database import db
 
 class VideoAnalysisJob:
@@ -49,6 +50,7 @@ class VideoAnalysisJob:
         self.active_incident_id: Optional[str] = None
         self.latest_evidence_score: float = 0.0
         self.latest_verification_state: str = "OBSERVED"
+        self.latest_corridor_action: str = "PROCEED_NORMAL"
 
 
 class PerceptionPipelineManager:
@@ -119,7 +121,8 @@ class PerceptionPipelineManager:
             "hardware": job.last_hardware_info,
             "verification_state": job.latest_verification_state,
             "evidence_score": round(job.latest_evidence_score, 2),
-            "active_incident_id": job.active_incident_id
+            "active_incident_id": job.active_incident_id,
+            "corridor_action": job.latest_corridor_action
         }
 
     def get_active_tracks(self, camera_id: str) -> List[Dict[str, Any]]:
@@ -147,6 +150,7 @@ class PerceptionPipelineManager:
             junction_id=cam_model.location.junction_id if cam_model else None
         )
         evidence_engine = EvidenceEngine(camera_id, cam_location)
+        corridor_engine = DynamicCorridorEngine()
 
         cap = cv2.VideoCapture(job.video_path)
         video_fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
@@ -205,6 +209,11 @@ class PerceptionPipelineManager:
                         db.update_camera_status(camera_id, status=CameraStatus.DEGRADED, health_score=0.60)
                     elif health.status == "FROZEN":
                         db.update_camera_status(camera_id, status=CameraStatus.DEGRADED, health_score=0.30)
+
+                # NAYAN - Dynamic Emergency Yield Corridor extraction
+                corridor_features = corridor_engine.extract_corridor_features(active_tracks, curr_timestamp)
+                if corridor_features.ambulance_track_id:
+                    job.latest_corridor_action = corridor_features.recommended_action
 
                 # 4. Multi-Signal Evidence Fusion & State Machine Transitions
                 mean_model_conf = float(np.mean([d.confidence for d in detections])) if detections else 0.50

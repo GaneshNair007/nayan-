@@ -74,14 +74,17 @@ class YOLOv8DetectorAdapter(BaseDetector):
     Executes real deep-learning inference using PyTorch and CUDA.
     """
 
-    # COCO Class mapping to Urban Mobility Domain
+    # COCO Class mapping to Urban Mobility Domain (Updated for India Emergency)
     COCO_DOMAIN_MAP = {
-        0: ("person", "pedestrian"),
-        1: ("bicycle", "vehicle"),
-        2: ("car", "vehicle"),
-        3: ("motorcycle", "vehicle"),
-        5: ("bus", "vehicle"),
-        7: ("truck", "vehicle"),
+        0: ("car", "vehicle"),
+        1: ("motorcycle", "vehicle"),
+        2: ("scooter", "vehicle"),
+        3: ("auto-rickshaw", "vehicle"),
+        4: ("bus", "vehicle"),
+        5: ("truck", "vehicle"),
+        6: ("van", "vehicle"),
+        7: ("ambulance", "ambulance"),
+        # legacy COCO
         24: ("backpack", "baggage"),
         26: ("handbag", "baggage"),
         28: ("suitcase", "baggage"),
@@ -97,11 +100,16 @@ class YOLOv8DetectorAdapter(BaseDetector):
 
         # Resolve weights path
         if not model_path:
-            # Check artifacts directory first
+            # Check fine-tuned model first
+            finetuned_model = os.path.abspath(os.path.join(
+                os.path.dirname(__file__), "..", "..", "models", "training", "india_emergency", "weights", "best.pt"
+            ))
             artifact_model = os.path.abspath(os.path.join(
                 os.path.dirname(__file__), "..", "..", "artifacts", "models", "yolov8n.pt"
             ))
-            if os.path.exists(artifact_model):
+            if os.path.exists(finetuned_model):
+                model_path = finetuned_model
+            elif os.path.exists(artifact_model):
                 model_path = artifact_model
             else:
                 model_path = "yolov8n.pt"

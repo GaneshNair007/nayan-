@@ -372,7 +372,7 @@ export default function CameraIntelligenceView({
         </div>
 
         {/* Live Performance Telemetry Strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
           <div className="glass-panel-subtle" style={{ padding: '8px 12px' }}>
             <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>DETECTION LATENCY</div>
             <div style={{ fontSize: '16px', fontWeight: '700', color: 'var(--accent-cyan)', fontFamily: 'var(--font-mono)' }}>
@@ -403,6 +403,14 @@ export default function CameraIntelligenceView({
               {videoStatus?.verification_state || 'OBSERVED'}
             </div>
             <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>Multi-Signal Gated</div>
+          </div>
+
+          <div className="glass-panel-subtle" style={{ padding: '8px 12px', background: 'rgba(56, 189, 248, 0.05)' }}>
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>DYNAMIC CORRIDOR</div>
+            <div style={{ fontSize: '12px', fontWeight: '700', color: '#a78bfa', fontFamily: 'var(--font-mono)' }}>
+              {videoStatus?.corridor_action?.replace('_', ' ') || 'STANDBY'}
+            </div>
+            <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>Lane Elasticity</div>
           </div>
         </div>
 

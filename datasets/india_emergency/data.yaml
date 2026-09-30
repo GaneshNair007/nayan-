@@ -1,0 +1,12 @@
+path: c:\nayan\datasets\india_emergency
+train: images/train
+val: images/val
+names:
+  0: car
+  1: motorcycle
+  2: scooter
+  3: auto-rickshaw
+  4: bus
+  5: truck
+  6: van
+  7: ambulance
