@@ -8,7 +8,7 @@ import httpx
 
 from app.models.response import (
     Resource, ResourceStatus, CorridorStatus, DispatchResponse, CorridorPlan,
-    Route, RouteWaypoint, JunctionCorridorStatus, LocationPoint
+    Route, RouteWaypoint, JunctionCorridorStatus, LocationPoint, SegmentCorridorStatus
 )
 from app.models.incident import ResponseState
 from app.models.event import DataProvenance
@@ -105,7 +105,7 @@ class ResponseService:
         dest = LocationPoint(lat=inc.location.lat, lon=inc.location.lon, address=inc.location.address)
         route = await ResponseService.compute_route(res.location, dest)
 
-        # Build Green Corridor Plan across 3 junctions
+        # Build Green Corridor Plan across 3 junctions & multiple spatial segments
         corridor_plan = CorridorPlan(
             id=f"COR-{uuid.uuid4().hex[:6].upper()}",
             dispatch_id=dispatch_id,
@@ -116,6 +116,13 @@ class ResponseService:
                 JunctionCorridorStatus(junction_id="JNC-02", junction_name="Central Expwy & 4th Cross", readiness="GREEN_ACTIVE", eta_seconds=110),
                 JunctionCorridorStatus(junction_id="JNC-03", junction_name="Plaza Blvd & Metro Entrance", readiness="STANDBY", eta_seconds=180)
             ],
+            segment_sequence=[
+                SegmentCorridorStatus(segment_id="SEG-01", camera_id="CAM-01", clearance_width_meters=3.2, traffic_compression_state="CLEARED", upstream_signal_state="HALTED_NEW_TRAFFIC", verified_by_cctv=True),
+                SegmentCorridorStatus(segment_id="SEG-02", camera_id="CAM-02", clearance_width_meters=3.5, traffic_compression_state="COMPRESSING", upstream_signal_state="FLOWING", verified_by_cctv=True),
+                SegmentCorridorStatus(segment_id="SEG-03", camera_id="CAM-03", clearance_width_meters=1.8, traffic_compression_state="FAILED", upstream_signal_state="FLOWING", verified_by_cctv=True),
+                SegmentCorridorStatus(segment_id="SEG-04", camera_id="CAM-04", clearance_width_meters=3.0, traffic_compression_state="CLEARED", upstream_signal_state="FLOWING", verified_by_cctv=False)
+            ],
+            is_rerouted=True,
             route=route,
             status=CorridorStatus.ACTIVE,
             provenance=DataProvenance.SIMULATOR

@@ -101,13 +101,14 @@ export default function EmergencyCorridorView({ resources, corridorPlans }) {
         {/* Signal Preemption Junction Timeline */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
           <div style={{ fontSize: '12px', fontWeight: '700', color: '#fff' }}>
-            CORRIDOR JUNCTION TIMELINE & SIGNAL CLEARANCE:
+            NAYAN DYNAMIC SPATIAL GRID & CORRIDOR SEGMENTS:
           </div>
 
           {[
-            { id: 'JNC-01', name: 'Main St & 1st Ave', status: 'GREEN_WAVE_ACTIVE', state: 'CLEARED', eta: 'T-00:30' },
-            { id: 'JNC-02', name: 'Central Expwy & 4th Cross (Target Impact)', status: 'HOLD_ALL_RED_PREEMPTION', state: 'INTERLOCKED', eta: 'T-01:45' },
-            { id: 'JNC-03', name: 'Metro Plaza Perimeter', status: 'FLOW_RESUMED', state: 'STANDBY', eta: 'T-03:10' }
+            { id: 'SEG-01', name: 'Main St Approach', status: 'HALTED_NEW_TRAFFIC', state: 'CLEARED', width: '3.2m', cctv: true },
+            { id: 'SEG-02', name: 'JNC-01 Entrance', status: 'FLOWING', state: 'COMPRESSING', width: '3.5m', cctv: true },
+            { id: 'SEG-03', name: 'JNC-02 Bottleneck', status: 'FLOWING', state: 'FAILED', width: '1.8m', cctv: true },
+            { id: 'SEG-04', name: 'Dynamic Reroute Path (4th Cross)', status: 'HALTED_NEW_TRAFFIC', state: 'CLEARED', width: '3.6m', cctv: true }
           ].map((item, idx) => (
             <div key={item.id} className="glass-panel-subtle" style={{ padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -115,8 +116,8 @@ export default function EmergencyCorridorView({ resources, corridorPlans }) {
                   width: '28px', 
                   height: '28px', 
                   borderRadius: '50%', 
-                  background: idx === 1 ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)',
-                  border: idx === 1 ? '1px solid #ef4444' : '1px solid #10b981',
+                  background: item.state === 'FAILED' ? 'rgba(239, 68, 68, 0.2)' : (item.state === 'CLEARED' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.2)'),
+                  border: item.state === 'FAILED' ? '1px solid #ef4444' : (item.state === 'CLEARED' ? '1px solid #10b981' : '1px solid #f59e0b'),
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -127,21 +128,29 @@ export default function EmergencyCorridorView({ resources, corridorPlans }) {
                   {idx + 1}
                 </div>
                 <div>
-                  <div style={{ fontWeight: '700', fontSize: '13px', color: '#fff' }}>{item.id} — {item.name}</div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>State: {item.status}</div>
+                  <div style={{ fontWeight: '700', fontSize: '13px', color: '#fff' }}>
+                    {item.id} — {item.name}
+                    {item.cctv && <span style={{ marginLeft: '6px', fontSize: '10px', color: '#a78bfa' }}>(CCTV Verified)</span>}
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Upstream: {item.status.replace('_', ' ')}</div>
                 </div>
               </div>
 
               <div style={{ textAlign: 'right' }}>
-                <span className={`badge ${item.state === 'CLEARED' ? 'badge-success' : 'badge-warning'}`}>
+                <span className={`badge ${item.state === 'CLEARED' ? 'badge-success' : (item.state === 'FAILED' ? 'badge-critical' : 'badge-warning')}`}>
                   {item.state}
                 </span>
-                <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px', fontFamily: 'var(--font-mono)' }}>
-                  ETA: {item.eta}
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', fontFamily: 'var(--font-mono)' }}>
+                  Clearance: <strong style={{ color: item.state === 'FAILED' ? '#f87171' : '#fff' }}>{item.width}</strong>
                 </div>
               </div>
             </div>
           ))}
+          
+          <div style={{ marginTop: '4px', padding: '10px', background: 'rgba(167, 139, 250, 0.1)', border: '1px solid rgba(167, 139, 250, 0.3)', borderRadius: '6px' }}>
+             <div style={{ fontSize: '12px', fontWeight: '700', color: '#c4b5fd', marginBottom: '4px' }}>NAYAN DYNAMIC ROUTING ACTIVE</div>
+             <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Segment SEG-03 failed to achieve 3.0m minimum clearance. Ambulance dynamically rerouted through SEG-04 to bypass localized compression failure.</div>
+          </div>
         </div>
 
       </div>

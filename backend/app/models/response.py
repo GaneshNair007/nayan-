@@ -63,12 +63,22 @@ class JunctionCorridorStatus(BaseModel):
     readiness: str  # STANDBY, PREPARING, CLEAR, GREEN_ACTIVE, PASSED
     eta_seconds: int
 
+class SegmentCorridorStatus(BaseModel):
+    segment_id: str
+    camera_id: Optional[str] = None
+    clearance_width_meters: float  # Aiming for 3-3.5m
+    traffic_compression_state: str  # COMPRESSING, CLEARED, FAILED
+    upstream_signal_state: str  # FLOWING, HALTED_NEW_TRAFFIC
+    verified_by_cctv: bool = False
+
 class CorridorPlan(BaseModel):
     id: str
     dispatch_id: str
     resource_id: str
     incident_id: str
     junction_sequence: List[JunctionCorridorStatus] = []
+    segment_sequence: List[SegmentCorridorStatus] = []
+    is_rerouted: bool = False
     route: Route
     status: CorridorStatus = CorridorStatus.PLANNED
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())

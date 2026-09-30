@@ -1,7 +1,10 @@
 # AEGIS GRID — Project Brief
 
 ## Vision
-AEGIS GRID is a real-time urban incident and mobility intelligence platform for the PS06 hackathon. It converts simulated CCTV observations into verified incidents, prioritized response, adaptive traffic recommendations, emergency dispatch, and a SUMO-backed green-corridor demonstration.
+AEGIS GRID / NAYAN is a real-time urban incident and mobility intelligence platform for the PS06 hackathon. It converts simulated CCTV observations into verified incidents, prioritized response, and adaptive traffic recommendations.
+
+### The NAYAN India-Specific Dynamic Corridor Model
+In India, we cannot assume perfect lane discipline or a permanent emergency lane. So NAYAN creates a Dynamic Emergency Yield Corridor. We divide the road into small spatial grids, detect every vehicle and the actually available road space, then calculate how traffic can compress locally to create a temporary 3–3.5 m ambulance corridor. Upstream signals stop new traffic from entering, junctions are pre-cleared, and each road segment is verified by CCTV before the ambulance reaches it. If one segment cannot create enough clearance, NAYAN dynamically reroutes the ambulance instead of blindly forcing the same corridor.
 
 ## Core product promise
 Detect the event, verify it, understand its impact, coordinate the response, and explain every decision.
@@ -16,8 +19,9 @@ Detect the event, verify it, understand its impact, coordinate the response, and
 ### P1: differentiators
 - Adaptive signal recommendations.
 - Emergency-resource dispatch.
-- Ambulance green corridor across multiple junctions.
-- SUMO/TraCI digital-twin scenario.
+- **NAYAN Dynamic Corridor**: Grid-based spatial slicing and lateral compression.
+- **Dynamic Rerouting**: Real-time pathing when minimum clearance (3.0m) fails.
+- SUMO/TraCI digital-twin scenario (India-specific heterogeneous traffic).
 - Multi-camera event association and incident evidence capsule.
 
 ### P2: optional
