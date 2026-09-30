@@ -22,6 +22,6 @@ def get_camera(camera_id: str):
 @router.get("/{camera_id}/detections", response_model=List[Detection])
 def get_camera_detections(camera_id: str):
     try:
-        return PerceptionService.generate_simulated_detections(camera_id)
+        return PerceptionService.get_camera_detections(camera_id)
     except KeyError:
         raise HTTPException(status_code=404, detail=f"Camera {camera_id} not found")

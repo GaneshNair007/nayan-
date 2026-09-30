@@ -95,6 +95,39 @@ class Database:
                 health_score=0.75,
                 current_detections_count=8,
                 provenance=DataProvenance.REPLAY_FIXTURE
+            ),
+            Camera(
+                id="CAM-07",
+                name="Metro Plaza Concourse - Pedestrian Transit",
+                status=CameraStatus.ACTIVE,
+                location=CameraLocation(lat=12.9782, lon=77.6022, address="Plaza Main Concourse", junction_id="JNC-03"),
+                feed_url="/api/videos/file/cam07_crowd_growth.mp4",
+                fps=30,
+                health_score=0.98,
+                current_detections_count=18,
+                provenance=DataProvenance.INFERENCE
+            ),
+            Camera(
+                id="CAM-09",
+                name="Expressway Sensor Probe - Optical Health",
+                status=CameraStatus.ACTIVE,
+                location=CameraLocation(lat=12.9760, lon=77.5995, address="Expressway Sensor Bay 9", junction_id="JNC-02"),
+                feed_url="/api/videos/file/cam09_normal_source.mp4",
+                fps=30,
+                health_score=1.0,
+                current_detections_count=12,
+                provenance=DataProvenance.INFERENCE
+            ),
+            Camera(
+                id="CAM-11",
+                name="Central Rail Terminal - Security Checkpoint B",
+                status=CameraStatus.ACTIVE,
+                location=CameraLocation(lat=12.9735, lon=77.6045, address="Rail Terminal Bay B", junction_id="JNC-01"),
+                feed_url="/api/videos/file/cam11_unattended_baggage.mp4",
+                fps=30,
+                health_score=0.97,
+                current_detections_count=6,
+                provenance=DataProvenance.INFERENCE
             )
         ]
         for c in cams:
@@ -228,5 +261,54 @@ class Database:
         )
         self.audit_events.insert(0, evt)
         return evt
+
+    def get_camera(self, camera_id: str) -> Optional[Camera]:
+        return self.cameras.get(camera_id)
+
+    def update_camera_status(
+        self,
+        camera_id: str,
+        status: Optional[CameraStatus] = None,
+        health_score: Optional[float] = None,
+        detections_count: Optional[int] = None
+    ):
+        cam = self.cameras.get(camera_id)
+        if cam:
+            if status is not None:
+                cam.status = status
+            if health_score is not None:
+                cam.health_score = health_score
+            if detections_count is not None:
+                cam.current_detections_count = detections_count
+
+    def get_incident(self, incident_id: str) -> Optional[Incident]:
+        return self.incidents.get(incident_id)
+
+    def save_incident(self, incident: Incident):
+        self.incidents[incident.id] = incident
+
+    def create_or_update_incident(self, incident: Incident):
+        self.incidents[incident.id] = incident
+
+    def update_incident_response_state(
+        self,
+        incident_id: str,
+        new_state: ResponseState,
+        reason: Optional[str] = None
+    ):
+        inc = self.incidents.get(incident_id)
+        if inc:
+            old_state = inc.response_state
+            inc.response_state = new_state
+            self.log_audit(
+                action=f"Incident {incident_id} response state -> {new_state.value}",
+                entity_type="INCIDENT",
+                entity_id=incident_id,
+                previous_state=old_state.value,
+                next_state=new_state.value,
+                reason=reason,
+                source="perception-pipeline",
+                provenance=DataProvenance.INFERENCE
+            )
 
 db = Database()

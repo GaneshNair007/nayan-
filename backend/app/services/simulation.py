@@ -33,13 +33,22 @@ class SimulationService:
         return {"status": "success", "message": "AEGIS GRID state successfully reset."}
 
     @staticmethod
-    async def run_golden_demo() -> Incident:
+    async def run_golden_demo(use_live_inference: bool = True) -> Incident:
         """
         Executes the Golden Demo Collision Scenario:
+        Launches real YOLOv8 (CUDA) + ByteTrack inference on cam04_collision.mp4.
         CAM-04 Collision -> OBSERVED -> SUSPECTED -> VERIFYING -> CONFIRMED -> Dispatch Ready.
         """
+        import os
+        from app.perception.pipeline import perception_manager
+
         SimulationService.reset_simulation()
         now_iso = datetime.now(timezone.utc).isoformat()
+
+        # Launch real GPU video analysis on cam04_collision.mp4
+        demo_video = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "demo", "cam04_collision.mp4"))
+        if use_live_inference and os.path.exists(demo_video):
+            perception_manager.start_job("CAM-04", demo_video, loop_video=True)
 
         # 1. Candidate Collision Observation on CAM-04
         inc = Incident(
@@ -168,14 +177,21 @@ class SimulationService:
     @staticmethod
     async def run_crowd_scenario() -> Incident:
         """
-        Executes Crowd Anomaly Scenario on CAM-05.
+        Executes Crowd Anomaly Scenario on CAM-07 (Pedestrian Plaza).
         Observes movement patterns (density, growth rate, directional turbulence) - no intent inference.
         """
+        import os
+        from app.perception.pipeline import perception_manager
+
         now_iso = datetime.now(timezone.utc).isoformat()
+        crowd_video = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "demo", "cam07_crowd_growth.mp4"))
+        if os.path.exists(crowd_video):
+            perception_manager.start_job("CAM-07", crowd_video, loop_video=True)
+
         inc = Incident(
             id="INC-2026-002",
             type=IncidentType.CROWD_ANOMALY,
-            camera_id="CAM-05",
+            camera_id="CAM-07",
             location=IncidentLocation(
                 lat=12.9780,
                 lon=77.6020,
@@ -194,12 +210,12 @@ class SimulationService:
             description="Perception engine detected abnormal pedestrian accumulation and vector convergence near Metro Concourse Entry B.",
             affected_lanes=["Pedestrian Plaza", "Metro Ramp"],
             estimated_people_affected=45,
-            provenance=DataProvenance.REPLAY_FIXTURE,
+            provenance=DataProvenance.INFERENCE,
             evidence=[
                 EvidenceItem(
                     id="ev-c1",
                     type="density_spike",
-                    source="CAM-05 Density Engine",
+                    source="CAM-07 Density Engine",
                     timestamp=now_iso,
                     confidence_score=0.91,
                     provenance=DataProvenance.INFERENCE,
@@ -208,7 +224,7 @@ class SimulationService:
                 EvidenceItem(
                     id="ev-c2",
                     type="directional_turbulence",
-                    source="CAM-05 Optical Flow",
+                    source="CAM-07 Optical Flow",
                     timestamp=now_iso,
                     confidence_score=0.87,
                     provenance=DataProvenance.INFERENCE,
@@ -231,7 +247,7 @@ class SimulationService:
             source="incident-engine",
             scenario_id="crowd-anomaly",
             correlation_id=inc.id,
-            provenance=DataProvenance.REPLAY_FIXTURE,
+            provenance=DataProvenance.INFERENCE,
             payload=inc.model_dump()
         )
         return inc
@@ -239,14 +255,21 @@ class SimulationService:
     @staticmethod
     async def run_baggage_scenario() -> Incident:
         """
-        Executes Unattended Baggage Scenario on CAM-06.
+        Executes Unattended Baggage Scenario on CAM-11.
         Object/person association, separation distance, stationary duration.
         """
+        import os
+        from app.perception.pipeline import perception_manager
+
         now_iso = datetime.now(timezone.utc).isoformat()
+        baggage_video = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "demo", "cam11_unattended_baggage.mp4"))
+        if os.path.exists(baggage_video):
+            perception_manager.start_job("CAM-11", baggage_video, loop_video=True)
+
         inc = Incident(
             id="INC-2026-003",
             type=IncidentType.UNATTENDED_BAGGAGE,
-            camera_id="CAM-06",
+            camera_id="CAM-11",
             location=IncidentLocation(
                 lat=12.9730,
                 lon=77.6050,

@@ -35,6 +35,8 @@ class EventEnvelope(BaseModel):
     demo: bool = True
     payload: Dict[str, Any]
 
+WebSocketEvent = EventEnvelope
+
 class AuditEvent(BaseModel):
     id: str = Field(default_factory=lambda: f"audit-{uuid.uuid4().hex[:8]}")
     timestamp: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())

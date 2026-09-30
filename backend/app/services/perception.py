@@ -74,10 +74,50 @@ class PerceptionService:
         return cam
 
     @staticmethod
+    def get_camera_detections(camera_id: str) -> List[Detection]:
+        """
+        Returns real live detections and tracks from active CV pipeline (INFERENCE).
+        Falls back to explicitly labeled REPLAY_FIXTURE only if no live video job is running.
+        """
+        from app.perception.pipeline import perception_manager
+        
+        live_tracks = perception_manager.get_active_tracks(camera_id)
+        now_iso = datetime.now(timezone.utc).isoformat()
+        
+        if live_tracks:
+            # Return genuine live inference detections
+            detections = []
+            for t in live_tracks:
+                b = t["current_bbox"]
+                bbox_obj = BoundingBox(
+                    x=float(b[0]),
+                    y=float(b[1]),
+                    width=float(b[2] - b[0]),
+                    height=float(b[3] - b[1])
+                )
+                det = Detection(
+                    id=f"det-{camera_id}-{t['track_id']}",
+                    camera_id=camera_id,
+                    timestamp=now_iso,
+                    anonymous_id=t["anonymous_id"],
+                    class_name=t["class_name"],
+                    confidence=float(t["confidence"]),
+                    bbox=bbox_obj,
+                    speed_estimate_kmh=round(t["speed_px_per_frame"] * 2.5, 1),
+                    stationary_duration_s=float(t["stationary_duration_s"]),
+                    provenance=DataProvenance.INFERENCE
+                )
+                detections.append(det)
+            return detections
+
+        # Fallback to deterministic replay fixture
+        return PerceptionService.generate_simulated_detections(camera_id)
+
+    @staticmethod
     def generate_simulated_detections(camera_id: str) -> List[Detection]:
         """
-        Generates privacy-preserving, anonymous detections for demonstration.
-        Labels provenance explicitly as REPLAY_FIXTURE.
+        Deterministic fixture fallback for emergency demo reliability.
+        Labeled explicitly as REPLAY_FIXTURE.
         """
         now_iso = datetime.now(timezone.utc).isoformat()
 

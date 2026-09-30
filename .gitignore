@@ -16,6 +16,9 @@ node_modules/
 dist/
 .vite/
 
-# IDE & System
-.DS_Store
-*.log
+# Datasets (raw / processed)
+datasets/raw/
+datasets/processed/
+artifacts/raw/
+yolov8n.pt
+backend/yolov8n.pt
