@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from './components/Header';
 import Navigation from './components/Navigation';
+import PalominoLandingView from './components/PalominoLandingView';
 import CommandCenterView from './components/CommandCenterView';
 import CameraIntelligenceView from './components/CameraIntelligenceView';
 import TrafficControlView from './components/TrafficControlView';
@@ -10,13 +11,14 @@ import AuditView from './components/AuditView';
 import IncidentDrawer from './components/IncidentDrawer';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('command-center');
+  const [activeTab, setActiveTab] = useState('landing');
   const [selectedCameraId, setSelectedCameraId] = useState('CAM-04');
   const [selectedIncidentId, setSelectedIncidentId] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Core Data Stores
   const [capabilities, setCapabilities] = useState(null);
+  const [readiness, setReadiness] = useState(null);
   const [videoCatalogue, setVideoCatalogue] = useState([]);
   const [incidents, setIncidents] = useState([]);
   const [cameras, setCameras] = useState([]);
@@ -31,8 +33,9 @@ export default function App() {
   // 1. Initial Snapshot Fetcher via authoritative REST APIs
   const fetchAllSnapshot = useCallback(async () => {
     try {
-      const [capsRes, vidsRes, incsRes, camsRes, jncsRes, resRes, auditsRes] = await Promise.all([
+      const [capsRes, readyRes, vidsRes, incsRes, camsRes, jncsRes, resRes, auditsRes] = await Promise.all([
         fetch('/api/capabilities').catch(() => null),
+        fetch('/api/ready').catch(() => null),
         fetch('/api/videos').catch(() => null),
         fetch('/api/incidents').catch(() => null),
         fetch('/api/cameras').catch(() => null),
@@ -42,6 +45,7 @@ export default function App() {
       ]);
 
       if (capsRes?.ok) setCapabilities(await capsRes.json());
+      if (readyRes?.ok) setReadiness(await readyRes.json());
       if (vidsRes?.ok) {
         const vData = await vidsRes.json();
         setVideoCatalogue(vData.videos || []);
@@ -163,79 +167,96 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)' }}>
-      
-      {/* Top Command Bar */}
-      <Header 
-        capabilities={capabilities}
-        wsConnected={wsConnected}
-        onRunScenario={handleRunScenario}
-        onReset={handleReset}
-        activeScenarioLoading={scenarioLoading}
-      />
-
-      {/* Navigation Module Strip */}
-      <Navigation 
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
-        incidentCount={incidents.length}
-        criticalCount={criticalCount}
-      />
-
-      {/* Active Module View */}
-      <main style={{ flex: 1, position: 'relative' }}>
-        {activeTab === 'command-center' && (
-          <CommandCenterView 
-            incidents={incidents}
-            cameras={cameras}
-            junctions={junctions}
-            resources={resources}
-            onSelectCamera={handleSelectCamera}
-            onSelectIncident={handleSelectIncident}
+      {activeTab === 'landing' ? (
+        <PalominoLandingView 
+          capabilities={capabilities}
+          readiness={readiness}
+          cameras={cameras}
+          incidents={incidents}
+          videoCatalogue={videoCatalogue}
+          wsConnected={wsConnected}
+          onEnterCommandCenter={() => setActiveTab('command-center')}
+          onSelectCamera={(camId) => {
+            setSelectedCameraId(camId);
+            setActiveTab('camera-intel');
+          }}
+        />
+      ) : (
+        <>
+          {/* Top Command Bar */}
+          <Header 
+            capabilities={capabilities}
+            wsConnected={wsConnected}
+            onRunScenario={handleRunScenario}
+            onReset={handleReset}
+            activeScenarioLoading={scenarioLoading}
+            onOpenLanding={() => setActiveTab('landing')}
           />
-        )}
 
-        {activeTab === 'camera-intel' && (
-          <CameraIntelligenceView 
-            selectedCameraId={selectedCameraId}
-            onSelectCamera={setSelectedCameraId}
-            videoCatalogue={videoCatalogue}
-            onOpenIncident={handleSelectIncident}
+          {/* Navigation Module Strip */}
+          <Navigation 
+            activeTab={activeTab}
+            onSelectTab={setActiveTab}
+            incidentCount={incidents.length}
+            criticalCount={criticalCount}
           />
-        )}
 
-        {activeTab === 'traffic' && (
-          <TrafficControlView 
-            junctions={junctions}
-          />
-        )}
+          {/* Active Module View */}
+          <main style={{ flex: 1, position: 'relative' }}>
+            {activeTab === 'command-center' && (
+              <CommandCenterView 
+                incidents={incidents}
+                cameras={cameras}
+                junctions={junctions}
+                resources={resources}
+                onSelectCamera={handleSelectCamera}
+                onSelectIncident={handleSelectIncident}
+              />
+            )}
 
-        {activeTab === 'corridor' && (
-          <EmergencyCorridorView 
-            resources={resources}
-          />
-        )}
+            {activeTab === 'camera-intel' && (
+              <CameraIntelligenceView 
+                selectedCameraId={selectedCameraId}
+                onSelectCamera={setSelectedCameraId}
+                videoCatalogue={videoCatalogue}
+                onOpenIncident={handleSelectIncident}
+              />
+            )}
 
-        {activeTab === 'digital-twin' && (
-          <DigitalTwinView />
-        )}
+            {activeTab === 'traffic' && (
+              <TrafficControlView 
+                junctions={junctions}
+              />
+            )}
 
-        {activeTab === 'audit' && (
-          <AuditView 
-            auditEvents={auditEvents}
-          />
-        )}
+            {activeTab === 'corridor' && (
+              <EmergencyCorridorView 
+                resources={resources}
+              />
+            )}
 
-        {/* Slideout Incident Detail Drawer */}
-        {drawerOpen && activeIncidentObj && (
-          <IncidentDrawer 
-            incident={activeIncidentObj}
-            onClose={() => setDrawerOpen(false)}
-            onAuthorizeResponse={fetchAllSnapshot}
-            onDispatched={fetchAllSnapshot}
-          />
-        )}
-      </main>
+            {activeTab === 'digital-twin' && (
+              <DigitalTwinView />
+            )}
 
+            {activeTab === 'audit' && (
+              <AuditView 
+                auditEvents={auditEvents}
+              />
+            )}
+
+            {/* Slideout Incident Detail Drawer */}
+            {drawerOpen && activeIncidentObj && (
+              <IncidentDrawer 
+                incident={activeIncidentObj}
+                onClose={() => setDrawerOpen(false)}
+                onAuthorizeResponse={fetchAllSnapshot}
+                onDispatched={fetchAllSnapshot}
+              />
+            )}
+          </main>
+        </>
+      )}
     </div>
   );
 }

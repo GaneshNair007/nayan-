@@ -17,7 +17,8 @@ export default function Header({
   wsConnected, 
   onRunScenario, 
   onReset,
-  activeScenarioLoading 
+  activeScenarioLoading,
+  onOpenLanding
 }) {
   const [timeStr, setTimeStr] = useState('');
 
@@ -40,7 +41,11 @@ export default function Header({
         
         {/* Left: Brand & Status Badges */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div 
+            onClick={onOpenLanding}
+            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+            title="Return to Palomino Overview & Cinematic Landing"
+          >
             <div style={{ 
               background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(59, 130, 246, 0.2))', 
               padding: '8px', 
@@ -51,14 +56,23 @@ export default function Header({
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '18px', fontWeight: '800', letterSpacing: '1px', color: '#fff' }}>AEGIS GRID</span>
-                <span className="badge badge-cyan" style={{ fontSize: '10px' }}>v1.4 PROTOTYPE</span>
+                <span style={{ fontSize: '18px', fontWeight: '800', letterSpacing: '1px', color: '#fff' }}>NAYAN / AEGIS</span>
+                <span className="badge badge-cyan" style={{ fontSize: '10px' }}>v2.0 PROD</span>
               </div>
               <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                Autonomous Urban Incident Intelligence & Mobility Control
+                Autonomous Incident Intelligence & Mobility Control
               </div>
             </div>
           </div>
+
+          <button
+            onClick={onOpenLanding}
+            className="btn btn-ghost"
+            style={{ padding: '4px 10px', fontSize: '11px', gap: '4px' }}
+            title="Switch to Palomino first-page presentation"
+          >
+            <span>← OVERVIEW</span>
+          </button>
 
           <div style={{ height: '24px', width: '1px', background: 'var(--border-subtle)' }} />
 

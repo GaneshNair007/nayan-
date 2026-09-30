@@ -24,6 +24,7 @@
   --status-info: #06b6d4;
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Host Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
   --radius-sm: 6px;
@@ -245,3 +246,144 @@ code, pre, .font-mono {
 .animate-fade-in {
   animation: fadeIn 0.25s ease forwards;
 }
+
+/* =====================================================================
+   PALOMINO INTERACTION & CINEMATIC DISPLAY STYLES
+   ===================================================================== */
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Marquee continuous scroll */
+@keyframes marquee-horizontal {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee-horizontal 28s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Subtle scanline texture for CCTV feeds */
+.scanlines-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.35) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.03),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.03)
+  );
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+}
+
+/* Palomino Character-Swap Navigation Link */
+.palomino-nav-link {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 6px 12px;
+}
+
+.palomino-nav-link .char-wrap {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.palomino-nav-link .char-primary {
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.3, 1, 0.7, 1);
+}
+
+.palomino-nav-link .char-secondary {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  transform: translateX(-100%);
+  color: var(--accent-cyan);
+  transition: transform 0.4s cubic-bezier(0.3, 1, 0.7, 1);
+}
+
+.palomino-nav-link:hover .char-primary {
+  transform: translateX(100%);
+}
+
+.palomino-nav-link:hover .char-secondary {
+  transform: translateX(0);
+}
+
+/* Video Card Hover Slideup Caption */
+.palomino-card-media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: #000;
+}
+
+.palomino-card-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(100%);
+  transition: transform 0.45s cubic-bezier(0.2, 1, 0.3, 1);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 80%, transparent 100%);
+  padding: 16px;
+  backdrop-filter: blur(4px);
+  z-index: 20;
+}
+
+.palomino-card-media:hover .palomino-card-caption {
+  transform: translateY(0%);
+}
+
+/* Cursor floating camera preview capsule */
+.cursor-preview-capsule {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.12s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.2s ease;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 1px 1px rgba(0, 229, 255, 0.4);
+}
+
+/* Large display typography responsiveness */
+.hero-display-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 11vw, 9.5rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.hero-display-accent {
+  background: linear-gradient(135deg, #ffffff 40%, rgba(255, 255, 255, 0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-display-cyan {
+  background: linear-gradient(135deg, #00e5ff 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+

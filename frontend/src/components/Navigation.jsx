@@ -1,5 +1,5 @@
-import React from 'react';
 import { 
+  Compass,
   LayoutDashboard, 
   Video, 
   GitFork, 
@@ -10,6 +10,7 @@ import {
 
 export default function Navigation({ activeTab, onSelectTab, incidentCount, criticalCount }) {
   const tabs = [
+    { id: 'landing', label: 'Overview & Story', icon: Compass, badge: 'PALOMINO' },
     { id: 'command-center', label: 'Command Center', icon: LayoutDashboard },
     { id: 'camera-intel', label: 'Camera Intelligence & Demo Feeds', icon: Video, badge: '8 FEEDS' },
     { id: 'traffic', label: 'Traffic & Signals', icon: GitFork },
