@@ -1,6 +1,7 @@
 /* ============================================================
    NAYAN x PALOMINO HIGH-FIDELITY RECONSTRUCTION STYLESHEET
    Strict adherence to https://palominoprod.com/en forensics
+   Motion driven exclusively via Motion for React.
    ============================================================ */
 
 :root {
@@ -77,11 +78,6 @@
   color: var(--pal-text-muted);
 }
 
-/* ============================================================
-   PALOMINO CHARACTER-SWAP NAVIGATION LINK MECHANISM
-   Two duplicate layers inside clipped container (overflow: clip)
-   Layer 1 exits to +100% X, Layer 2 enters from -100% to 0% X
-   ============================================================ */
 .pal-nav-item {
   position: relative;
   display: inline-block;
@@ -89,102 +85,6 @@
   text-decoration: none;
   color: #ffffff;
   padding: 0 4px;
-}
-
-.pal-char-stream {
-  position: relative;
-  display: inline-block;
-  overflow: clip;
-}
-
-.pal-char-primary {
-  display: inline-block;
-  transition: transform 0.45s cubic-bezier(0.3, 1, 0.7, 1);
-  transform: translate(0%, 0%);
-}
-
-.pal-char-secondary {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: inline-block;
-  transform: translate(-100%, 0%);
-  transition: transform 0.45s cubic-bezier(0.3, 1, 0.7, 1);
-  color: #ffffff;
-}
-
-.pal-nav-item:hover .pal-char-primary {
-  transform: translate(100%, 0%);
-}
-
-.pal-nav-item:hover .pal-char-secondary {
-  transform: translate(0%, 0%);
-}
-
-/* Continuous linear marquee for Network Strip */
-@keyframes pal-marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
-}
-
-.pal-marquee-track {
-  display: flex;
-  width: max-content;
-  animation: pal-marquee 32s linear infinite;
-}
-
-.pal-marquee-track:hover {
-  animation-play-state: paused;
-}
-
-/* Project Card & Hover Caption Rise */
-.pal-project-card {
-  position: relative;
-  overflow: hidden;
-  background: #0d0d10;
-  cursor: pointer;
-}
-
-.pal-project-media {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-  transform: scale(1.0);
-}
-
-.pal-project-card:hover .pal-project-media {
-  transform: scale(1.035);
-}
-
-.pal-project-caption {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  transform: translateY(100%);
-  transition: transform 0.5s cubic-bezier(0.3, 1, 0.7, 1);
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 80%, transparent 100%);
-  padding: 24px;
-  z-index: 10;
-}
-
-.pal-project-card:hover .pal-project-caption {
-  transform: translateY(0%);
-}
-
-/* Floating pointer-following media preview */
-.pal-pointer-preview {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  width: 280px;
-  height: 175px;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transform: translate(-50%, -50%);
-  transition: opacity 0.25s ease;
 }
 
 /* Key Figures Grid */
@@ -206,9 +106,7 @@
 
 /* Services Layered Pinned Stack */
 .pal-service-layer {
-  position: sticky;
-  top: 90px;
-  background: #000000;
+  background: #111111;
   border-top: 1px solid var(--pal-border);
   padding: 48px 0;
   min-height: 480px;
@@ -222,11 +120,11 @@
   color: #000000;
   position: sticky;
   bottom: 0;
-  z-index: 1;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   justifyContent: space-between;
-  padding: 130px 40px 30px 40px;
+  padding: 120px 40px 24px 40px;
   box-sizing: border-box;
 }
 

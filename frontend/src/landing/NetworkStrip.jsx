@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
+import { motion, useAnimationFrame, useMotionValue, useReducedMotion } from 'motion/react';
 
 const NETWORK_MARKS = [
   { name: 'YOLOv8', category: 'PERCEPTION' },
@@ -14,8 +15,34 @@ const NETWORK_MARKS = [
 ];
 
 export default function NetworkStrip() {
+  const [isHovered, setIsHovered] = useState(false);
+  const trackRef = useRef(null);
+  const halfWidthRef = useRef(0);
+  const shouldReduceMotion = useReducedMotion();
+  const x = useMotionValue(0);
+
+  // Measure single track width for seamless loop wrapping
+  useEffect(() => {
+    if (trackRef.current) {
+      // Total scrollWidth contains 2 identical sequences
+      halfWidthRef.current = trackRef.current.scrollWidth / 2;
+    }
+  }, []);
+
+  // Measured 42px/s smooth translation via Motion animation frame
+  useAnimationFrame((time, delta) => {
+    if (shouldReduceMotion || isHovered || !halfWidthRef.current) return;
+    // 42 pixels per second
+    const moveBy = (42 * delta) / 1000;
+    let currentX = x.get() - moveBy;
+    if (Math.abs(currentX) >= halfWidthRef.current) {
+      currentX += halfWidthRef.current;
+    }
+    x.set(currentX);
+  });
+
   return (
-    <section 
+    <section
       id="system-network"
       style={{
         position: 'relative',
@@ -28,9 +55,26 @@ export default function NetworkStrip() {
       }}
     >
       {/* Centered Section Label matching Palomino's "● OUR CLIENTS" */}
-      <div style={{ textAlign: 'center', marginBottom: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-        <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#ffffff' }} />
-        <h2 
+      <div
+        style={{
+          textAlign: 'center',
+          marginBottom: '44px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px'
+        }}
+      >
+        <span
+          style={{
+            display: 'inline-block',
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            backgroundColor: '#ffffff'
+          }}
+        />
+        <h2
           className="pal-p3"
           style={{
             margin: 0,
@@ -45,18 +89,31 @@ export default function NetworkStrip() {
       </div>
 
       {/* Infinite Horizontal Marquee */}
-      <div 
+      <div
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         style={{
           width: '100%',
           overflow: 'hidden',
           display: 'flex',
-          maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
-          WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)'
+          maskImage:
+            'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+          WebkitMaskImage:
+            'linear-gradient(to right, transparent, black 15%, black 85%, transparent)'
         }}
       >
-        <div className="pal-marquee-track">
-          {[...NETWORK_MARKS, ...NETWORK_MARKS, ...NETWORK_MARKS].map((item, idx) => (
-            <div 
+        <motion.div
+          ref={trackRef}
+          style={{
+            display: 'flex',
+            width: 'max-content',
+            x,
+            willChange: 'transform'
+          }}
+        >
+          {/* Render two identical tracks for continuous seamless looping */}
+          {[...NETWORK_MARKS, ...NETWORK_MARKS].map((item, idx) => (
+            <div
               key={idx}
               style={{
                 display: 'inline-flex',
@@ -67,7 +124,7 @@ export default function NetworkStrip() {
                 cursor: 'default'
               }}
             >
-              <span 
+              <span
                 style={{
                   fontFamily: 'var(--pal-font)',
                   fontSize: '28px',
@@ -79,7 +136,7 @@ export default function NetworkStrip() {
               >
                 {item.name}
               </span>
-              <span 
+              <span
                 style={{
                   fontFamily: 'var(--pal-font)',
                   fontSize: '11px',
@@ -93,7 +150,7 @@ export default function NetworkStrip() {
               </span>
             </div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

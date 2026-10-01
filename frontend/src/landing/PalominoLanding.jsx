@@ -3,7 +3,7 @@ import LandingHeader from './LandingHeader';
 import Hero from './Hero';
 import NetworkStrip from './NetworkStrip';
 import SelectedIntelligence from './SelectedIntelligence';
-import HoverMediaPreview from './HoverMediaPreview';
+import CursorTracker from './CursorTracker';
 import KeyFigures from './KeyFigures';
 import CapabilitySection from './CapabilitySection';
 import Story from './Story';
@@ -13,7 +13,7 @@ import { initSmoothScroll } from './motionConfig';
 import './landing.css';
 
 export default function PalominoLanding({ onEnterCommandCenter }) {
-  const [activeProject, setActiveProject] = useState(null);
+  const [, setActiveProject] = useState(null);
   const [backendMetrics, setBackendMetrics] = useState({
     mAP50: null,
     ambulancePrecision: null,
@@ -24,12 +24,12 @@ export default function PalominoLanding({ onEnterCommandCenter }) {
     isOnline: false
   });
 
-  // Initialize Lenis smooth scroll & GSAP ScrollTrigger
+  // Initialize Lenis standalone smooth scroll (GSAP completely eliminated)
   useEffect(() => {
-    const lenis = initSmoothScroll();
+    const scrollInstance = initSmoothScroll();
     return () => {
-      if (lenis && typeof lenis.destroy === 'function') {
-        lenis.destroy();
+      if (scrollInstance && typeof scrollInstance.destroy === 'function') {
+        scrollInstance.destroy();
       }
     };
   }, []);
@@ -41,27 +41,36 @@ export default function PalominoLanding({ onEnterCommandCenter }) {
     async function fetchBackendData() {
       try {
         const [readyRes, capRes, camRes, modelRes] = await Promise.allSettled([
-          fetch('/api/ready').then(r => r.json()),
-          fetch('/api/capabilities').then(r => r.json()),
-          fetch('/api/cameras').then(r => r.json()),
-          fetch('/api/model/metrics').then(r => r.json())
+          fetch('/api/ready').then((r) => r.json()),
+          fetch('/api/capabilities').then((r) => r.json()),
+          fetch('/api/cameras').then((r) => r.json()),
+          fetch('/api/model/metrics').then((r) => r.json())
         ]);
 
         if (!isMounted) return;
 
-        const isReady = readyRes.status === 'fulfilled' && readyRes.value?.status === 'ready';
+        const isReady =
+          readyRes.status === 'fulfilled' && readyRes.value?.status === 'ready';
         const capabilities = capRes.status === 'fulfilled' ? capRes.value : null;
         const cameras = camRes.status === 'fulfilled' ? camRes.value : [];
-        const modelMetrics = modelRes.status === 'fulfilled' && modelRes.value?.available ? modelRes.value : null;
+        const modelMetrics =
+          modelRes.status === 'fulfilled' && modelRes.value?.available
+            ? modelRes.value
+            : null;
 
-        setBackendMetrics(prev => ({
+        setBackendMetrics((prev) => ({
           ...prev,
           isReady,
           isOnline: readyRes.status === 'fulfilled',
-          cameraCount: Array.isArray(cameras) && cameras.length > 0 ? cameras.length : prev.cameraCount,
+          cameraCount:
+            Array.isArray(cameras) && cameras.length > 0
+              ? cameras.length
+              : prev.cameraCount,
           fps: capabilities?.runtime?.fps_estimate || prev.fps,
-          mAP50: modelMetrics?.map50 ?? capabilities?.vision?.map50 ?? prev.mAP50,
-          ambulancePrecision: modelMetrics?.ambulance_precision ?? prev.ambulancePrecision,
+          mAP50:
+            modelMetrics?.map50 ?? capabilities?.vision?.map50 ?? prev.mAP50,
+          ambulancePrecision:
+            modelMetrics?.ambulance_precision ?? prev.ambulancePrecision,
           ambulanceRecall: modelMetrics?.ambulance_recall ?? 0.969,
           epochs: modelMetrics?.epochs_completed ?? 40,
           checkpoint: capabilities?.vision?.checkpoint || 'best.pt',
@@ -70,7 +79,7 @@ export default function PalominoLanding({ onEnterCommandCenter }) {
       } catch (err) {
         console.warn('Backend connection notice: running with frozen benchmark values', err);
         if (isMounted) {
-          setBackendMetrics(prev => ({ ...prev, isOnline: false }));
+          setBackendMetrics((prev) => ({ ...prev, isOnline: false }));
         }
       }
     }
@@ -86,39 +95,51 @@ export default function PalominoLanding({ onEnterCommandCenter }) {
   }, []);
 
   return (
-    <div className="pal-root" style={{ width: '100%', minHeight: '100vh', backgroundColor: '#000000', color: '#ffffff' }}>
-      {/* 01. FIXED NAVIGATION HEADER */}
+    <div
+      className="pal-root"
+      style={{
+        width: '100%',
+        minHeight: '100vh',
+        backgroundColor: '#000000',
+        color: '#ffffff',
+        position: 'relative'
+      }}
+    >
+      {/* 01. FIXED NAVIGATION HEADER (Horizontal letter roll variants) */}
       <LandingHeader onEnterCommandCenter={onEnterCommandCenter} />
 
-      {/* 02. HERO SECTION (12vw typography, full-screen video, zero cyan HUD) */}
+      {/* 02. HERO SECTION (1.60x scale contraction, deterministic scroll linkage) */}
       <Hero videoSrc="/api/videos/file/cam04_collision.mp4" />
 
-      {/* 03. SYSTEM NETWORK (OUR CLIENTS -> TYPOGRAPHIC CAPABILITY MARKS) */}
+      {/* 03. SYSTEM NETWORK (42px/s continuous MotionValue marquee) */}
       <NetworkStrip />
 
-      {/* 04. SELECTED LIVE INTELLIGENCE (12-COL ASYMMETRIC FILM CARDS) */}
-      <SelectedIntelligence 
-        onSelectProject={setActiveProject} 
-        onEnterCommandCenter={onEnterCommandCenter} 
+      {/* 04. SELECTED LIVE INTELLIGENCE (12-col asymmetric film cards, hover zoom) */}
+      <SelectedIntelligence
+        onSelectProject={setActiveProject}
+        onEnterCommandCenter={onEnterCommandCenter}
       />
 
-      {/* FLOATING CURSOR-FOLLOWING MEDIA CAPSULE */}
-      <HoverMediaPreview activeProject={activeProject} />
+      {/* INERTIA POINTER TRACKER (Difference dot cursor) */}
+      <CursorTracker />
 
-      {/* 05. KEY FIGURES (3x2 INSET MATRIX WITH TABULAR NUMERALS) */}
+      {/* 05. KEY FIGURES (Viewport-triggered numeric counter animation) */}
       <KeyFigures backendMetrics={backendMetrics} />
 
-      {/* 06. SERVICES & CORE CAPABILITIES (4 STACKED PINNED LAYERS) */}
+      {/* 06. SERVICES & CORE CAPABILITIES (4 stacked pinned sticky layers with parallax) */}
       <CapabilitySection />
 
-      {/* 07. HOW NAYAN WORKS (OUR STORY 2-COL EDITORIAL SPREAD) */}
-      <Story />
+      {/* 07. HOW NAYAN WORKS (Our story 2-col editorial spread with ParallaxMedia) */}
+      <Story onEnterCommandCenter={onEnterCommandCenter} />
 
-      {/* 08. FORENSIC CASES & EVIDENCE (TESTIMONIALS STRUCTURE WITH REAL AUDIT QUOTES) */}
+      {/* 08. FORENSIC EVIDENCE CASES (Direction-aware AnimatePresence carousel) */}
       <EvidenceCases />
 
-      {/* 09 & 10. CLOSING STATEMENT & WHITE STICKY FOOTER (GIANT WORDMARK NAYAN) */}
-      <LandingFooter onEnterCommandCenter={onEnterCommandCenter} backendMetrics={backendMetrics} />
+      {/* 09 & 10. CLOSING STATEMENT CTA & WHITE STICKY FOOTER UNDERLAY */}
+      <LandingFooter
+        onEnterCommandCenter={onEnterCommandCenter}
+        backendMetrics={backendMetrics}
+      />
     </div>
   );
 }
