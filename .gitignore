@@ -33,3 +33,6 @@ artifacts/models/nayan_india_run/
 artifacts/models/nayan_sanity_run/
 yolov8n.pt
 backend/yolov8n.pt
+
+# Playwright ephemeral test outputs
+tools/pal_reference_capture/test_output/

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
-import { navEase } from '../motion/easing';
+import React from 'react';
+import LetterSwapLink from '../motion/LetterSwapLink';
+import { Radio } from 'lucide-react';
 
 export default function AppHeader({
   activeTab,
@@ -9,9 +9,6 @@ export default function AppHeader({
   onOpenSystemDrawer,
   onOpenScenarioDrawer
 }) {
-  const [hoveredTab, setHoveredTab] = useState(null);
-  const [isSystemHovered, setIsSystemHovered] = useState(false);
-
   const navItems = [
     { id: 'landing', label: 'OVERVIEW' },
     { id: 'command-center', label: 'COMMAND' },
@@ -35,15 +32,16 @@ export default function AppHeader({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 var(--gutter)',
-        backgroundColor: 'rgba(0, 0, 0, 0.82)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
+        padding: '0 var(--gutter, 32px)',
+        backgroundColor: 'rgba(0, 0, 0, 0.88)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         borderBottom: '1px solid var(--border-subtle)'
       }}
     >
       {/* Brand Wordmark */}
       <button
+        type="button"
         onClick={() => onSelectTab('landing')}
         style={{
           background: 'none',
@@ -52,7 +50,7 @@ export default function AppHeader({
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          gap: '8px'
+          gap: '10px'
         }}
       >
         <span
@@ -70,132 +68,55 @@ export default function AppHeader({
         <span
           style={{
             fontSize: '10px',
+            fontFamily: 'monospace',
             letterSpacing: '0.1em',
             color: 'var(--text-muted)',
             textTransform: 'uppercase',
             borderLeft: '1px solid var(--border-subtle)',
-            paddingLeft: '8px'
+            paddingLeft: '10px'
           }}
         >
           CV-FIRST URBAN SAFETY
         </span>
       </button>
 
-      {/* Main Navigation with Character / Duplicate Text Swap Hover */}
+      {/* Main Navigation with 21st.dev Letter Swap Links */}
       <nav
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 'clamp(14px, 2vw, 32px)'
+          gap: 'clamp(14px, 2.2vw, 36px)'
         }}
       >
-        {navItems.map((item) => {
-          const isActive = activeTab === item.id;
-          const isHovered = hoveredTab === item.id;
-
-          return (
-            <button
-              key={item.id}
-              onClick={() => onSelectTab(item.id)}
-              onMouseEnter={() => setHoveredTab(item.id)}
-              onMouseLeave={() => setHoveredTab(null)}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '8px 0',
-                cursor: 'pointer',
-                position: 'relative',
-                overflow: 'hidden',
-                height: '32px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center'
-              }}
-            >
-              {/* Duplicate text swap container */}
-              <div
-                style={{
-                  position: 'relative',
-                  height: '16px',
-                  overflow: 'hidden'
-                }}
-              >
-                {/* Primary layer */}
-                <motion.span
-                  animate={{ y: isHovered ? '-100%' : '0%' }}
-                  transition={{ duration: 0.35, ease: navEase }}
-                  style={{
-                    display: 'block',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
-                    color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)'
-                  }}
-                >
-                  {item.label}
-                </motion.span>
-
-                {/* Swap layer */}
-                <motion.span
-                  animate={{ y: isHovered ? '0%' : '100%' }}
-                  transition={{ duration: 0.35, ease: navEase }}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    display: 'block',
-                    fontSize: '13px',
-                    fontWeight: 600,
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
-                    color: 'var(--text-primary)'
-                  }}
-                >
-                  {item.label}
-                </motion.span>
-              </div>
-
-              {/* Active Indicator Underline */}
-              {isActive && (
-                <motion.div
-                  layoutId="activeNavIndicator"
-                  style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: '1px',
-                    backgroundColor: 'var(--text-primary)'
-                  }}
-                />
-              )}
-            </button>
-          );
-        })}
+        {navItems.map((item) => (
+          <LetterSwapLink
+            key={item.id}
+            active={activeTab === item.id}
+            onClick={() => onSelectTab(item.id)}
+            fontSize="12px"
+            activeColor="var(--text-primary)"
+            inactiveColor="var(--text-secondary)"
+          >
+            {item.label}
+          </LetterSwapLink>
+        ))}
       </nav>
 
-      {/* Right Controls: Scenarios, System Drawer Trigger, Live Pulse */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'clamp(12px, 1.5vw, 24px)'
-        }}
-      >
-        {/* Scenarios Button */}
+      {/* Right Utility: Scenarios, System Drawer, and Live Pulse */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        {/* Scenarios Quick-Action */}
         <button
+          type="button"
           onClick={onOpenScenarioDrawer}
           style={{
             background: 'none',
             border: '1px solid var(--border-subtle)',
             color: 'var(--text-secondary)',
+            padding: '5px 12px',
             fontSize: '11px',
-            fontWeight: 500,
+            fontFamily: 'monospace',
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
-            padding: '6px 12px',
-            borderRadius: '2px',
             cursor: 'pointer',
             transition: 'border-color 0.2s, color 0.2s'
           }}
@@ -211,70 +132,24 @@ export default function AppHeader({
           SCENARIOS +
         </button>
 
-        {/* System Drawer Button with Text Swap */}
-        <button
+        {/* System Drawer Trigger */}
+        <LetterSwapLink
           onClick={onOpenSystemDrawer}
-          onMouseEnter={() => setIsSystemHovered(true)}
-          onMouseLeave={() => setIsSystemHovered(false)}
-          style={{
-            background: 'none',
-            border: 'none',
-            padding: '8px 0',
-            cursor: 'pointer',
-            position: 'relative',
-            overflow: 'hidden',
-            height: '32px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center'
-          }}
+          fontSize="11px"
+          inactiveColor="var(--text-muted)"
+          activeColor="var(--text-primary)"
         >
-          <div style={{ position: 'relative', height: '16px', overflow: 'hidden' }}>
-            <motion.span
-              animate={{ y: isSystemHovered ? '-100%' : '0%' }}
-              transition={{ duration: 0.35, ease: navEase }}
-              style={{
-                display: 'block',
-                fontSize: '12px',
-                fontWeight: 500,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                color: 'var(--text-secondary)'
-              }}
-            >
-              SYSTEM
-            </motion.span>
-            <motion.span
-              animate={{ y: isSystemHovered ? '0%' : '100%' }}
-              transition={{ duration: 0.35, ease: navEase }}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                display: 'block',
-                fontSize: '12px',
-                fontWeight: 600,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-                color: 'var(--text-primary)'
-              }}
-            >
-              SYSTEM
-            </motion.span>
-          </div>
-        </button>
+          SYSTEM
+        </LetterSwapLink>
 
-        {/* Realtime Live Pulse */}
+        {/* Live WebSocket Status Dot */}
         <div
-          title={wsConnected ? 'Realtime WebSocket Active' : 'WebSocket Reconnecting...'}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            fontSize: '11px',
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            color: wsConnected ? 'var(--text-primary)' : 'var(--text-muted)'
+            paddingLeft: '8px',
+            borderLeft: '1px solid var(--border-subtle)'
           }}
         >
           <span
@@ -282,11 +157,20 @@ export default function AppHeader({
               width: '6px',
               height: '6px',
               borderRadius: '50%',
-              backgroundColor: wsConnected ? 'var(--status-confirmed)' : 'var(--status-verifying)',
-              boxShadow: wsConnected ? '0 0 8px var(--status-confirmed)' : 'none'
+              backgroundColor: wsConnected ? '#10b981' : '#f59e0b',
+              boxShadow: wsConnected ? '0 0 8px #10b981' : '0 0 8px #f59e0b'
             }}
           />
-          <span>LIVE</span>
+          <span
+            style={{
+              fontSize: '10px',
+              fontFamily: 'monospace',
+              letterSpacing: '0.05em',
+              color: wsConnected ? '#10b981' : '#f59e0b'
+            }}
+          >
+            {wsConnected ? 'LIVE' : 'OFFLINE'}
+          </span>
         </div>
       </div>
     </header>

@@ -52,10 +52,11 @@ def get_video_catalogue():
 
     return {"videos": videos, "total": len(videos)}
 
-@router.get("/file/{filename}")
+@router.api_route("/file/{filename}", methods=["GET", "HEAD"])
 def stream_demo_video(filename: str):
     """
     Serves the actual curated H.264 MP4 video file for HTML5 video playback.
+    Supports both GET and HEAD requests for browser media probing.
     """
     safe_name = os.path.basename(filename)
     path = os.path.join(DEMO_DIR, safe_name)

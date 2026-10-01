@@ -1,9 +1,16 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 
-export default function Hero({ videoSrc = '/api/videos/file/cam04_collision.mp4' }) {
+const HERO_FEEDS = [
+  { id: 'highway', label: 'METRO FLYOVER', src: '/media/hero/urban_highway_night.mp4' },
+  { id: 'roundabout', label: 'PLANAR ROUNDABOUT', src: '/media/hero/planar_roundabout_night.mp4' },
+  { id: 'aerial', label: 'AERIAL CORRIDOR', src: '/media/hero/aerial_interchange_night.mp4' },
+];
+
+export default function Hero({ videoSrc = '/media/hero/urban_highway_night.mp4' }) {
   const containerRef = useRef(null);
   const shouldReduceMotion = useReducedMotion();
+  const [activeSrc, setActiveSrc] = useState(videoSrc);
 
   // Scroll linkage matching Palomino empirical telemetry
   // Linked over the pinned container scroll duration
@@ -59,7 +66,7 @@ export default function Hero({ videoSrc = '/api/videos/file/cam04_collision.mp4'
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          padding: '120px 20px 40px 20px',
+          padding: '120px 24px 40px 24px',
           boxSizing: 'border-box',
           backgroundColor: '#000000'
         }}
@@ -85,7 +92,8 @@ export default function Hero({ videoSrc = '/api/videos/file/cam04_collision.mp4'
             }}
           >
             <video
-              src={videoSrc}
+              key={activeSrc}
+              src={activeSrc}
               autoPlay
               loop
               muted
@@ -95,7 +103,7 @@ export default function Hero({ videoSrc = '/api/videos/file/cam04_collision.mp4'
                 height: '100%',
                 objectFit: 'cover',
                 objectPosition: '50% 45%',
-                filter: 'brightness(0.55) contrast(1.05)'
+                filter: 'brightness(0.62) contrast(1.10)'
               }}
             />
           </motion.div>
@@ -105,7 +113,7 @@ export default function Hero({ videoSrc = '/api/videos/file/cam04_collision.mp4'
               position: 'absolute',
               inset: 0,
               background:
-                'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.75) 100%)',
+                'linear-gradient(to bottom, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.15) 45%, rgba(0,0,0,0.82) 100%)',
               pointerEvents: 'none'
             }}
           />
@@ -141,7 +149,7 @@ export default function Hero({ videoSrc = '/api/videos/file/cam04_collision.mp4'
           </h1>
         </motion.div>
 
-        {/* Bottom Row: Support Copy Lower-Left, Scroll Indicator Lower-Right */}
+        {/* Bottom Row: Support Copy Lower-Left, Feed Switcher Center, Scroll Indicator Lower-Right */}
         <motion.div
           style={{
             position: 'relative',
@@ -150,7 +158,9 @@ export default function Hero({ videoSrc = '/api/videos/file/cam04_collision.mp4'
             justifyContent: 'space-between',
             alignItems: 'flex-end',
             width: '100%',
-            opacity: textOpacity
+            opacity: textOpacity,
+            flexWrap: 'wrap',
+            gap: '16px'
           }}
         >
           {/* Support copy (~420px width, 16px, 3 lines matching Palomino) */}
@@ -158,15 +168,90 @@ export default function Hero({ videoSrc = '/api/videos/file/cam04_collision.mp4'
             style={{
               maxWidth: '420px',
               fontFamily: 'var(--pal-font)',
-              fontSize: '16px',
+              fontSize: '15px',
               fontWeight: 400,
-              lineHeight: '24px',
-              color: 'rgba(255, 255, 255, 0.85)'
+              lineHeight: '23px',
+              color: 'rgba(255, 255, 255, 0.88)',
+              textShadow: '0 2px 10px rgba(0,0,0,0.7)'
             }}
           >
             Autonomous incident verification and dynamic emergency yield corridors.
             Real CUDA transfer learning (0.988 mAP50) • Calibrated planar geometry.
             Bengaluru urban mobility intelligence.
+          </div>
+
+          {/* Interactive Live Hero Video Feed Switcher */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'rgba(10, 15, 25, 0.75)',
+              backdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '999px',
+              padding: '4px 6px',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6)'
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '0 10px',
+                fontSize: '11px',
+                fontWeight: 600,
+                letterSpacing: '0.08em',
+                color: 'rgba(255, 255, 255, 0.6)'
+              }}
+            >
+              <span
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  backgroundColor: '#10b981',
+                  boxShadow: '0 0 8px #10b981'
+                }}
+              />
+              FEED
+            </div>
+            {HERO_FEEDS.map((feed) => {
+              const isActive = activeSrc === feed.src;
+              return (
+                <button
+                  key={feed.id}
+                  onClick={() => setActiveSrc(feed.src)}
+                  style={{
+                    background: isActive ? '#ffffff' : 'transparent',
+                    color: isActive ? '#050b14' : 'rgba(255, 255, 255, 0.75)',
+                    border: 'none',
+                    borderRadius: '999px',
+                    padding: '6px 14px',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    letterSpacing: '0.06em',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.color = '#ffffff';
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.color = 'rgba(255, 255, 255, 0.75)';
+                      e.currentTarget.style.background = 'transparent';
+                    }
+                  }}
+                >
+                  {feed.label}
+                </button>
+              );
+            })}
           </div>
 
           {/* Scroll indicator */}
@@ -177,7 +262,7 @@ export default function Hero({ videoSrc = '/api/videos/file/cam04_collision.mp4'
               fontWeight: 400,
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
-              color: 'rgba(255, 255, 255, 0.7)'
+              color: 'rgba(255, 255, 255, 0.75)'
             }}
           >
             SCROLL ↓

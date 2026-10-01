@@ -1,7 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
 @import './design/tokens.css';
 @import './design/typography.css';
 @import './design/grid.css';
+
+@theme inline {
+  --font-sans: var(--font-geist-sans, 'Host Grotesk', sans-serif);
+  --font-mono: var(--font-geist-mono, 'JetBrains Mono', monospace);
+}
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
 
 /* ============================================================
    NAYAN x PALOMINO GLOBAL STYLES

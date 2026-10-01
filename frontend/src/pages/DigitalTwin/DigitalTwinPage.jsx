@@ -1,16 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { motion, useInView } from 'motion/react';
 import PageHero from '../../layout/PageHero';
-import EditorialCounter from '../../motion/EditorialCounter';
+import ComparisonSlider from '../../motion/ComparisonSlider';
+import AnimatedMetric from '../../motion/AnimatedMetric';
+import { Sliders, ShieldCheck, Activity, CheckCircle2, ArrowUpRight } from 'lucide-react';
 
 export default function DigitalTwinPage() {
-  const [sliderPos, setSliderPos] = useState(50); // percentage 0-100
+  const [sliderPos, setSliderPos] = useState(50);
+  const [hoveredMetric, setHoveredMetric] = useState(null);
+  const metricsRef = useRef(null);
+  const isMetricsInView = useInView(metricsRef, { once: true, margin: '-60px' });
 
-  // 4 Palomino Key Figures for Fixed vs Adaptive
   const keyFigures = [
-    { number: '01', label: 'EMERGENCY TRAVEL TIME', fixed: '6.4 MIN', adaptive: '3.7 MIN', improvement: '-42%' },
-    { number: '02', label: 'MEAN INTERSECTION DELAY', fixed: '48.2 SEC', adaptive: '29.8 SEC', improvement: '-38%' },
-    { number: '03', label: 'PEAK VEHICULAR QUEUE', fixed: '124 METERS', adaptive: '57 METERS', improvement: '-54%' },
-    { number: '04', label: 'AVERAGE STOPPED TIME', fixed: '38.5 SEC', adaptive: '15.0 SEC', improvement: '-61%' }
+    {
+      number: '01',
+      label: 'EMERGENCY TRAVEL TIME',
+      fixed: '6.4 MIN',
+      adaptiveTarget: 3.7,
+      adaptiveUnit: ' MIN',
+      improvementVal: -42,
+      detail: 'Measured from Central Fire Hub to Hospital Stop-line along Central Expressway.'
+    },
+    {
+      number: '02',
+      label: 'MEAN INTERSECTION DELAY',
+      fixed: '48.2 SEC',
+      adaptiveTarget: 29.8,
+      adaptiveUnit: ' SEC',
+      improvementVal: -38,
+      detail: 'Average vehicular wait time across all approaches at Junction 2.'
+    },
+    {
+      number: '03',
+      label: 'PEAK VEHICULAR QUEUE',
+      fixed: '124 METERS',
+      adaptiveTarget: 57,
+      adaptiveUnit: ' METERS',
+      improvementVal: -54,
+      detail: 'Maximum queue tail length on Northbound approach during peak rush hour.'
+    },
+    {
+      number: '04',
+      label: 'AVERAGE STOPPED TIME',
+      fixed: '38.5 SEC',
+      adaptiveTarget: 15.0,
+      adaptiveUnit: ' SEC',
+      improvementVal: -61,
+      detail: 'Per-vehicle cumulative idling time while awaiting green phase.'
+    }
   ];
 
   return (
@@ -19,191 +56,150 @@ export default function DigitalTwinPage() {
       <PageHero
         eyebrow="SUMO TRAFFIC MICROSIMULATION & VALIDATION"
         title="FIXED VS ADAPTIVE"
-        subtitle="Controlled comparison of standard fixed-time traffic signal cycles versus NAYAN closed-loop adaptive green-wave corridors. Validated via SUMO microsimulation."
+        subtitle="Counterfactual validation comparing conventional fixed-time signal cycles against NAYAN closed-loop adaptive green waves. Validated via SUMO microsimulation."
         meta={
           <div style={{ textAlign: 'right' }}>
             <span className="text-micro" style={{ color: 'var(--text-muted)' }}>
               SIMULATION PROVENANCE
             </span>
-            <p style={{ margin: '2px 0 0 0', fontSize: '13px', fontFamily: 'monospace' }}>
+            <p style={{ margin: '2px 0 0 0', fontSize: '14px', fontFamily: 'monospace', color: '#10b981' }}>
               SUMO / TRACI CLOSED-LOOP ENGINE
             </p>
           </div>
         }
       />
 
-      <div className="page-container" style={{ paddingTop: '48px', paddingBottom: '120px' }}>
+      <div className="page-container" style={{ paddingTop: '40px', paddingBottom: '140px' }}>
         
-        {/* Dominant Split Comparison Visual (Draggable/Adjustable Slider) */}
-        <div
-          style={{
-            border: '1px solid var(--border-subtle)',
-            backgroundColor: '#0a0a0c',
-            position: 'relative',
-            overflow: 'hidden',
-            marginBottom: '80px',
-            userSelect: 'none'
-          }}
-        >
-          {/* Header Strip */}
-          <div
-            style={{
-              padding: '16px 24px',
-              borderBottom: '1px solid var(--border-subtle)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              backgroundColor: 'rgba(0, 0, 0, 0.6)'
-            }}
-          >
-            <span className="text-micro">
-              LEFT: CONVENTIONAL FIXED-CYCLE TRAFFIC · RIGHT: NAYAN ADAPTIVE PREEMPTION
-            </span>
+        {/* Full-Width 21st.dev Comparison Slider */}
+        <div style={{ marginBottom: '80px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '20px' }}>
+            <div>
+              <span className="text-micro" style={{ color: '#10b981' }}>
+                TACTILE VISUAL WIPE · 50/50 SPLIT
+              </span>
+              <h2 className="text-heading" style={{ margin: '4px 0 0 0', textTransform: 'uppercase' }}>
+                MICROSCOPIC TRAFFIC FLOW RECONSTRUCTION
+              </h2>
+            </div>
             <span className="text-micro" style={{ color: 'var(--text-muted)' }}>
-              DRAG SLIDER TO COMPARE BEHAVIOR
+              DRAG HANDLE OR USE ARROW KEYS TO COMPARE
             </span>
           </div>
 
-          {/* Split Comparison Frame */}
-          <div
-            style={{
-              position: 'relative',
-              width: '100%',
-              height: 'clamp(440px, 55vh, 700px)',
-              overflow: 'hidden'
-            }}
-            onMouseMove={(e) => {
-              if (e.buttons === 1) {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const pos = Math.max(5, Math.min(95, ((e.clientX - rect.left) / rect.width) * 100));
-                setSliderPos(pos);
-              }
-            }}
-          >
-            {/* Background Layer: NAYAN Adaptive (Right) */}
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                backgroundImage: 'url(/media/editorial/aerial-highway-interchange-02.webp)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'brightness(0.9)'
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '24px',
-                  right: '24px',
-                  backgroundColor: 'rgba(0, 0, 0, 0.85)',
-                  padding: '8px 16px',
-                  border: '1px solid var(--status-confirmed)',
-                  fontSize: '11px',
-                  letterSpacing: '0.08em',
-                  color: 'var(--status-confirmed)'
-                }}
-              >
-                NAYAN ADAPTIVE CORRIDOR (3.7 MIN)
-              </div>
-            </div>
-
-            {/* Clipped Top Layer: Conventional Fixed Signal (Left) */}
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: `${sliderPos}%`,
-                height: '100%',
-                overflow: 'hidden',
-                borderRight: '2px solid var(--text-primary)'
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100vw',
-                  maxWidth: '1600px',
-                  height: '100%',
-                  backgroundImage: 'url(/media/editorial/urban-traffic-congestion-03.webp)',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  filter: 'grayscale(0.6) brightness(0.65)'
-                }}
-              >
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '24px',
-                    left: '24px',
-                    backgroundColor: 'rgba(0, 0, 0, 0.85)',
-                    padding: '8px 16px',
-                    border: '1px solid var(--border-subtle)',
-                    fontSize: '11px',
-                    letterSpacing: '0.08em',
-                    color: 'var(--text-muted)'
-                  }}
-                >
-                  CONVENTIONAL FIXED SIGNALS (6.4 MIN)
-                </div>
-              </div>
-            </div>
-
-            {/* Slider Handle */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: `${sliderPos}%`,
-                transform: 'translate(-50%, -50%)',
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--text-primary)',
-                color: 'var(--bg-primary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '14px',
-                fontWeight: 700,
-                boxShadow: '0 8px 24px rgba(0,0,0,0.8)',
-                pointerEvents: 'none'
-              }}
-            >
-              ↔
-            </div>
-          </div>
+          <ComparisonSlider
+            beforeSrc="/media/nayan/stills/cam04_still_12s.webp"
+            afterSrc="/media/nayan/stills/cam03_still_7s.webp"
+            beforeLabel="FIXED-TIME BASELINE"
+            afterLabel="NAYAN ADAPTIVE AI"
+            beforeTag="GRIDLOCK · QUEUE 124m · DELAY +4.2m"
+            afterTag="PREEMPTION ACTIVE · QUEUE 57m · -42% TRAVEL TIME"
+            initialPosition={50}
+            onPositionChange={setSliderPos}
+          />
         </div>
 
-        {/* 4 Palomino Key Figures (Zero Boxed Cards) */}
-        <div style={{ borderTop: '1px solid var(--border-strong)', paddingTop: '48px' }}>
-          <span className="text-micro" style={{ display: 'block', marginBottom: '24px' }}>
-            SUMO SIMULATION VALIDATION METRICS
-          </span>
+        {/* 4 Key Figures with 21st.dev Animated Metrics */}
+        <div ref={metricsRef} style={{ borderTop: '1px solid var(--border-strong)', paddingTop: '64px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
+            <div>
+              <span className="text-micro" style={{ color: 'var(--text-muted)' }}>
+                QUANTITATIVE PERFORMANCE COMPARISON
+              </span>
+              <h3 className="text-heading" style={{ margin: '6px 0 0 0', textTransform: 'uppercase' }}>
+                EMPIRICAL VALIDATION FIGURES
+              </h3>
+            </div>
+            <span className="text-micro" style={{ color: '#10b981' }}>
+              ANIMATED ON VIEWPORT ENTRY
+            </span>
+          </div>
 
-          <div className="grid-12">
-            {keyFigures.map((fig) => (
-              <div key={fig.number} className="col-span-3" style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '24px' }}>
-                <span className="text-micro">{fig.number} / {fig.label}</span>
-                
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', margin: '12px 0 6px 0' }}>
-                  <span className="text-display-lg tabular-nums" style={{ color: 'var(--status-confirmed)' }}>
-                    {fig.improvement}
-                  </span>
-                </div>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '24px'
+            }}
+          >
+            {keyFigures.map((fig) => {
+              const isHovered = hoveredMetric === fig.number;
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                  <span>FIXED: {fig.fixed}</span>
-                  <span style={{ color: 'var(--text-primary)' }}>NAYAN: {fig.adaptive}</span>
+              return (
+                <div
+                  key={fig.number}
+                  onMouseEnter={() => setHoveredMetric(fig.number)}
+                  onMouseLeave={() => setHoveredMetric(null)}
+                  style={{
+                    padding: '32px',
+                    border: `1px solid ${isHovered ? 'var(--text-primary)' : 'var(--border-subtle)'}`,
+                    backgroundColor: isHovered ? 'rgba(255, 255, 255, 0.03)' : '#07080a',
+                    transition: 'all 0.25s ease',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                      <span className="text-micro" style={{ color: isHovered ? '#10b981' : 'var(--text-muted)' }}>
+                        METRIC {fig.number}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          fontFamily: 'monospace',
+                          fontWeight: 700,
+                          color: '#10b981',
+                          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                          border: '1px solid rgba(16, 185, 129, 0.3)',
+                          padding: '2px 8px'
+                        }}
+                      >
+                        {isMetricsInView ? (
+                          <AnimatedMetric value={fig.improvementVal} suffix="%" />
+                        ) : '0%'}
+                      </span>
+                    </div>
+
+                    <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '0.04em' }}>
+                      {fig.label}
+                    </h4>
+
+                    {/* Before vs After comparison numbers */}
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', marginBottom: '16px' }}>
+                      <div>
+                        <span className="text-micro" style={{ color: 'var(--text-muted)' }}>FIXED BASELINE</span>
+                        <p style={{ margin: '4px 0 0 0', fontSize: '18px', fontFamily: 'monospace', color: '#ef4444' }}>
+                          {fig.fixed}
+                        </p>
+                      </div>
+
+                      <span style={{ fontSize: '16px', color: 'var(--text-muted)' }}>→</span>
+
+                      <div>
+                        <span className="text-micro" style={{ color: '#10b981' }}>NAYAN ADAPTIVE</span>
+                        <p style={{ margin: '4px 0 0 0', fontSize: '24px', fontFamily: 'monospace', fontWeight: 700, color: 'var(--text-primary)' }}>
+                          {isMetricsInView ? (
+                            <AnimatedMetric
+                              value={fig.adaptiveTarget}
+                              decimals={1}
+                              suffix={fig.adaptiveUnit}
+                            />
+                          ) : (
+                            `0.0${fig.adaptiveUnit}`
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p style={{ margin: 0, fontSize: '12px', lineHeight: 1.5, color: 'var(--text-muted)', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
+                    {fig.detail}
+                  </p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

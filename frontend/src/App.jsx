@@ -114,6 +114,7 @@ export default function App() {
                 onSelectCamera={setSelectedCameraId}
                 videoCatalogue={videoCatalogue}
                 onOpenIncident={handleSelectIncident}
+                onNavigateTab={setActiveTab}
               />
             </motion.div>
           )}

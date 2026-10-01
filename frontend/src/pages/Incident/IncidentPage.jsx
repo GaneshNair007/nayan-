@@ -1,8 +1,39 @@
-import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useState, useRef } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import PageHero from '../../layout/PageHero';
 import { editorialEase } from '../../motion/easing';
 import apiClient from '../../data/apiClient';
+
+const TIMELINE_PHASES = [
+  {
+    phase: '01',
+    state: 'OBSERVED',
+    timestamp: '08:35:38.120',
+    signals: 'Trajectory Convergence Detected',
+    detail: 'YOLOv8 & ByteTrack track IDs #14 and #19 observe vector intersection with lateral angular closure >32°.'
+  },
+  {
+    phase: '02',
+    state: 'SUSPECTED',
+    timestamp: '08:35:39.450',
+    signals: 'Acute Deceleration Anomaly',
+    detail: 'Optical flow records sudden velocity decay from 54 km/h to 0 km/h in 0.8s (19.9 px/frame² peak deceleration).'
+  },
+  {
+    phase: '03',
+    state: 'VERIFYING',
+    timestamp: '08:35:40.800',
+    signals: 'Spatial Proximity & Cluster Stoppage',
+    detail: 'Planar bounding boxes overlap. Multi-object tracker clusters vehicles into a single stationary entity across lane 1.'
+  },
+  {
+    phase: '04',
+    state: 'CONFIRMED',
+    timestamp: '08:35:41.900',
+    signals: 'Obstruction Duration >2.5s',
+    detail: 'Stationary threshold exceeded. Critical incident confirmed with 0.94 model confidence. Automated preemption proposal issued.'
+  }
+];
 
 export default function IncidentPage({
   incidentId = 'INC-CAM-04-LIVE',
@@ -14,6 +45,19 @@ export default function IncidentPage({
   const [authorizing, setAuthorizing] = useState(false);
   const [aiDraft, setAiDraft] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
+
+  const galleryRef = useRef(null);
+  const { scrollYProgress: galleryProgress } = useScroll({
+    target: galleryRef,
+    offset: ['start end', 'end start']
+  });
+
+  // Asynchronous vertical parallax for the 4 forensic frames
+  const yFrame1 = useTransform(galleryProgress, [0, 1], shouldReduceMotion ? [0, 0] : [40, -40]);
+  const yFrame2 = useTransform(galleryProgress, [0, 1], shouldReduceMotion ? [0, 0] : [-30, 50]);
+  const yFrame3 = useTransform(galleryProgress, [0, 1], shouldReduceMotion ? [0, 0] : [60, -60]);
+  const yFrame4 = useTransform(galleryProgress, [0, 1], shouldReduceMotion ? [0, 0] : [-50, 40]);
 
   const incident = incidents.find(i => i.id === incidentId) || incidents[0] || {
     id: 'INC-CAM-04-LIVE',
@@ -85,18 +129,18 @@ export default function IncidentPage({
         }
       />
 
-      <div className="page-container" style={{ paddingTop: '48px', paddingBottom: '120px' }}>
+      <div className="page-container" style={{ paddingTop: '40px', paddingBottom: '120px' }}>
         
-        {/* Hero Media Block (Full width, Cinematic Aspect Ratio) */}
+        {/* Dominant Hero Media (85vw Cinematic Presentation) */}
         <div
           style={{
             width: '100%',
-            height: 'clamp(400px, 50vh, 700px)',
+            height: 'clamp(460px, 62vh, 800px)',
             border: '1px solid var(--border-subtle)',
             backgroundColor: '#0a0a0c',
             position: 'relative',
             overflow: 'hidden',
-            marginBottom: '64px'
+            marginBottom: '96px'
           }}
         >
           <video
@@ -105,8 +149,38 @@ export default function IncidentPage({
             loop
             muted
             playsInline
+            ref={(el) => { if (el) el.muted = true; }}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
+
+          {/* Calibrated Bounding Box */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '38%',
+              left: '42%',
+              width: '18%',
+              height: '24%',
+              border: '1px solid var(--status-critical)',
+              pointerEvents: 'none'
+            }}
+          >
+            <span
+              style={{
+                position: 'absolute',
+                top: '-20px',
+                left: 0,
+                fontSize: '10px',
+                fontFamily: 'monospace',
+                color: 'var(--status-critical)',
+                backgroundColor: 'rgba(0,0,0,0.85)',
+                padding: '1px 6px',
+                letterSpacing: '0.04em'
+              }}
+            >
+              IMPACT CLUSTER · CONF 0.94
+            </span>
+          </div>
 
           <div
             style={{
@@ -115,7 +189,7 @@ export default function IncidentPage({
               left: 0,
               right: 0,
               padding: '24px 32px',
-              background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%)',
+              background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'flex-end'
@@ -123,109 +197,233 @@ export default function IncidentPage({
           >
             <div>
               <span className="text-micro" style={{ color: 'var(--status-critical)' }}>
-                TELEMETRY: IMPACT DETECTED
+                TELEMETRY: VERIFIED TRAJECTORY IMPACT
               </span>
-              <p style={{ margin: '4px 0 0 0', fontSize: '18px', fontWeight: 600 }}>
+              <p style={{ margin: '4px 0 0 0', fontSize: '20px', fontWeight: 600 }}>
                 Trajectory Conflict Verified on CAM-04 (Lane 1 Blocked)
               </p>
             </div>
             <div style={{ textAlign: 'right', fontSize: '12px', color: 'var(--text-muted)' }}>
-              <span>PROVENANCE: INFERENCE</span>
+              <span>PROVENANCE: YOLOv8 FP16 CUDA · BYTETRACK</span>
             </div>
           </div>
         </div>
 
-        {/* Section 01: Typographic Verification Timeline (Full Width) */}
-        <div style={{ marginBottom: '80px', borderTop: '1px solid var(--border-strong)', paddingTop: '40px' }}>
-          <span className="text-micro" style={{ display: 'block', marginBottom: '24px' }}>
-            01 / MULTI-STAGE VERIFICATION LIFECYCLE
+        {/* Section 01: Modern Timeline Spanning Substantial Viewport Height */}
+        <div style={{ marginBottom: '120px', borderTop: '1px solid var(--border-strong)', paddingTop: '48px' }}>
+          <span className="text-micro" style={{ display: 'block', marginBottom: '32px' }}>
+            01 / 4-STAGE FORENSIC VERIFICATION TIMELINE
           </span>
 
-          <div className="grid-12" style={{ textAlign: 'center' }}>
-            {[
-              { stage: 'OBSERVED', num: '01', desc: '1 Signal: Trajectory Vector Convergence' },
-              { stage: 'SUSPECTED', num: '02', desc: '2 Signals: Deceleration Anomaly Measured' },
-              { stage: 'VERIFYING', num: '03', desc: '3 Signals: Spatial Overlap & Proximity' },
-              { stage: 'CONFIRMED', num: '04', desc: 'Stoppage >2.5s & Evidence Score ≥0.75' }
-            ].map((st, i) => {
-              const isPastOrCurrent = true;
+          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            {/* Continuous Vertical Timeline Track */}
+            <div
+              style={{
+                position: 'absolute',
+                left: '120px',
+                top: '16px',
+                bottom: '16px',
+                width: '1px',
+                backgroundColor: 'var(--border-subtle)'
+              }}
+            />
+
+            {TIMELINE_PHASES.map((ph, idx) => {
+              const isConfirmedState = ph.state === 'CONFIRMED';
+              const dotColor = isConfirmedState ? 'var(--status-critical)' : 'var(--text-primary)';
+
               return (
                 <div
-                  key={st.stage}
-                  className="col-span-3"
+                  key={ph.phase}
                   style={{
-                    borderTop: `2px solid ${st.stage === 'CONFIRMED' ? 'var(--status-critical)' : 'var(--text-primary)'}`,
-                    paddingTop: '16px',
-                    textAlign: 'left'
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '40px',
+                    position: 'relative',
+                    padding: '24px 0',
+                    borderBottom: '1px solid var(--border-subtle)'
                   }}
                 >
-                  <span className="text-micro" style={{ color: 'var(--text-muted)' }}>
-                    PHASE {st.num}
-                  </span>
-                  <h4 style={{ margin: '4px 0', fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                    {st.stage}
-                  </h4>
-                  <p className="text-body" style={{ margin: 0, fontSize: '12px' }}>
-                    {st.desc}
-                  </p>
+                  {/* Timestamp & Phase Index */}
+                  <div style={{ width: '100px', textAlign: 'right' }}>
+                    <span className="text-micro" style={{ color: 'var(--text-muted)' }}>
+                      PHASE {ph.phase}
+                    </span>
+                    <p style={{ margin: '2px 0 0 0', fontSize: '11px', fontFamily: 'monospace', color: 'var(--text-secondary)' }}>
+                      {ph.timestamp}
+                    </p>
+                  </div>
+
+                  {/* Timeline Node Dot */}
+                  <div
+                    style={{
+                      width: '9px',
+                      height: '9px',
+                      borderRadius: '50%',
+                      backgroundColor: dotColor,
+                      boxShadow: `0 0 8px ${dotColor}`,
+                      marginTop: '6px',
+                      zIndex: 2
+                    }}
+                  />
+
+                  {/* Narrative Body */}
+                  <div style={{ flex: 1, paddingLeft: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '6px' }}>
+                      <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        {ph.state}
+                      </h3>
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          color: isConfirmedState ? 'var(--status-critical)' : 'var(--text-secondary)',
+                          fontFamily: 'monospace'
+                        }}
+                      >
+                        — {ph.signals}
+                      </span>
+                    </div>
+
+                    <p className="text-body" style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, maxWidth: '820px' }}>
+                      {ph.detail}
+                    </p>
+                  </div>
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* Section 02: What Happened & Forensic Evidence Details (Editorial Asymmetry) */}
-        <div className="grid-12" style={{ marginBottom: '96px', alignItems: 'flex-start' }}>
-          <div className="col-span-5">
-            <span className="text-micro">02 / SITUATIONAL CHRONOLOGY</span>
-            <h2 className="text-heading" style={{ margin: '8px 0 16px 0', textTransform: 'uppercase' }}>
-              WHAT HAPPENED
+        {/* Section 02: 21st.dev Immersive Scroll Gallery (Asynchronous Vertical Parallax) */}
+        <div ref={galleryRef} style={{ marginBottom: '120px', borderTop: '1px solid var(--border-strong)', paddingTop: '48px' }}>
+          <div style={{ marginBottom: '40px' }}>
+            <span className="text-micro">02 / IMMERSIVE FORENSIC SCROLL GALLERY</span>
+            <h2 className="text-heading" style={{ margin: '4px 0 0 0', textTransform: 'uppercase' }}>
+              CHRONOLOGICAL FRAME EVIDENCE
             </h2>
-            <p className="text-body-lg" style={{ lineHeight: 1.6 }}>
-              {incident.description}
+            <p className="text-body" style={{ margin: '8px 0 0 0', maxWidth: '680px' }}>
+              High-cadence camera frame sequence with differential optical displacement. Frames translate asynchronously during scroll.
             </p>
-            <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: 'var(--text-secondary)' }}>
-              <div><strong>LOCATION:</strong> Central Expressway & 4th Cross (JNC-02)</div>
-              <div><strong>AFFECTED LANES:</strong> {incident.affected_lanes?.join(', ') || 'Sector 1 (Left)'}</div>
-              <div><strong>DETECTOR CONFIDENCE:</strong> {Math.round(incident.model_confidence * 100)}% (FP16 CUDA)</div>
-            </div>
           </div>
 
-          <div className="col-span-7" style={{ paddingLeft: 'clamp(16px, 3vw, 48px)' }}>
-            <span className="text-micro">03 / QUANTITATIVE PHYSICAL EVIDENCE</span>
-            <hr className="editorial-rule-strong" style={{ margin: '12px 0 24px 0' }} />
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>Deceleration Anomaly</h4>
-                  <span className="text-micro">CONF 0.92</span>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: '24px',
+              alignItems: 'center'
+            }}
+          >
+            {/* Frame 1: Before Frame */}
+            <motion.div
+              style={{ y: yFrame1, border: '1px solid var(--border-subtle)', backgroundColor: '#0a0a0c', overflow: 'hidden' }}
+            >
+              <div style={{ height: '220px', position: 'relative', overflow: 'hidden' }}>
+                <video
+                  src="/api/videos/file/cam04_collision.mp4"
+                  muted
+                  playsInline
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.7)' }}
+                />
+                <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
+                  <span className="text-micro" style={{ backgroundColor: 'rgba(0,0,0,0.8)', padding: '2px 6px' }}>
+                    T - 4.2s · BASELINE
+                  </span>
                 </div>
-                <p className="text-body" style={{ margin: 0, fontSize: '13px' }}>
-                  Peak deceleration rate 19.9 px/frame² measured between V-001 and V-002, matching physical impact criteria.
+              </div>
+              <div style={{ padding: '16px' }}>
+                <span className="text-micro">UNINTERRUPTED FLOW</span>
+                <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                  Speeds nominal at 52 km/h across both lanes.
                 </p>
               </div>
+            </motion.div>
 
-              <div style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>Persistent Spatial Obstruction</h4>
-                  <span className="text-micro">CONF 0.85</span>
+            {/* Frame 2: Event Frame */}
+            <motion.div
+              style={{ y: yFrame2, border: '1px solid var(--status-critical)', backgroundColor: '#0a0a0c', overflow: 'hidden' }}
+            >
+              <div style={{ height: '240px', position: 'relative', overflow: 'hidden' }}>
+                <video
+                  src="/api/videos/file/cam04_collision.mp4"
+                  muted
+                  playsInline
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+                <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
+                  <span className="text-micro" style={{ backgroundColor: 'rgba(239, 68, 68, 0.9)', color: '#fff', padding: '2px 6px' }}>
+                    T = 0.0s · IMPACT
+                  </span>
                 </div>
-                <p className="text-body" style={{ margin: 0, fontSize: '13px' }}>
-                  Contact cluster stationary duration reached 3.2s, verifying vehicle immobilization across roadway.
+              </div>
+              <div style={{ padding: '16px' }}>
+                <span className="text-micro" style={{ color: 'var(--status-critical)' }}>DECELERATION SPIKE</span>
+                <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                  Peak 19.9 px/frame² kinematic deceleration anomaly.
                 </p>
               </div>
+            </motion.div>
 
-              <div style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 600 }}>Road Space Corridor Feasibility</h4>
-                  <span className="text-micro">CONF 0.95</span>
+            {/* Frame 3: After Frame */}
+            <motion.div
+              style={{ y: yFrame3, border: '1px solid var(--border-subtle)', backgroundColor: '#0a0a0c', overflow: 'hidden' }}
+            >
+              <div style={{ height: '220px', position: 'relative', overflow: 'hidden' }}>
+                <video
+                  src="/api/videos/file/cam04_collision.mp4"
+                  muted
+                  playsInline
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.8)' }}
+                />
+                <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
+                  <span className="text-micro" style={{ backgroundColor: 'rgba(0,0,0,0.8)', padding: '2px 6px' }}>
+                    T + 3.5s · STOPPAGE
+                  </span>
                 </div>
-                <p className="text-body" style={{ margin: 0, fontSize: '13px' }}>
-                  Dynamic corridor engine confirms 14.0m road width with remaining 7.5m clearance along southern shoulder.
+              </div>
+              <div style={{ padding: '16px' }}>
+                <span className="text-micro">ROADWAY IMPASSE</span>
+                <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                  Vehicles immobilized. Queue propagation initiated.
                 </p>
               </div>
-            </div>
+            </motion.div>
+
+            {/* Frame 4: Bounding Box Evidence Crop */}
+            <motion.div
+              style={{ y: yFrame4, border: '1px solid var(--border-subtle)', backgroundColor: '#0a0a0c', overflow: 'hidden' }}
+            >
+              <div style={{ height: '240px', position: 'relative', overflow: 'hidden', backgroundColor: '#111' }}>
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '25%',
+                    left: '20%',
+                    right: '20%',
+                    bottom: '25%',
+                    border: '1px dashed var(--status-critical)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <span style={{ fontSize: '11px', fontFamily: 'monospace', color: 'var(--status-critical)' }}>
+                    ROI CROP: V-001/002
+                  </span>
+                </div>
+                <div style={{ position: 'absolute', top: '10px', left: '10px' }}>
+                  <span className="text-micro" style={{ backgroundColor: 'rgba(0,0,0,0.8)', padding: '2px 6px' }}>
+                    PLANAR PROJECTION
+                  </span>
+                </div>
+              </div>
+              <div style={{ padding: '16px' }}>
+                <span className="text-micro">GROUND HOMOGRAPHY</span>
+                <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                  Centroid separation: 0.42m (Direct Physical Contact).
+                </p>
+              </div>
+            </motion.div>
           </div>
         </div>
 
@@ -235,9 +433,9 @@ export default function IncidentPage({
             
             {/* Operator Authorization Control */}
             <div className="col-span-6" style={{ paddingRight: '24px' }}>
-              <span className="text-micro">04 / DISPATCH AUTHORIZATION</span>
+              <span className="text-micro">03 / HUMAN OPERATOR AUTHORIZATION</span>
               <h3 style={{ margin: '8px 0 16px 0', fontSize: '24px', fontWeight: 600 }}>
-                OPERATOR RESPONSE STATUS
+                DISPATCH DIRECTIVE
               </h3>
               
               <div
@@ -281,7 +479,7 @@ export default function IncidentPage({
 
             {/* AI Decision Support (Strictly Secondary) */}
             <div className="col-span-6">
-              <span className="text-micro">05 / AI OPERATOR COPILOT (DECISION SUPPORT)</span>
+              <span className="text-micro">04 / AI OPERATOR COPILOT (DECISION SUPPORT)</span>
               <h3 style={{ margin: '8px 0 16px 0', fontSize: '24px', fontWeight: 600 }}>
                 SITUATIONAL SYNTHESIS
               </h3>

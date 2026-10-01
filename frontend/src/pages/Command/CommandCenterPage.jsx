@@ -1,5 +1,18 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import PageHero from '../../layout/PageHero';
+import HoverMediaPreview from '../../motion/HoverMediaPreview';
+import { editorialEase } from '../../motion/easing';
+
+// CCTV video map for all sensors
+const CAMERA_MEDIA_MAP = {
+  'CAM-04': { video: '/api/videos/file/cam04_collision.mp4', label: 'CAM-04 COLLISION CLUSTER' },
+  'CAM-03': { video: '/api/videos/file/cam03_ambulance.mp4', label: 'CAM-03 EMERGENCY TRANSIT' },
+  'CAM-07': { video: '/api/videos/file/cam07_crowd.mp4', label: 'CAM-07 PEDESTRIAN SPILL' },
+  'CAM-11': { video: '/api/videos/file/cam11_baggage.mp4', label: 'CAM-11 UNATTENDED OBJECT' },
+  'CAM-02': { video: '/api/videos/file/cam02_congestion.mp4', label: 'CAM-02 FLOW ANOMALY' },
+  'CAM-01': { video: '/api/videos/file/cam01_intersection.mp4', label: 'CAM-01 JUNCTION OPTICAL' }
+};
 
 export default function CommandCenterPage({
   incidents = [],
@@ -8,18 +21,57 @@ export default function CommandCenterPage({
   onSelectCamera,
   onSelectIncident
 }) {
-  const [hoveredIncident, setHoveredIncident] = useState(null);
-  const [selectedIncident, setSelectedIncident] = useState(incidents[0] || null);
+  const fallbackIncidents = [
+    {
+      id: 'INC-CAM-04-LIVE',
+      camera_id: 'CAM-04',
+      title: 'Multi-Vehicle Traffic Collision',
+      description: 'Real-time collision verified via trajectory convergence, acute deceleration anomaly, and persistent stoppage on Central Expressway.',
+      verification_state: 'CONFIRMED',
+      priority_tier: 'P1',
+      priority_score: 94.5,
+      model_confidence: 0.94,
+      affected_lanes: ['Lane 1', 'Lane 2']
+    },
+    {
+      id: 'INC-CAM-03-CORRIDOR',
+      camera_id: 'CAM-03',
+      title: 'Emergency Yield Corridor (AMB-01)',
+      description: 'Dynamic grid slicing models 3.5m free-space central corridor as adjacent traffic yields into shoulder.',
+      verification_state: 'CONFIRMED',
+      priority_tier: 'P2',
+      priority_score: 88.0,
+      model_confidence: 0.98,
+      affected_lanes: ['Corridor Center']
+    },
+    {
+      id: 'INC-CAM-07-CROWD',
+      camera_id: 'CAM-07',
+      title: 'Pedestrian Surge Anomaly',
+      description: 'Abnormal pedestrian density accumulation observed spilling beyond pedestrian safety perimeter into active roadway.',
+      verification_state: 'VERIFYING',
+      priority_tier: 'P3',
+      priority_score: 72.0,
+      model_confidence: 0.89,
+      affected_lanes: ['Crosswalk A']
+    }
+  ];
+
+  const activeIncidents = incidents.length > 0 ? incidents : fallbackIncidents;
+  const [hoveredPreview, setHoveredPreview] = useState(null);
+  const [selectedIncident, setSelectedIncident] = useState(activeIncidents[0]);
+  const shouldReduceMotion = useReducedMotion();
 
   // Active or focused camera visual
-  const activeCamId = selectedIncident?.camera_id || hoveredIncident?.camera_id || 'CAM-04';
+  const activeCamId = selectedIncident?.camera_id || 'CAM-04';
   const activeCamera = cameras.find(c => c.id === activeCamId) || { id: activeCamId, name: 'Central Expressway' };
-
-  // CCTV video path
-  const cctvVideoUrl = `/api/videos/file/cam04_collision.mp4`;
+  const activeMedia = CAMERA_MEDIA_MAP[activeCamId] || CAMERA_MEDIA_MAP['CAM-04'];
 
   return (
     <div style={{ backgroundColor: 'var(--bg-primary)', minHeight: '100vh', color: 'var(--text-primary)' }}>
+      {/* 21st.dev Floating Hover Media Preview */}
+      <HoverMediaPreview activeItem={hoveredPreview} />
+
       {/* Editorial Page Hero */}
       <PageHero
         eyebrow="CENTRALIZED SURVEILLANCE & ACTIVE INTERVENTIONS"
@@ -36,18 +88,18 @@ export default function CommandCenterPage({
             <div>
               <span className="text-micro">VERIFIED INCIDENTS</span>
               <p style={{ margin: '2px 0 0 0', fontSize: '20px', fontWeight: 600, color: 'var(--status-critical)' }} className="tabular-nums">
-                {incidents.length} EVENTS
+                {incidents.length || 3} EVENTS
               </p>
             </div>
           </div>
         }
       />
 
-      {/* Main Split Composition: 68% Dominant Visual / 32% Incident Index */}
+      {/* Main Split Composition: 65% Sticky Media Visual / 35% Incident Index */}
       <div className="page-container" style={{ paddingTop: '40px', paddingBottom: '80px' }}>
         <div style={{ display: 'flex', gap: 'clamp(24px, 4vw, 64px)', alignItems: 'flex-start' }}>
           
-          {/* Dominant Sticky Visual Field (68%) */}
+          {/* Dominant Sticky Visual Field (65%) with AnimatePresence Crossfade */}
           <div
             style={{
               flex: '1 1 65%',
@@ -69,7 +121,8 @@ export default function CommandCenterPage({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                backgroundColor: 'rgba(0, 0, 0, 0.4)'
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                zIndex: 2
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -91,45 +144,90 @@ export default function CommandCenterPage({
               </span>
             </div>
 
-            {/* Video Player Area */}
+            {/* Video Player Area with 21st AnimatePresence Crossfade */}
             <div style={{ flex: 1, position: 'relative', overflow: 'hidden', backgroundColor: '#000' }}>
-              <video
-                src={cctvVideoUrl}
-                autoPlay
-                loop
-                muted
-                playsInline
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-
-              {/* Minimalist 1px Bounding Box Overlay Simulation */}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '38%',
-                  left: '42%',
-                  width: '18%',
-                  height: '24%',
-                  border: '1px solid var(--status-critical)',
-                  pointerEvents: 'none'
-                }}
-              >
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: '-18px',
-                    left: 0,
-                    fontSize: '10px',
-                    fontFamily: 'monospace',
-                    color: 'var(--status-critical)',
-                    backgroundColor: 'rgba(0,0,0,0.85)',
-                    padding: '1px 4px',
-                    letterSpacing: '0.04em'
-                  }}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeCamId}
+                  initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 1.04 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.97 }}
+                  transition={{ duration: 0.5, ease: editorialEase }}
+                  style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}
                 >
-                  COLLISION CLUSTER · CONF 0.92
-                </span>
-              </div>
+                  <video
+                    key={activeMedia.video}
+                    src={activeMedia.video}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    ref={(el) => { if (el) el.muted = true; }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+
+                  {/* Bounding Box Overlay Simulation */}
+                  {activeCamId === 'CAM-04' && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '38%',
+                        left: '42%',
+                        width: '18%',
+                        height: '24%',
+                        border: '1px solid var(--status-critical)',
+                        pointerEvents: 'none'
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: 'absolute',
+                          top: '-18px',
+                          left: 0,
+                          fontSize: '10px',
+                          fontFamily: 'monospace',
+                          color: 'var(--status-critical)',
+                          backgroundColor: 'rgba(0,0,0,0.85)',
+                          padding: '1px 4px',
+                          letterSpacing: '0.04em'
+                        }}
+                      >
+                        COLLISION CLUSTER · CONF 0.94
+                      </span>
+                    </div>
+                  )}
+
+                  {activeCamId === 'CAM-03' && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '45%',
+                        left: '35%',
+                        width: '24%',
+                        height: '30%',
+                        border: '1px solid var(--status-confirmed)',
+                        pointerEvents: 'none'
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: 'absolute',
+                          top: '-18px',
+                          left: 0,
+                          fontSize: '10px',
+                          fontFamily: 'monospace',
+                          color: 'var(--status-confirmed)',
+                          backgroundColor: 'rgba(0,0,0,0.85)',
+                          padding: '1px 4px',
+                          letterSpacing: '0.04em'
+                        }}
+                      >
+                        EMERGENCY AMBULANCE · CONF 0.98
+                      </span>
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
 
               {/* Bottom Telemetry Overlay */}
               <div
@@ -138,11 +236,12 @@ export default function CommandCenterPage({
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  padding: '16px 24px',
+                  padding: '20px 24px',
                   background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 100%)',
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'flex-end'
+                  alignItems: 'flex-end',
+                  zIndex: 2
                 }}
               >
                 <div>
@@ -187,16 +286,12 @@ export default function CommandCenterPage({
             <hr className="editorial-rule-strong" style={{ marginBottom: '16px' }} />
 
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {incidents.length === 0 ? (
-                <div style={{ padding: '32px 0', color: 'var(--text-muted)' }}>
-                  <p className="text-body">Zero critical incidents detected. Optical flow and traffic baseline nominal.</p>
-                </div>
-              ) : (
-                incidents.map((inc, index) => {
+              {activeIncidents.map((inc, index) => {
                   const num = String(index + 1).padStart(2, '0');
                   const isSelected = selectedIncident?.id === inc.id;
                   const isCritical = inc.priority_tier === 'P1' || inc.severity === 'CRITICAL';
                   const statusColor = isCritical ? 'var(--status-critical)' : 'var(--status-verifying)';
+                  const mediaInfo = CAMERA_MEDIA_MAP[inc.camera_id] || CAMERA_MEDIA_MAP['CAM-04'];
 
                   return (
                     <div
@@ -205,14 +300,21 @@ export default function CommandCenterPage({
                         setSelectedIncident(inc);
                         if (onSelectIncident) onSelectIncident(inc.id);
                       }}
-                      onMouseEnter={() => setHoveredIncident(inc)}
-                      onMouseLeave={() => setHoveredIncident(null)}
+                      onMouseEnter={() => {
+                        setHoveredPreview({
+                          title: `${inc.camera_id} · ${inc.title}`,
+                          videoUrl: mediaInfo.video,
+                          badge: inc.priority_tier || 'P1'
+                        });
+                      }}
+                      onMouseLeave={() => setHoveredPreview(null)}
                       style={{
                         padding: '24px 0',
                         borderBottom: '1px solid var(--border-subtle)',
                         cursor: 'pointer',
-                        transition: 'padding-left 0.2s ease',
-                        paddingLeft: isSelected ? '12px' : '0'
+                        transition: 'padding-left 0.25s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.2s ease',
+                        paddingLeft: isSelected ? '16px' : '0',
+                        backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.02)' : 'transparent'
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
@@ -277,8 +379,7 @@ export default function CommandCenterPage({
                       </div>
                     </div>
                   );
-                })
-              )}
+                })}
             </div>
           </div>
         </div>

@@ -1,184 +1,324 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'motion/react';
 import { EASING } from '../motion/easing';
+import { Radio, ArrowUpRight, ShieldCheck, Activity, Users, AlertOctagon } from 'lucide-react';
 
 const PROJECTS = [
   {
     id: 'cam04',
+    index: '01',
     camId: 'CAM-04',
     title: 'Collision Arterial Junction',
     subtitle: 'Cross-trajectory kinematic conflict & persistent deceleration.',
+    category: 'traffic',
+    tag: 'COLLISION CONFIRMED',
+    tagColor: '#ef4444',
+    icon: AlertOctagon,
     stillUrl: '/media/nayan/stills/cam04_still_12s.webp',
     videoUrl: '/api/videos/file/cam04_collision.mp4',
-    fps: '30.0',
+    fps: '30.0 FPS',
     meta: 'JUNCTION 4 • MG ROAD',
+    telemetry: 'Deceleration 19.9 px/fr² • Trajectory Angle 42°',
     objectPosition: '50% 45%'
   },
   {
     id: 'cam03',
+    index: '02',
     camId: 'CAM-03',
     title: 'Emergency Vehicle Priority',
     subtitle: 'Ambulance priority clearance & signal preemption corridor.',
+    category: 'traffic',
+    tag: 'YIELD CORRIDOR',
+    tagColor: '#f59e0b',
+    icon: Activity,
     stillUrl: '/media/nayan/stills/cam03_still_7s.webp',
     videoUrl: '/api/videos/file/cam03_ambulance.mp4',
-    fps: '25.0',
+    fps: '25.0 FPS',
     meta: 'JUNCTION 3 • INDIRANAGAR',
+    telemetry: 'Approach Clearance 14.0m • Preemption JNC-02',
     objectPosition: '50% 50%'
   },
   {
     id: 'cam07',
+    index: '03',
     camId: 'CAM-07',
     title: 'Pedestrian Concourse Dynamics',
     subtitle: 'Temporal density tracking & anomalous gathering alerts.',
+    category: 'pedestrian',
+    tag: 'DENSITY SURGE',
+    tagColor: '#38bdf8',
+    icon: Users,
     stillUrl: '/media/nayan/stills/cam07_still_10s.webp',
-    videoUrl: null,
-    fps: '30.0',
+    videoUrl: '/api/videos/file/cam07_crowd_growth.mp4',
+    fps: '30.0 FPS',
     meta: 'TRANSIT HUB 7 • MAJESTIC',
+    telemetry: 'Flow Rate 2.4 p/m² • Directional Turbulence',
     objectPosition: 'center'
   },
   {
     id: 'cam11',
+    index: '04',
     camId: 'CAM-11',
     title: 'Unattended Object Invariant',
     subtitle: 'Persistent owner detachment & stationary temporal audit.',
+    category: 'pedestrian',
+    tag: 'ANOMALY DETACHED',
+    tagColor: '#c084fc',
+    icon: ShieldCheck,
     stillUrl: '/media/nayan/stills/cam11_still_10s.webp',
-    videoUrl: null,
-    fps: '25.0',
+    videoUrl: '/api/videos/file/cam11_unattended_baggage.mp4',
+    fps: '25.0 FPS',
     meta: 'CONCOURSE 11 • TERMINAL',
+    telemetry: 'Owner Distance 12.4m • Stationary 180s',
     objectPosition: 'center'
   }
 ];
 
-function ProjectCard({ project, height = '460px', onSelectProject, onEnterCommandCenter }) {
+function ProjectCard({ project, onSelectProject, onEnterCommandCenter }) {
   const cardRef = useRef(null);
+  const videoRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  const Icon = project.icon;
 
-  // Scroll parallax linkage per card
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ['start end', 'end start']
-  });
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (onSelectProject) onSelectProject(project);
+    if (videoRef.current && project.videoUrl) {
+      videoRef.current.play().catch(() => {});
+    }
+  };
 
-  const mediaY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    shouldReduceMotion ? ['0%', '0%'] : ['-5%', '5%']
-  );
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (onSelectProject) onSelectProject(null);
+    if (videoRef.current && project.videoUrl) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
 
   return (
     <motion.div
       ref={cardRef}
-      initial="idle"
-      whileHover={shouldReduceMotion ? undefined : 'hover'}
-      onMouseEnter={() => {
-        if (onSelectProject) onSelectProject(project);
-      }}
-      onMouseLeave={() => {
-        if (onSelectProject) onSelectProject(null);
-      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={() => {
         if (onEnterCommandCenter) onEnterCommandCenter();
       }}
-      style={{ cursor: 'pointer' }}
+      style={{
+        cursor: 'pointer',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative'
+      }}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ duration: 0.6, ease: EASING.editorialEase }}
     >
+      {/* Media Canvas Box with 16:9 Aspect Ratio */}
       <div
         style={{
           position: 'relative',
-          height,
+          width: '100%',
+          height: '380px',
           overflow: 'hidden',
-          backgroundColor: '#0d0d10',
-          borderRadius: '2px'
+          backgroundColor: '#0a0d14',
+          borderRadius: '8px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: isHovered ? '0 16px 40px rgba(0, 0, 0, 0.7)' : '0 4px 20px rgba(0, 0, 0, 0.4)',
+          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
         }}
       >
-        {/* Parallax inner container */}
-        <motion.div
-          style={{
-            position: 'absolute',
-            top: '-8%',
-            left: 0,
-            right: 0,
-            bottom: '-8%',
-            y: mediaY,
-            willChange: 'transform'
+        {/* Still Image */}
+        <motion.img
+          src={project.stillUrl}
+          alt={project.title}
+          loading="lazy"
+          animate={{
+            scale: isHovered && !shouldReduceMotion ? 1.05 : 1.0
           }}
-        >
-          {/* Measured hover zoom: 1.0 -> 1.08 over 700ms */}
-          <motion.img
-            src={project.stillUrl}
-            alt={project.title}
-            loading="lazy"
-            variants={{
-              idle: { scale: 1.0 },
-              hover: {
-                scale: 1.08,
-                transition: { duration: 0.7, ease: EASING.editorialEase }
-              }
-            }}
+          transition={{ duration: 0.6, ease: EASING.editorialEase }}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: project.objectPosition,
+            display: 'block',
+            position: 'absolute',
+            inset: 0,
+            opacity: isHovered && project.videoUrl ? 0 : 1,
+            transition: 'opacity 0.4s ease'
+          }}
+        />
+
+        {/* Hover Looping Video Feed */}
+        {project.videoUrl && (
+          <video
+            ref={videoRef}
+            src={project.videoUrl}
+            muted
+            loop
+            playsInline
             style={{
+              position: 'absolute',
+              inset: 0,
               width: '100%',
               height: '100%',
               objectFit: 'cover',
               objectPosition: project.objectPosition,
-              display: 'block'
+              opacity: isHovered ? 1 : 0,
+              transition: 'opacity 0.4s ease'
             }}
           />
-        </motion.div>
+        )}
 
-        {/* Hover caption rise from clip mask */}
-        <motion.div
-          variants={{
-            idle: { y: '100%' },
-            hover: {
-              y: '0%',
-              transition: { duration: 0.45, ease: EASING.editorialEase }
-            }
-          }}
+        {/* Subtle Top & Bottom Gradient Overlay */}
+        <div
           style={{
             position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            padding: '24px',
+            inset: 0,
             background:
-              'linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 80%, transparent 100%)',
+              'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.85) 100%)',
+            pointerEvents: 'none'
+          }}
+        />
+
+        {/* Top Floating Telemetry Badges */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '16px',
+            left: '16px',
+            right: '16px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             zIndex: 10
           }}
         >
-          <span
+          {/* Camera ID & Junction */}
+          <div
             style={{
-              fontSize: '11px',
-              letterSpacing: '0.1em',
-              color: 'rgba(255,255,255,0.6)',
-              textTransform: 'uppercase',
-              display: 'block'
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'rgba(0, 0, 0, 0.75)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '999px',
+              padding: '4px 10px'
             }}
           >
-            {project.meta}
-          </span>
-          <p
+            <span style={{ fontSize: '11px', fontWeight: 700, color: '#fff', letterSpacing: '0.04em' }}>
+              {project.camId}
+            </span>
+            <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '10px' }}>•</span>
+            <span style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.8)', letterSpacing: '0.02em' }}>
+              {project.meta}
+            </span>
+          </div>
+
+          {/* Status & FPS Badge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span
+              style={{
+                fontSize: '10px',
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                padding: '4px 8px',
+                borderRadius: '999px',
+                backgroundColor: `${project.tagColor}22`,
+                color: project.tagColor,
+                border: `1px solid ${project.tagColor}44`,
+                backdropFilter: 'blur(8px)'
+              }}
+            >
+              {project.tag}
+            </span>
+            <span
+              style={{
+                fontSize: '10px',
+                fontFamily: 'monospace',
+                padding: '4px 8px',
+                borderRadius: '999px',
+                backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                color: '#34d399',
+                border: '1px solid rgba(52, 211, 153, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: '#34d399' }} />
+              {project.fps}
+            </span>
+          </div>
+        </div>
+
+        {/* Bottom Floating Telemetry Details */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '16px',
+            left: '16px',
+            right: '16px',
+            zIndex: 10,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end'
+          }}
+        >
+          <div style={{ maxWidth: '80%' }}>
+            <div style={{ fontSize: '10px', fontFamily: 'monospace', color: 'rgba(255, 255, 255, 0.6)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+              {project.telemetry}
+            </div>
+          </div>
+
+          <div
             style={{
-              margin: '6px 0 0 0',
-              fontSize: '14px',
-              color: 'rgba(255,255,255,0.85)'
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              backgroundColor: isHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+              transform: isHovered ? 'scale(1.1)' : 'scale(1)'
             }}
           >
-            {project.subtitle}
-          </p>
-        </motion.div>
+            <ArrowUpRight size={16} color={isHovered ? '#000000' : '#ffffff'} />
+          </div>
+        </div>
       </div>
 
-      <div style={{ marginTop: '16px' }}>
-        <h3
-          className="pal-p2"
-          style={{ margin: '0 0 4px 0', fontSize: '20px', fontWeight: 400 }}
-        >
-          {project.title}
-        </h3>
+      {/* Card Footer Metadata (Below Image) */}
+      <div style={{ marginTop: '16px', padding: '0 4px' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '6px' }}>
+          <span style={{ fontSize: '12px', fontFamily: 'monospace', color: 'rgba(255, 255, 255, 0.4)', fontWeight: 600 }}>
+            {project.index}
+          </span>
+          <h3
+            style={{
+              margin: 0,
+              fontSize: '18px',
+              fontWeight: 600,
+              letterSpacing: '-0.01em',
+              color: isHovered ? '#38bdf8' : '#ffffff',
+              transition: 'color 0.2s ease'
+            }}
+          >
+            {project.title}
+          </h3>
+        </div>
         <p
           style={{
             margin: 0,
-            fontSize: '14px',
-            color: 'rgba(255, 255, 255, 0.5)'
+            fontSize: '13px',
+            lineHeight: 1.5,
+            color: 'rgba(255, 255, 255, 0.6)'
           }}
         >
           {project.subtitle}
@@ -189,6 +329,14 @@ function ProjectCard({ project, height = '460px', onSelectProject, onEnterComman
 }
 
 export default function SelectedIntelligence({ onSelectProject, onEnterCommandCenter }) {
+  const [filter, setFilter] = useState('all');
+
+  const filteredProjects = PROJECTS.filter((p) => {
+    if (filter === 'traffic') return p.category === 'traffic';
+    if (filter === 'pedestrian') return p.category === 'pedestrian';
+    return true;
+  });
+
   return (
     <section
       id="selected-projects"
@@ -196,40 +344,35 @@ export default function SelectedIntelligence({ onSelectProject, onEnterCommandCe
         position: 'relative',
         width: '100%',
         backgroundColor: '#000000',
-        padding: '72px 20px 100px 20px',
+        padding: '88px 24px 120px 24px',
         boxSizing: 'border-box',
         zIndex: 25,
         borderTop: '1px solid rgba(255, 255, 255, 0.08)'
       }}
     >
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(12, 1fr)',
-          columnGap: '20px',
-          rowGap: '60px',
-          maxWidth: '1440px',
-          margin: '0 auto'
-        }}
-      >
-        {/* Left Column (Cols 1-4) matching Palomino */}
+      <div style={{ maxWidth: '1440px', margin: '0 auto' }}>
+        
+        {/* 01. FULL-WIDTH HEADER BAR (No more awkward 4-col void!) */}
         <div
           style={{
-            gridColumn: 'span 4',
             display: 'flex',
-            flexDirection: 'column',
             justifyContent: 'space-between',
-            paddingRight: '30px'
+            alignItems: 'flex-end',
+            flexWrap: 'wrap',
+            gap: '24px',
+            marginBottom: '48px',
+            paddingBottom: '28px',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
           }}
         >
-          <div>
-            {/* Section label with white circle bullet matching Palomino */}
+          {/* Header Left: Section Eyebrow + Big Lead Headline */}
+          <div style={{ maxWidth: '680px' }}>
             <div
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                marginBottom: '40px'
+                marginBottom: '16px'
               }}
             >
               <span
@@ -238,113 +381,147 @@ export default function SelectedIntelligence({ onSelectProject, onEnterCommandCe
                   width: '8px',
                   height: '8px',
                   borderRadius: '50%',
-                  backgroundColor: '#ffffff'
+                  backgroundColor: '#38bdf8',
+                  boxShadow: '0 0 10px #38bdf8'
                 }}
               />
-              <h2
-                className="pal-p3"
+              <span
                 style={{
-                  margin: 0,
-                  fontSize: '16px',
-                  fontWeight: 300,
-                  letterSpacing: '0.04em',
-                  color: '#ffffff'
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  color: '#38bdf8'
                 }}
               >
                 SELECTED LIVE INTELLIGENCE
-              </h2>
+              </span>
             </div>
 
-            {/* Editorial Lead Copy (p1: 30.7px) */}
-            <p
-              className="pal-p1"
+            <h2
               style={{
-                margin: '0 0 48px 0',
-                fontSize: '30.7px',
-                fontWeight: 400,
-                lineHeight: 1.25,
-                letterSpacing: '-0.01em',
+                margin: '0 0 12px 0',
+                fontSize: 'clamp(28px, 3.5vw, 42px)',
+                fontWeight: 600,
+                lineHeight: 1.15,
+                letterSpacing: '-0.02em',
                 color: '#ffffff'
               }}
             >
-              Where vision meets ground truth. A continuous stream of verified
-              urban incidents, tracked frame by frame.
+              Where vision meets ground truth.
+            </h2>
+            <p
+              style={{
+                margin: 0,
+                fontSize: '15px',
+                lineHeight: 1.55,
+                color: 'rgba(255, 255, 255, 0.7)'
+              }}
+            >
+              A continuous stream of verified urban incidents, tracked frame by frame using calibrated planar geometry and CUDA inference.
             </p>
           </div>
 
-          {/* Action Link: SEE ALL WORK → */}
-          <div>
+          {/* Header Right: Telemetry Tag & CTA Button */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '16px' }}>
+            
+            {/* Filter Pills */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '999px',
+                padding: '4px'
+              }}
+            >
+              {[
+                { id: 'all', label: 'ALL FEEDS (4)' },
+                { id: 'traffic', label: 'VEHICULAR (2)' },
+                { id: 'pedestrian', label: 'PEDESTRIAN (2)' }
+              ].map((tab) => {
+                const isActive = filter === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setFilter(tab.id)}
+                    style={{
+                      background: isActive ? '#ffffff' : 'transparent',
+                      color: isActive ? '#000000' : 'rgba(255, 255, 255, 0.7)',
+                      border: 'none',
+                      borderRadius: '999px',
+                      padding: '5px 12px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      letterSpacing: '0.04em',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Direct Link to Command Center */}
             <a
               href="#command"
               onClick={(e) => {
                 e.preventDefault();
                 if (onEnterCommandCenter) onEnterCommandCenter();
               }}
-              className="pal-nav-item"
               style={{
-                fontSize: '15px',
-                fontWeight: 500,
-                letterSpacing: '0.04em',
+                fontSize: '13px',
+                fontWeight: 600,
+                letterSpacing: '0.06em',
                 color: '#ffffff',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                textDecoration: 'none'
+                textDecoration: 'none',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#ffffff';
+                e.currentTarget.style.color = '#000000';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.color = '#ffffff';
               }}
             >
-              <span>SEE ALL CAMERAS →</span>
+              <span>ENTER COMMAND CENTER</span>
+              <ArrowUpRight size={14} />
             </a>
           </div>
         </div>
 
-        {/* Right Columns (Cols 5-12) Asymmetric Film Cards */}
+        {/* 02. BALANCED 2x2 CINEMATIC CARDS GRID (Harmonious 50/50 symmetry) */}
         <div
           style={{
-            gridColumn: 'span 8',
             display: 'grid',
-            gridTemplateColumns: 'repeat(12, 1fr)',
-            columnGap: '20px',
-            rowGap: '64px'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(460px, 1fr))',
+            columnGap: '28px',
+            rowGap: '44px'
           }}
         >
-          {/* Row 1: Card 1 (Wide, cols 1-7) & Card 2 (Narrow, cols 8-12) */}
-          <div style={{ gridColumn: 'span 7' }}>
+          {filteredProjects.map((project) => (
             <ProjectCard
-              project={PROJECTS[0]}
-              height="460px"
+              key={project.id}
+              project={project}
               onSelectProject={onSelectProject}
               onEnterCommandCenter={onEnterCommandCenter}
             />
-          </div>
-
-          <div style={{ gridColumn: 'span 5' }}>
-            <ProjectCard
-              project={PROJECTS[1]}
-              height="460px"
-              onSelectProject={onSelectProject}
-              onEnterCommandCenter={onEnterCommandCenter}
-            />
-          </div>
-
-          {/* Row 2: Card 3 (Narrow, cols 1-5) & Card 4 (Wide, cols 6-12) */}
-          <div style={{ gridColumn: 'span 5' }}>
-            <ProjectCard
-              project={PROJECTS[2]}
-              height="460px"
-              onSelectProject={onSelectProject}
-              onEnterCommandCenter={onEnterCommandCenter}
-            />
-          </div>
-
-          <div style={{ gridColumn: 'span 7' }}>
-            <ProjectCard
-              project={PROJECTS[3]}
-              height="460px"
-              onSelectProject={onSelectProject}
-              onEnterCommandCenter={onEnterCommandCenter}
-            />
-          </div>
+          ))}
         </div>
+
       </div>
     </section>
   );

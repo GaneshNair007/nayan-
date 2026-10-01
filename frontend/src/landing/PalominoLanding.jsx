@@ -5,7 +5,7 @@ import NetworkStrip from './NetworkStrip';
 import SelectedIntelligence from './SelectedIntelligence';
 import CursorTracker from './CursorTracker';
 import KeyFigures from './KeyFigures';
-import CapabilitySection from './CapabilitySection';
+import ScrollDeck from '../motion/ScrollDeck';
 import Story from './Story';
 import EvidenceCases from './EvidenceCases';
 import LandingFooter from './LandingFooter';
@@ -106,7 +106,7 @@ export default function PalominoLanding({ onEnterCommandCenter }) {
       }}
     >
       {/* 02. HERO SECTION (1.60x scale contraction, deterministic scroll linkage) */}
-      <Hero videoSrc="/api/videos/file/cam04_collision.mp4" />
+      <Hero videoSrc="/media/hero/urban_highway_night.mp4" />
 
       {/* 03. SYSTEM NETWORK (42px/s continuous MotionValue marquee) */}
       <NetworkStrip />
@@ -123,8 +123,8 @@ export default function PalominoLanding({ onEnterCommandCenter }) {
       {/* 05. KEY FIGURES (Viewport-triggered numeric counter animation) */}
       <KeyFigures backendMetrics={backendMetrics} />
 
-      {/* 06. SERVICES & CORE CAPABILITIES (4 stacked pinned sticky layers with parallax) */}
-      <CapabilitySection />
+      {/* 06. SERVICES & CORE CAPABILITIES (21st.dev 4-stage sticky card deck: DETECT -> VERIFY -> RESPOND -> SIMULATE) */}
+      <ScrollDeck onEnterCommandCenter={onEnterCommandCenter} />
 
       {/* 07. HOW NAYAN WORKS (Our story 2-col editorial spread with ParallaxMedia) */}
       <Story onEnterCommandCenter={onEnterCommandCenter} />
