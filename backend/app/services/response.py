@@ -147,13 +147,13 @@ class ResponseService:
             eval_res = corridor_engine.verify_segment_cctv(cam_id, tracks)
             comp_st = eval_res.get("traffic_compression_state", "READY")
             clearance_m = eval_res.get("clearance_width_meters")
-            if clearance_m is None:
-                clearance_m = round(eval_res.get("normalized_clearance", 0.75) * 4.0, 2)
+            norm_clearance = eval_res.get("normalized_clearance")
             dynamic_segments.append(
                 SegmentCorridorStatus(
                     segment_id=seg_id,
                     camera_id=cam_id,
                     clearance_width_meters=clearance_m,
+                    normalized_clearance=norm_clearance,
                     traffic_compression_state=comp_st,
                     upstream_signal_state=signal_st,
                     verified_by_cctv=eval_res.get("verified_by_cctv", True)

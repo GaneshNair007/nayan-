@@ -109,6 +109,25 @@ class AIAssistantService:
         openai_enabled = os.environ.get("OPENAI_ENABLED", "true" if api_key else "false").lower() == "true"
         return bool(api_key and openai_enabled)
 
+    @classmethod
+    def get_status(cls) -> Dict[str, Any]:
+        """Returns sanitized AI status without leaking secrets."""
+        api_key = os.environ.get("OPENAI_API_KEY") or settings.OPENAI_API_KEY
+        openai_enabled = os.environ.get("OPENAI_ENABLED", "true" if api_key else "false").lower() == "true"
+        configured = bool(api_key and openai_enabled)
+        return {
+            "enabled": openai_enabled,
+            "configured": configured,
+            "available": configured,
+            "provider": "openai",
+            "model": os.environ.get("OPENAI_MODEL", settings.OPENAI_MODEL),
+            "fallback_model": settings.OPENAI_FALLBACK_MODEL,
+            "mode": "operator_decision_support",
+            "autonomous_actions": False,
+            "store_responses": False,
+            "last_error": None
+        }
+
     async def generate_assistance(
         self,
         mode: str,
@@ -256,7 +275,8 @@ CURRENT AUTHORITATIVE BACKEND CONTEXT:
                 }
 
         latency_ms = round((time.time() - start_time) * 1000, 2)
-        output_hash = hashlib.sha256(raw_output.encode("utf-8")).hexdigest()
+        raw_output_str = str(raw_output or "")
+        output_hash = hashlib.sha256(raw_output_str.encode("utf-8")).hexdigest()
 
         # Parse JSON output from model or construct clean structure
         summary = ""

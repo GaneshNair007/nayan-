@@ -131,11 +131,19 @@ class EvidenceEngine:
                 self.accumulated_evidence.append(ev)
                 new_evidence_added.append(ev)
 
-        evidence_score = min(1.0, score)
+        accumulated_types = {e.type for e in self.accumulated_evidence}
+        effective_signals = max(matched_signals, len(accumulated_types))
+        
+        # Calculate score reflecting both instantaneous and accumulated temporal evidence
+        if self.accumulated_evidence:
+            accum_score = min(1.0, sum(e.confidence_score for e in self.accumulated_evidence) / 4.0)
+            evidence_score = min(1.0, max(score, accum_score))
+        else:
+            evidence_score = min(1.0, score)
 
         # Transition State Machine based strictly on evidence measurements
         prev_state = self.verification_state
-        if matched_signals == 0:
+        if effective_signals == 0:
             return None
 
         if self.candidate_start_time is None:
@@ -143,14 +151,29 @@ class EvidenceEngine:
 
         dur = timestamp - self.candidate_start_time
 
-        if matched_signals == 1:
-            self.verification_state = VerificationState.OBSERVED
-        elif matched_signals == 2:
-            self.verification_state = VerificationState.SUSPECTED
-        elif matched_signals >= 3 and features.post_event_stationary_duration_s < 2.5:
-            self.verification_state = VerificationState.VERIFYING
-        elif matched_signals >= 3 and features.post_event_stationary_duration_s >= 2.5 and evidence_score >= 0.75:
-            self.verification_state = VerificationState.CONFIRMED
+        # Monotonic forward state transitions based on quantitative physical signals
+        if effective_signals == 1:
+            candidate_state = VerificationState.OBSERVED
+        elif effective_signals == 2:
+            candidate_state = VerificationState.SUSPECTED
+        elif effective_signals >= 3 and features.post_event_stationary_duration_s < 2.5 and "stationary_duration" not in accumulated_types:
+            candidate_state = VerificationState.VERIFYING
+        elif effective_signals >= 3 and (features.post_event_stationary_duration_s >= 2.5 or "stationary_duration" in accumulated_types) and evidence_score >= 0.70:
+            candidate_state = VerificationState.CONFIRMED
+        else:
+            candidate_state = prev_state
+
+        # Ensure verification state does not regress during an active incident lifecycle
+        state_order = {
+            VerificationState.OBSERVED: 1,
+            VerificationState.SUSPECTED: 2,
+            VerificationState.VERIFYING: 3,
+            VerificationState.CONFIRMED: 4
+        }
+        if state_order.get(candidate_state, 0) >= state_order.get(prev_state, 0):
+            self.verification_state = candidate_state
+        else:
+            self.verification_state = prev_state
 
         if self.verification_state != prev_state:
             trans = StateTransition(
@@ -158,7 +181,7 @@ class EvidenceEngine:
                 from_state=prev_state.value,
                 to_state=self.verification_state.value,
                 timestamp=now_iso,
-                reason=f"Evidence score reached {evidence_score:.2f} with {matched_signals} signals"
+                reason=f"Evidence score reached {evidence_score:.2f} with {effective_signals} signals"
             )
             self.state_history.append(trans)
 

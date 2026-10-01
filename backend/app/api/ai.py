@@ -28,19 +28,8 @@ def get_ai_status():
     """
     Returns AI Assistant status without exposing secrets.
     """
-    configured = ai_service.is_configured()
-    return {
-        "enabled": settings.OPENAI_ENABLED,
-        "configured": configured,
-        "available": configured,
-        "provider": "openai",
-        "model": settings.OPENAI_MODEL,
-        "fallback_model": settings.OPENAI_FALLBACK_MODEL,
-        "mode": "operator_decision_support",
-        "autonomous_actions": False,
-        "store_responses": False,
-        "api_key_configured": bool(settings.OPENAI_API_KEY)
-    }
+    from app.services.ai_assistant import AIAssistantService
+    return AIAssistantService.get_status()
 
 @router.post("/assist")
 async def assist_operator(req: AIAssistRequest):

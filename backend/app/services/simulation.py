@@ -73,7 +73,7 @@ class SimulationService:
                 severity=IncidentSeverity.MEDIUM,
                 evidence_score=0.25,
                 estimated_people_affected=live_peop,
-                affected_lanes_count=1,
+                affected_lanes_count=0,
                 evidence_count=0
             )
             live_inc = Incident(
@@ -96,7 +96,7 @@ class SimulationService:
                 priority_reasons=p_reasons + ["Active video inference initiated on CAM-04"],
                 title="Live Traffic Stream Observation on CAM-04",
                 description=f"Active GPU computer-vision pipeline running on CAM-04. Tracking {len(active_tracks)} live entities with {active_dets} detections.",
-                affected_lanes=["Lane 1"],
+                affected_lanes=[],
                 estimated_people_affected=live_peop,
                 provenance=DataProvenance.INFERENCE,
                 evidence=[]

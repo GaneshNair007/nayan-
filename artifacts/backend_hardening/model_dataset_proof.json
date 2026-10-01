@@ -1,0 +1,52 @@
+{
+  "model_verification": {
+    "checkpoint_path": "artifacts/models/nayan_india_v2/best.pt",
+    "sha256": "6eb11ed634f43ea67a2866ceed7227a50b1a8b850be13013607b4da5d25cebbe",
+    "file_size_mb": 5.960299491882324,
+    "names": {
+      "0": "ambulance",
+      "1": "car",
+      "2": "motorcycle",
+      "3": "auto_rickshaw",
+      "4": "bus",
+      "5": "truck"
+    },
+    "classes_match": true,
+    "cuda_available": true,
+    "device_name": "NVIDIA GeForce RTX 4050 Laptop GPU"
+  },
+  "dataset_verification": {
+    "counts": {
+      "train": 4520,
+      "val": 1268,
+      "test": 1173
+    },
+    "missing_labels": {
+      "train": 0,
+      "val": 0,
+      "test": 0
+    },
+    "corrupt_labels": {
+      "train": 0,
+      "val": 0,
+      "test": 0
+    },
+    "train_val_overlap": 0,
+    "train_test_overlap": 0,
+    "val_test_overlap": 0,
+    "valid": true
+  },
+  "training_proofs": {
+    "proof_files": {
+      "artifacts/training_v2/full_run/results.csv": true,
+      "artifacts/training_v2/full_run/args.yaml": true,
+      "artifacts/training_v2/full_run/confusion_matrix.png": true,
+      "artifacts/training_v2/full_run/BoxPR_curve.png": true,
+      "artifacts/training_v2/full_run/BoxF1_curve.png": true,
+      "artifacts/training_v2/gpu_proof.txt": true,
+      "artifacts/training_v2/nvidia_smi_live.txt": true
+    },
+    "epochs": 40
+  },
+  "all_passed": true
+}

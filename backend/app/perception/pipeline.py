@@ -268,12 +268,40 @@ class PerceptionPipelineManager:
                     else:
                         sev = IncidentSeverity.HIGH if state == VerificationState.CONFIRMED else IncidentSeverity.MEDIUM
 
+                    # Dynamically derive affected lanes from vehicle contact points and camera calibration
+                    affected_lanes = []
+                    if inc_type == IncidentType.COLLISION:
+                        involved_tracks = [t for t in active_tracks if t.track_id in collision_features.involved_track_ids]
+                        if not involved_tracks:
+                            involved_tracks = active_tracks[:2]
+
+                        calib = DEMO_CALIBRATIONS.get(camera_id)
+                        if calib and calib.calibrated:
+                            for t in involved_tracks:
+                                u = t.bbox.x + t.bbox.width / 2.0
+                                v = t.bbox.y + t.bbox.height
+                                gp = calib.image_to_ground(u, v)
+                                if gp:
+                                    x_m = gp[0]
+                                    lane_idx = int(x_m / (calib.road_width_meters / 3.0)) + 1
+                                    lane_name = f"Lane {max(1, min(3, lane_idx))}"
+                                    if lane_name not in affected_lanes:
+                                        affected_lanes.append(lane_name)
+                        else:
+                            for t in involved_tracks:
+                                u_norm = (t.bbox.x + t.bbox.width / 2.0) / 640.0
+                                sector = "Sector 1 (Left)" if u_norm < 0.33 else ("Sector 2 (Center)" if u_norm < 0.66 else "Sector 3 (Right)")
+                                if sector not in affected_lanes:
+                                    affected_lanes.append(sector)
+
+                    affected_lanes_count = len(affected_lanes)
+
                     # Calculate deterministic priority tier and score using verified IncidentService formula
                     p_tier, p_score, calc_reasons = IncidentService.calculate_priority(
                         severity=sev,
                         evidence_score=ev_score,
                         estimated_people_affected=max(1, len(active_tracks)),
-                        affected_lanes_count=2 if inc_type == IncidentType.COLLISION else 0,
+                        affected_lanes_count=affected_lanes_count,
                         evidence_count=len(ev_items),
                         emergency_involved=False
                     )
@@ -297,7 +325,7 @@ class PerceptionPipelineManager:
                         priority_reasons=reasons,
                         title=title,
                         description=desc,
-                        affected_lanes=["Lane 1", "Lane 2"] if inc_type == IncidentType.COLLISION else [],
+                        affected_lanes=affected_lanes,
                         estimated_people_affected=len(active_tracks),
                         provenance=DataProvenance.INFERENCE,
                         evidence=ev_items,

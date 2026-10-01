@@ -1,0 +1,1039 @@
+{
+  "correlation_id": "cv-trace-22f884c7",
+  "pipeline_stages": [
+    "VIDEO_DECODING",
+    "TRAINED_YOLO_INFERENCE",
+    "BYTETRACK_ASSOCIATION",
+    "TEMPORAL_KINEMATIC_FEATURES",
+    "MULTI_SIGNAL_EVIDENCE_ENGINE",
+    "DETERMINISTIC_PRIORITY_SCORING"
+  ],
+  "model_checkpoint": "artifacts/models/nayan_india_v2/best.pt",
+  "device": "cuda:0",
+  "total_frames_traced": 20,
+  "state_transitions": [
+    "SUSPECTED"
+  ],
+  "captured_evidence_items": [
+    {
+      "id": "EV-CAM-04-0001",
+      "type": "deceleration_anomaly",
+      "source": "CAM-04-perception",
+      "confidence_score": 0.92,
+      "details": {
+        "max_deceleration": 19.92129155784233
+      }
+    },
+    {
+      "id": "EV-CAM-04-0002",
+      "type": "persistent_proximity",
+      "source": "CAM-04-perception",
+      "confidence_score": 0.85,
+      "details": {
+        "iou": 0.9646810123048083,
+        "duration_s": 0.03333333333333333
+      }
+    }
+  ],
+  "final_incident_state": {
+    "incident_id": "INC-CAM04-cv-trace-22f884c7",
+    "camera_id": "CAM-04",
+    "verification_state": "SUSPECTED",
+    "evidence_score": 0.443,
+    "priority_tier": "P3",
+    "priority_score": 48.1,
+    "priority_reasons": [
+      "Severity level HIGH contributes 26.2pts",
+      "+ 2 estimated individuals affected",
+      "+ Severe lane obstruction (1 lanes blocked)"
+    ]
+  },
+  "frame_traces": [
+    {
+      "frame_index": 426,
+      "timestamp_seconds": 14.2,
+      "detections_count": 2,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.683,
+          "bbox": [
+            1129.0,
+            0.0,
+            1277.0,
+            149.0
+          ]
+        },
+        {
+          "class_name": "car",
+          "confidence": 0.278,
+          "bbox": [
+            395.0,
+            379.5,
+            626.0,
+            505.5
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        },
+        {
+          "track_id": 2,
+          "anonymous_id": "V-002",
+          "class_name": "car",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": false,
+        "max_deceleration_px_frame2": 0.0,
+        "involved_track_ids": [],
+        "confidence_score": 0.0
+      }
+    },
+    {
+      "frame_index": 427,
+      "timestamp_seconds": 14.233,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.686,
+          "bbox": [
+            1129.0,
+            0.0,
+            1277.0,
+            149.1
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.06,
+          "acceleration": 0.06
+        },
+        {
+          "track_id": 2,
+          "anonymous_id": "V-002",
+          "class_name": "car",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": false,
+        "max_deceleration_px_frame2": 0.0,
+        "involved_track_ids": [],
+        "confidence_score": 0.0
+      }
+    },
+    {
+      "frame_index": 428,
+      "timestamp_seconds": 14.267,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.684,
+          "bbox": [
+            1129.0,
+            0.0,
+            1277.0,
+            149.0
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.06,
+          "acceleration": 0.0
+        },
+        {
+          "track_id": 2,
+          "anonymous_id": "V-002",
+          "class_name": "car",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": false,
+        "max_deceleration_px_frame2": 0.0,
+        "involved_track_ids": [],
+        "confidence_score": 0.0
+      }
+    },
+    {
+      "frame_index": 429,
+      "timestamp_seconds": 14.3,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.677,
+          "bbox": [
+            1129.0,
+            0.0,
+            1277.0,
+            149.0
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.0,
+          "acceleration": -0.06
+        },
+        {
+          "track_id": 2,
+          "anonymous_id": "V-002",
+          "class_name": "car",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": false,
+        "max_deceleration_px_frame2": 0.0,
+        "involved_track_ids": [],
+        "confidence_score": 0.0
+      }
+    },
+    {
+      "frame_index": 430,
+      "timestamp_seconds": 14.333,
+      "detections_count": 2,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.676,
+          "bbox": [
+            1129.0,
+            0.0,
+            1277.0,
+            149.0
+          ]
+        },
+        {
+          "class_name": "car",
+          "confidence": 0.319,
+          "bbox": [
+            379.0,
+            382.0,
+            592.5,
+            498.5
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        },
+        {
+          "track_id": 2,
+          "anonymous_id": "V-002",
+          "class_name": "car",
+          "speed_px_per_sec": 24.85,
+          "acceleration": 24.85
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": false,
+        "max_deceleration_px_frame2": 0.0,
+        "involved_track_ids": [],
+        "confidence_score": 0.0
+      }
+    },
+    {
+      "frame_index": 431,
+      "timestamp_seconds": 14.367,
+      "detections_count": 3,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.677,
+          "bbox": [
+            1129.0,
+            0.0,
+            1277.0,
+            148.8
+          ]
+        },
+        {
+          "class_name": "car",
+          "confidence": 0.363,
+          "bbox": [
+            374.0,
+            380.0,
+            585.0,
+            497.5
+          ]
+        },
+        {
+          "class_name": "ambulance",
+          "confidence": 0.262,
+          "bbox": [
+            376.5,
+            379.5,
+            586.5,
+            496.0
+          ]
+        }
+      ],
+      "active_tracks_count": 3,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.12,
+          "acceleration": 0.12
+        },
+        {
+          "track_id": 2,
+          "anonymous_id": "V-002",
+          "class_name": "car",
+          "speed_px_per_sec": 4.93,
+          "acceleration": -19.92
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": true,
+        "max_deceleration_px_frame2": 19.92,
+        "involved_track_ids": [
+          "V-002",
+          "V-003"
+        ],
+        "confidence_score": 0.55
+      },
+      "verification_state": "SUSPECTED",
+      "evidence_score": 0.55
+    },
+    {
+      "frame_index": 432,
+      "timestamp_seconds": 14.4,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.677,
+          "bbox": [
+            1129.0,
+            0.0,
+            1277.0,
+            148.8
+          ]
+        }
+      ],
+      "active_tracks_count": 3,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.0,
+          "acceleration": -0.12
+        },
+        {
+          "track_id": 2,
+          "anonymous_id": "V-002",
+          "class_name": "car",
+          "speed_px_per_sec": 4.93,
+          "acceleration": -19.92
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": true,
+        "max_deceleration_px_frame2": 19.92,
+        "involved_track_ids": [
+          "V-002",
+          "V-003"
+        ],
+        "confidence_score": 0.55
+      },
+      "verification_state": "SUSPECTED",
+      "evidence_score": 0.55
+    },
+    {
+      "frame_index": 433,
+      "timestamp_seconds": 14.433,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.677,
+          "bbox": [
+            1129.0,
+            0.0,
+            1277.0,
+            148.8
+          ]
+        }
+      ],
+      "active_tracks_count": 3,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        },
+        {
+          "track_id": 2,
+          "anonymous_id": "V-002",
+          "class_name": "car",
+          "speed_px_per_sec": 4.93,
+          "acceleration": -19.92
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": true,
+        "max_deceleration_px_frame2": 19.92,
+        "involved_track_ids": [
+          "V-002",
+          "V-003"
+        ],
+        "confidence_score": 0.55
+      },
+      "verification_state": "SUSPECTED",
+      "evidence_score": 0.55
+    },
+    {
+      "frame_index": 434,
+      "timestamp_seconds": 14.467,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.677,
+          "bbox": [
+            1129.0,
+            0.0,
+            1277.0,
+            148.8
+          ]
+        }
+      ],
+      "active_tracks_count": 3,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        },
+        {
+          "track_id": 2,
+          "anonymous_id": "V-002",
+          "class_name": "car",
+          "speed_px_per_sec": 4.93,
+          "acceleration": -19.92
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": true,
+        "max_deceleration_px_frame2": 19.92,
+        "involved_track_ids": [
+          "V-002",
+          "V-003"
+        ],
+        "confidence_score": 0.55
+      },
+      "verification_state": "SUSPECTED",
+      "evidence_score": 0.55
+    },
+    {
+      "frame_index": 435,
+      "timestamp_seconds": 14.5,
+      "detections_count": 2,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.672,
+          "bbox": [
+            1129.0,
+            0.0,
+            1277.0,
+            148.5
+          ]
+        },
+        {
+          "class_name": "ambulance",
+          "confidence": 0.3,
+          "bbox": [
+            365.5,
+            381.0,
+            563.5,
+            493.0
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.12,
+          "acceleration": 0.12
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 15.1,
+          "acceleration": 15.1
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": false,
+        "max_deceleration_px_frame2": 0.0,
+        "involved_track_ids": [],
+        "confidence_score": 0.0
+      }
+    },
+    {
+      "frame_index": 436,
+      "timestamp_seconds": 14.533,
+      "detections_count": 2,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.67,
+          "bbox": [
+            1128.0,
+            0.0,
+            1276.0,
+            148.5
+          ]
+        },
+        {
+          "class_name": "ambulance",
+          "confidence": 0.475,
+          "bbox": [
+            362.5,
+            380.5,
+            553.0,
+            492.5
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 1.0,
+          "acceleration": 0.88
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 6.77,
+          "acceleration": -8.33
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": true,
+        "max_deceleration_px_frame2": 8.33,
+        "involved_track_ids": [
+          "V-001",
+          "V-003"
+        ],
+        "confidence_score": 0.3
+      },
+      "verification_state": "SUSPECTED",
+      "evidence_score": 0.443
+    },
+    {
+      "frame_index": 437,
+      "timestamp_seconds": 14.567,
+      "detections_count": 2,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.669,
+          "bbox": [
+            1128.0,
+            0.0,
+            1276.0,
+            148.5
+          ]
+        },
+        {
+          "class_name": "ambulance",
+          "confidence": 0.343,
+          "bbox": [
+            359.5,
+            381.5,
+            550.5,
+            492.0
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.0,
+          "acceleration": -1.0
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 2.76,
+          "acceleration": -4.01
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": true,
+        "max_deceleration_px_frame2": 4.01,
+        "involved_track_ids": [
+          "V-001",
+          "V-003"
+        ],
+        "confidence_score": 0.3
+      },
+      "verification_state": "SUSPECTED",
+      "evidence_score": 0.443
+    },
+    {
+      "frame_index": 438,
+      "timestamp_seconds": 14.6,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.67,
+          "bbox": [
+            1128.0,
+            0.0,
+            1276.0,
+            148.2
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.12,
+          "acceleration": 0.12
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 2.76,
+          "acceleration": -4.01
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": true,
+        "max_deceleration_px_frame2": 4.01,
+        "involved_track_ids": [
+          "V-001",
+          "V-003"
+        ],
+        "confidence_score": 0.3
+      },
+      "verification_state": "SUSPECTED",
+      "evidence_score": 0.443
+    },
+    {
+      "frame_index": 439,
+      "timestamp_seconds": 14.633,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.674,
+          "bbox": [
+            1128.0,
+            0.0,
+            1276.0,
+            148.2
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.0,
+          "acceleration": -0.12
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 2.76,
+          "acceleration": -4.01
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": true,
+        "max_deceleration_px_frame2": 4.01,
+        "involved_track_ids": [
+          "V-001",
+          "V-003"
+        ],
+        "confidence_score": 0.3
+      },
+      "verification_state": "SUSPECTED",
+      "evidence_score": 0.443
+    },
+    {
+      "frame_index": 440,
+      "timestamp_seconds": 14.667,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.674,
+          "bbox": [
+            1128.0,
+            0.0,
+            1276.0,
+            148.2
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.0,
+          "acceleration": 0.0
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 2.76,
+          "acceleration": -4.01
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": true,
+        "max_deceleration_px_frame2": 4.01,
+        "involved_track_ids": [
+          "V-001",
+          "V-003"
+        ],
+        "confidence_score": 0.3
+      },
+      "verification_state": "SUSPECTED",
+      "evidence_score": 0.443
+    },
+    {
+      "frame_index": 441,
+      "timestamp_seconds": 14.7,
+      "detections_count": 2,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.669,
+          "bbox": [
+            1128.0,
+            0.0,
+            1276.0,
+            148.0
+          ]
+        },
+        {
+          "class_name": "auto_rickshaw",
+          "confidence": 0.319,
+          "bbox": [
+            352.0,
+            382.5,
+            525.0,
+            489.5
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.12,
+          "acceleration": 0.12
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 16.52,
+          "acceleration": 13.76
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": false,
+        "max_deceleration_px_frame2": 0.0,
+        "involved_track_ids": [],
+        "confidence_score": 0.0
+      }
+    },
+    {
+      "frame_index": 442,
+      "timestamp_seconds": 14.733,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.669,
+          "bbox": [
+            1128.0,
+            0.0,
+            1276.0,
+            148.1
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 0.06,
+          "acceleration": -0.06
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 16.52,
+          "acceleration": 13.76
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": false,
+        "max_deceleration_px_frame2": 0.0,
+        "involved_track_ids": [],
+        "confidence_score": 0.0
+      }
+    },
+    {
+      "frame_index": 443,
+      "timestamp_seconds": 14.767,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.669,
+          "bbox": [
+            1128.0,
+            1.4,
+            1278.0,
+            155.0
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 4.24,
+          "acceleration": 4.18
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 16.52,
+          "acceleration": 13.76
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": false,
+        "max_deceleration_px_frame2": 0.0,
+        "involved_track_ids": [],
+        "confidence_score": 0.0
+      }
+    },
+    {
+      "frame_index": 444,
+      "timestamp_seconds": 14.8,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.669,
+          "bbox": [
+            1130.0,
+            1.4,
+            1278.0,
+            155.0
+          ]
+        }
+      ],
+      "active_tracks_count": 2,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 1.0,
+          "acceleration": -3.24
+        },
+        {
+          "track_id": 3,
+          "anonymous_id": "V-003",
+          "class_name": "car",
+          "speed_px_per_sec": 16.52,
+          "acceleration": 13.76
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": false,
+        "max_deceleration_px_frame2": 0.0,
+        "involved_track_ids": [],
+        "confidence_score": 0.0
+      }
+    },
+    {
+      "frame_index": 445,
+      "timestamp_seconds": 14.833,
+      "detections_count": 1,
+      "detections_sample": [
+        {
+          "class_name": "truck",
+          "confidence": 0.667,
+          "bbox": [
+            1128.0,
+            1.4,
+            1278.0,
+            155.0
+          ]
+        }
+      ],
+      "active_tracks_count": 1,
+      "tracks_sample": [
+        {
+          "track_id": 1,
+          "anonymous_id": "V-001",
+          "class_name": "truck",
+          "speed_px_per_sec": 1.0,
+          "acceleration": 0.0
+        }
+      ],
+      "temporal_features": {
+        "trajectory_convergence": false,
+        "convergence_rate_px": 0.0,
+        "abrupt_speed_reduction": false,
+        "max_deceleration_px_frame2": 0.0,
+        "involved_track_ids": [],
+        "confidence_score": 0.0
+      }
+    }
+  ]
+}

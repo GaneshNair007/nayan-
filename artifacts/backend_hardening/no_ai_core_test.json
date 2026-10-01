@@ -1,0 +1,58 @@
+{
+  "model_loaded": true,
+  "model_path": "artifacts/models/nayan_india_v2/best.pt",
+  "model_sha256": "6eb11ed634f43ea67a2866ceed7227a50b1a8b850be13013607b4da5d25cebbe",
+  "model_classes": [
+    "ambulance",
+    "car",
+    "motorcycle",
+    "auto_rickshaw",
+    "bus",
+    "truck"
+  ],
+  "cuda_active": true,
+  "video_decoding": true,
+  "video_path": "data/demo/cam04_collision.mp4",
+  "total_frames": 1050,
+  "detections_generated": true,
+  "total_detections": 435,
+  "bytetrack_active": true,
+  "temporal_features_computed": true,
+  "state_transitions": [
+    "OBSERVED",
+    "SUSPECTED"
+  ],
+  "incident_verified": true,
+  "corridor_cctv_verification": {
+    "camera_id": "CAM-01",
+    "verified_by_cctv": true,
+    "calibrated": true,
+    "physical_units_valid": true,
+    "traffic_compression_state": "CLEARED",
+    "center_blocked": false,
+    "normalized_clearance": 1.0,
+    "clearance_width_meters": 14.0,
+    "road_width_meters": 14.0,
+    "calibration_error_m": 0.0
+  },
+  "routing_successful": true,
+  "route_distance_m": 1660.1,
+  "route_duration_s": 185.3,
+  "route_provenance": "EXTERNAL_ROUTING",
+  "audit_entry_id": "audit-d87a18b3",
+  "audit_logged": true,
+  "ai_status": {
+    "enabled": false,
+    "configured": false,
+    "available": false,
+    "provider": "openai",
+    "model": "gpt-6-luna",
+    "fallback_model": "gpt-4o",
+    "mode": "operator_decision_support",
+    "autonomous_actions": false,
+    "store_responses": false,
+    "last_error": null
+  },
+  "total_elapsed_seconds": 16.97,
+  "all_core_functions_operational": true
+}

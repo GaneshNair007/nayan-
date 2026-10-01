@@ -69,7 +69,8 @@ class JunctionCorridorStatus(BaseModel):
 class SegmentCorridorStatus(BaseModel):
     segment_id: str
     camera_id: Optional[str] = None
-    clearance_width_meters: float  # Aiming for 3-3.5m
+    clearance_width_meters: Optional[float] = None  # None if camera uncalibrated
+    normalized_clearance: Optional[float] = None  # 0.0 - 1.0 relative clearance
     traffic_compression_state: str  # COMPRESSING, CLEARED, FAILED
     upstream_signal_state: str  # FLOWING, HALTED_NEW_TRAFFIC
     verified_by_cctv: bool = False
