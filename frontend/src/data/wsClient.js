@@ -20,7 +20,10 @@ class NayanWebSocketClient {
 
     this.isManualClosed = false;
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws/events`;
+    const defaultWsUrl = import.meta.env.PROD
+      ? 'wss://nayan-backend-suse.onrender.com/ws/events'
+      : `${protocol}//${window.location.host}/ws/events`;
+    const wsUrl = import.meta.env.VITE_WS_URL || defaultWsUrl;
 
     try {
       this.ws = new WebSocket(wsUrl);
