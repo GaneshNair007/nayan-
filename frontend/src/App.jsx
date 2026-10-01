@@ -1,156 +1,48 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import Header from './components/Header';
-import Navigation from './components/Navigation';
-import PalominoLanding from './landing/PalominoLanding';
-import CommandCenterView from './components/CommandCenterView';
-import CameraIntelligenceView from './components/CameraIntelligenceView';
-import TrafficControlView from './components/TrafficControlView';
-import EmergencyCorridorView from './components/EmergencyCorridorView';
-import DigitalTwinView from './components/DigitalTwinView';
-import AuditView from './components/AuditView';
-import IncidentDrawer from './components/IncidentDrawer';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useNayanState } from './data/useNayanState';
+import { pageTransitionVariants } from './motion/pageTransitions';
+
+// Layout
+import AppHeader from './layout/AppHeader';
+import SystemDrawer from './layout/SystemDrawer';
+import ScenarioDrawer from './layout/ScenarioDrawer';
+
+// Reconstructed Editorial Pages
+import LandingPage from './pages/Landing/LandingPage';
+import CommandCenterPage from './pages/Command/CommandCenterPage';
+import CameraPage from './pages/Camera/CameraPage';
+import IncidentPage from './pages/Incident/IncidentPage';
+import TrafficPage from './pages/Traffic/TrafficPage';
+import CorridorPage from './pages/Corridor/CorridorPage';
+import DigitalTwinPage from './pages/DigitalTwin/DigitalTwinPage';
+import AuditPage from './pages/Audit/AuditPage';
+import AIPage from './pages/AI/AIPage';
+import SystemPage from './pages/System/SystemPage';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('landing');
   const [selectedCameraId, setSelectedCameraId] = useState('CAM-04');
-  const [selectedIncidentId, setSelectedIncidentId] = useState(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedIncidentId, setSelectedIncidentId] = useState('INC-CAM-04-LIVE');
+  const [systemDrawerOpen, setSystemDrawerOpen] = useState(false);
+  const [scenarioDrawerOpen, setScenarioDrawerOpen] = useState(false);
 
-  // Core Data Stores
-  const [capabilities, setCapabilities] = useState(null);
-  const [readiness, setReadiness] = useState(null);
-  const [videoCatalogue, setVideoCatalogue] = useState([]);
-  const [incidents, setIncidents] = useState([]);
-  const [cameras, setCameras] = useState([]);
-  const [junctions, setJunctions] = useState([]);
-  const [resources, setResources] = useState([]);
-  const [auditEvents, setAuditEvents] = useState([]);
-
-  // Telemetry & Scenario States
-  const [wsConnected, setWsConnected] = useState(false);
-  const [scenarioLoading, setScenarioLoading] = useState(false);
-
-  // 1. Initial Snapshot Fetcher via authoritative REST APIs
-  const fetchAllSnapshot = useCallback(async () => {
-    try {
-      const [capsRes, readyRes, vidsRes, incsRes, camsRes, jncsRes, resRes, auditsRes] = await Promise.all([
-        fetch('/api/capabilities').catch(() => null),
-        fetch('/api/ready').catch(() => null),
-        fetch('/api/videos').catch(() => null),
-        fetch('/api/incidents').catch(() => null),
-        fetch('/api/cameras').catch(() => null),
-        fetch('/api/junctions').catch(() => null),
-        fetch('/api/resources').catch(() => null),
-        fetch('/api/audit').catch(() => null),
-      ]);
-
-      if (capsRes?.ok) setCapabilities(await capsRes.json());
-      if (readyRes?.ok) setReadiness(await readyRes.json());
-      if (vidsRes?.ok) {
-        const vData = await vidsRes.json();
-        setVideoCatalogue(vData.videos || []);
-      }
-      if (incsRes?.ok) setIncidents(await incsRes.json());
-      if (camsRes?.ok) setCameras(await camsRes.json());
-      if (jncsRes?.ok) setJunctions(await jncsRes.json());
-      if (resRes?.ok) setResources(await resRes.json());
-      if (auditsRes?.ok) setAuditEvents(await auditsRes.json());
-    } catch (err) {
-      console.error('Snapshot sync error:', err);
-    }
-  }, []);
-
-  // Run initial fetch on mount
-  useEffect(() => {
-    fetchAllSnapshot();
-    const interval = setInterval(fetchAllSnapshot, 3000); // Polling backup
-    return () => clearInterval(interval);
-  }, [fetchAllSnapshot]);
-
-  // 2. Realtime WebSocket Stream with Auto-Reconnect
-  useEffect(() => {
-    let ws = null;
-    let reconnectTimeout = null;
-
-    const connectWebSocket = () => {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${window.location.host}/ws/events`;
-
-      ws = new WebSocket(wsUrl);
-
-      ws.onopen = () => {
-        setWsConnected(true);
-      };
-
-      ws.onmessage = (event) => {
-        try {
-          const envelope = JSON.parse(event.data);
-          // Handle incoming event envelope
-          if (envelope.type?.startsWith('incident.')) {
-            fetchAllSnapshot();
-          } else if (envelope.type?.startsWith('camera.')) {
-            fetchAllSnapshot();
-          } else if (envelope.type?.startsWith('corridor.')) {
-            fetchAllSnapshot();
-          }
-        } catch (e) {
-          console.error('WS parse error:', e);
-        }
-      };
-
-      ws.onclose = () => {
-        setWsConnected(false);
-        reconnectTimeout = setTimeout(connectWebSocket, 3000);
-      };
-
-      ws.onerror = () => {
-        ws.close();
-      };
-    };
-
-    connectWebSocket();
-
-    return () => {
-      if (reconnectTimeout) clearTimeout(reconnectTimeout);
-      if (ws) ws.close();
-    };
-  }, [fetchAllSnapshot]);
-
-  // Scenario Triggers
-  const handleRunScenario = async (scenarioType) => {
-    setScenarioLoading(true);
-    try {
-      if (scenarioType === 'golden') {
-        setSelectedCameraId('CAM-04');
-        setActiveTab('camera-intel');
-        await fetch('/api/demo/scenarios/golden/start', { method: 'POST' });
-      } else if (scenarioType === 'crowd') {
-        setSelectedCameraId('CAM-07');
-        setActiveTab('camera-intel');
-        await fetch('/api/demo/scenarios/crowd/start', { method: 'POST' });
-      } else if (scenarioType === 'baggage') {
-        setSelectedCameraId('CAM-11');
-        setActiveTab('camera-intel');
-        await fetch('/api/demo/scenarios/baggage/start', { method: 'POST' });
-      }
-      setTimeout(fetchAllSnapshot, 1000);
-    } catch (err) {
-      console.error('Scenario run error:', err);
-    } finally {
-      setScenarioLoading(false);
-    }
-  };
-
-  const handleReset = async () => {
-    try {
-      await fetch('/api/demo/reset', { method: 'POST' });
-      setSelectedIncidentId(null);
-      setDrawerOpen(false);
-      fetchAllSnapshot();
-    } catch (err) {
-      console.error('Reset error:', err);
-    }
-  };
+  // Authoritative Unified State Layer
+  const {
+    capabilities,
+    readiness,
+    videoCatalogue,
+    incidents,
+    cameras,
+    corridors,
+    junctions,
+    resources,
+    auditEvents,
+    aiStatus,
+    modelMetrics,
+    wsConnected,
+    refreshSnapshot
+  } = useNayanState();
 
   const handleSelectCamera = (camId) => {
     setSelectedCameraId(camId);
@@ -159,98 +51,204 @@ export default function App() {
 
   const handleSelectIncident = (incId) => {
     setSelectedIncidentId(incId);
-    setDrawerOpen(true);
+    setActiveTab('incident');
   };
 
-  const activeIncidentObj = incidents.find(i => i.id === selectedIncidentId);
-  const criticalCount = incidents.filter(i => i.priority_tier === 'P1' || i.severity === 'CRITICAL').length;
-
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)' }}>
-      {activeTab === 'landing' ? (
-        <PalominoLanding 
-          onEnterCommandCenter={() => setActiveTab('command-center')}
-          onSelectCamera={(camId) => {
-            setSelectedCameraId(camId);
-            setActiveTab('camera-intel');
-          }}
-        />
-      ) : (
-        <>
-          {/* Top Command Bar */}
-          <Header 
-            capabilities={capabilities}
-            wsConnected={wsConnected}
-            onRunScenario={handleRunScenario}
-            onReset={handleReset}
-            activeScenarioLoading={scenarioLoading}
-            onOpenLanding={() => setActiveTab('landing')}
-          />
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-primary)' }}>
+      {/* Persistent Minimalist Header */}
+      <AppHeader
+        activeTab={activeTab}
+        onSelectTab={setActiveTab}
+        wsConnected={wsConnected}
+        onOpenSystemDrawer={() => setSystemDrawerOpen(true)}
+        onOpenScenarioDrawer={() => setScenarioDrawerOpen(true)}
+      />
 
-          {/* Navigation Module Strip */}
-          <Navigation 
-            activeTab={activeTab}
-            onSelectTab={setActiveTab}
-            incidentCount={incidents.length}
-            criticalCount={criticalCount}
-          />
+      {/* Main Editorial Content with AnimatePresence Page Transitions */}
+      <main style={{ flex: 1, position: 'relative' }}>
+        <AnimatePresence mode="wait">
+          {activeTab === 'landing' && (
+            <motion.div
+              key="landing"
+              variants={pageTransitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <LandingPage
+                onEnterCommandCenter={() => setActiveTab('command-center')}
+                onSelectCamera={handleSelectCamera}
+              />
+            </motion.div>
+          )}
 
-          {/* Active Module View */}
-          <main style={{ flex: 1, position: 'relative' }}>
-            {activeTab === 'command-center' && (
-              <CommandCenterView 
+          {activeTab === 'command-center' && (
+            <motion.div
+              key="command-center"
+              variants={pageTransitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <CommandCenterPage
                 incidents={incidents}
                 cameras={cameras}
-                junctions={junctions}
-                resources={resources}
+                corridors={corridors}
                 onSelectCamera={handleSelectCamera}
                 onSelectIncident={handleSelectIncident}
               />
-            )}
+            </motion.div>
+          )}
 
-            {activeTab === 'camera-intel' && (
-              <CameraIntelligenceView 
+          {activeTab === 'camera-intel' && (
+            <motion.div
+              key="camera-intel"
+              variants={pageTransitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <CameraPage
                 selectedCameraId={selectedCameraId}
                 onSelectCamera={setSelectedCameraId}
                 videoCatalogue={videoCatalogue}
                 onOpenIncident={handleSelectIncident}
               />
-            )}
+            </motion.div>
+          )}
 
-            {activeTab === 'traffic' && (
-              <TrafficControlView 
+          {activeTab === 'incident' && (
+            <motion.div
+              key="incident"
+              variants={pageTransitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <IncidentPage
+                incidentId={selectedIncidentId}
+                incidents={incidents}
+                onBack={() => setActiveTab('command-center')}
+                onOpenCorridor={() => setActiveTab('corridor')}
+                onRefresh={refreshSnapshot}
+              />
+            </motion.div>
+          )}
+
+          {activeTab === 'traffic' && (
+            <motion.div
+              key="traffic"
+              variants={pageTransitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <TrafficPage
                 junctions={junctions}
               />
-            )}
+            </motion.div>
+          )}
 
-            {activeTab === 'corridor' && (
-              <EmergencyCorridorView 
+          {activeTab === 'corridor' && (
+            <motion.div
+              key="corridor"
+              variants={pageTransitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <CorridorPage
                 resources={resources}
               />
-            )}
+            </motion.div>
+          )}
 
-            {activeTab === 'digital-twin' && (
-              <DigitalTwinView />
-            )}
+          {activeTab === 'digital-twin' && (
+            <motion.div
+              key="digital-twin"
+              variants={pageTransitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <DigitalTwinPage />
+            </motion.div>
+          )}
 
-            {activeTab === 'audit' && (
-              <AuditView 
+          {activeTab === 'audit' && (
+            <motion.div
+              key="audit"
+              variants={pageTransitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <AuditPage
                 auditEvents={auditEvents}
               />
-            )}
+            </motion.div>
+          )}
 
-            {/* Slideout Incident Detail Drawer */}
-            {drawerOpen && activeIncidentObj && (
-              <IncidentDrawer 
-                incident={activeIncidentObj}
-                onClose={() => setDrawerOpen(false)}
-                onAuthorizeResponse={fetchAllSnapshot}
-                onDispatched={fetchAllSnapshot}
+          {activeTab === 'ai' && (
+            <motion.div
+              key="ai"
+              variants={pageTransitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <AIPage
+                aiStatus={aiStatus}
+                incidents={incidents}
               />
-            )}
-          </main>
-        </>
-      )}
+            </motion.div>
+          )}
+
+          {activeTab === 'system' && (
+            <motion.div
+              key="system"
+              variants={pageTransitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <SystemPage
+                capabilities={capabilities}
+                readiness={readiness}
+                modelMetrics={modelMetrics}
+                aiStatus={aiStatus}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+
+      {/* Slide-out Technical Telemetry Drawer */}
+      <SystemDrawer
+        isOpen={systemDrawerOpen}
+        onClose={() => setSystemDrawerOpen(false)}
+        capabilities={capabilities}
+        readiness={readiness}
+        aiStatus={aiStatus}
+        modelMetrics={modelMetrics}
+        onOpenSystemPage={() => {
+          setSystemDrawerOpen(false);
+          setActiveTab('system');
+        }}
+      />
+
+      {/* Slide-out Scenario Orchestration Drawer */}
+      <ScenarioDrawer
+        isOpen={scenarioDrawerOpen}
+        onClose={() => setScenarioDrawerOpen(false)}
+        onScenarioTriggered={(scenario) => {
+          setSelectedCameraId(scenario.camId);
+          setActiveTab('camera-intel');
+          refreshSnapshot();
+        }}
+        onResetTriggered={refreshSnapshot}
+      />
     </div>
   );
 }

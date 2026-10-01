@@ -145,6 +145,160 @@ ASSETS = [
     "license": "Unsplash License",
     "source_url": "https://unsplash.com/photos/time-lapse-photography-of-city-street-during-nighttime-NqOipja2nM",
     "usage": "Services: 02 VERIFY — Evidence Corroboration"
+  },
+  {
+    "id": "urban_transit_bus_04",
+    "filename": "urban-transit-bus-04.webp",
+    "url": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1920&q=80",
+    "category": "urban_traffic",
+    "author": "Chuttersnap",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/white-and-red-bus-on-road-during-daytime-BNBA1h-vnxY",
+    "usage": "Traffic Intelligence — Arterial Flow"
+  },
+  {
+    "id": "india_delhi_traffic_05",
+    "filename": "india-delhi-traffic-05.webp",
+    "url": "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1920&q=80",
+    "category": "urban_traffic",
+    "author": "Naveen Saxena",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/cars-on-road-near-monument-during-daytime-108a9",
+    "usage": "Command Center — High Density Indian Junction Flow"
+  },
+  {
+    "id": "emergency_ambulance_03",
+    "filename": "emergency-ambulance-03.webp",
+    "url": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1920&q=80",
+    "category": "ambulance_emergency",
+    "author": "Marcelo Leal",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/emergency-medical-services-vehicle-6_8w82m4L3s",
+    "usage": "Emergency Corridor — Response Deployment"
+  },
+  {
+    "id": "emergency_hospital_bay_04",
+    "filename": "emergency-hospital-bay-04.webp",
+    "url": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1920&q=80",
+    "category": "ambulance_emergency",
+    "author": "National Cancer Institute",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/emergency-medical-trauma-center-7y_8wK12v0",
+    "usage": "Emergency Corridor — Hospital Destination Pre-Clear"
+  },
+  {
+    "id": "aerial_junction_03",
+    "filename": "aerial-junction-03.webp",
+    "url": "https://images.unsplash.com/photo-1476900543704-4312b78632f8?auto=format&fit=crop&w=1920&q=80",
+    "category": "aerial_intersection",
+    "author": "Thomas Morse",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/aerial-photography-of-highways-and-flyovers-81K_39w9e",
+    "usage": "Corridor Geometry — Overpass and Grade Separation"
+  },
+  {
+    "id": "aerial_expressway_04",
+    "filename": "aerial-expressway-04.webp",
+    "url": "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=1920&q=80",
+    "category": "aerial_intersection",
+    "author": "Chuttersnap",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/aerial-view-of-city-artery-g-m8YvvJ92g",
+    "usage": "Traffic Signals — Grid Optimization Map"
+  },
+  {
+    "id": "cctv_surveillance_02",
+    "filename": "cctv-surveillance-02.webp",
+    "url": "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=1920&q=80",
+    "category": "cctv_infrastructure",
+    "author": "Bernard Hermant",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/security-camera-installed-outdoors-2_8aKx01",
+    "usage": "Camera Intelligence — CAM-02 Junction Surveillance"
+  },
+  {
+    "id": "cctv_surveillance_03",
+    "filename": "cctv-surveillance-03.webp",
+    "url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1920&q=80",
+    "category": "cctv_infrastructure",
+    "author": "Alexandre Debiève",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/server-rack-and-telemetry-mast-91_vK12",
+    "usage": "Camera Intelligence — Hardware Calibration"
+  },
+  {
+    "id": "control_room_monitors_02",
+    "filename": "control-room-monitors-02.webp",
+    "url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1920&q=80",
+    "category": "control_center",
+    "author": "Luke Chesser",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/data-visualization-screen-r-981k",
+    "usage": "AI Operator Copilot — Decision Console Context"
+  },
+  {
+    "id": "urban_pedestrian_crowd_02",
+    "filename": "urban-pedestrian-crowd-02.webp",
+    "url": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1920&q=80",
+    "category": "transport_crowd",
+    "author": "Robert Anasch",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/people-crossing-street-at-pedestrian-lane-0192",
+    "usage": "Camera Intelligence — CAM-07 Crowd Dispersion Analytics"
+  },
+  {
+    "id": "traffic_signal_mast_01",
+    "filename": "traffic-signal-mast-01.webp",
+    "url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80",
+    "category": "road_network_signal",
+    "author": "Clem Onojeghuo",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/traffic-lights-at-city-crossroad-8192",
+    "usage": "Traffic & Signals — JNC-01 Phase Actuation"
+  },
+  {
+    "id": "traffic_signal_junction_02",
+    "filename": "traffic-signal-junction-02.webp",
+    "url": "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1920&q=80",
+    "category": "road_network_signal",
+    "author": "Jaromír Kavan",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/city-intersection-with-traffic-lights-8172",
+    "usage": "Traffic & Signals — Dynamic All-Red Preemption"
+  },
+  {
+    "id": "smart_city_transit_06",
+    "filename": "smart-city-transit-06.webp",
+    "url": "https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1920&q=80",
+    "category": "city_night_traffic",
+    "author": "Aleksandar Pasaric",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/time-lapse-photography-of-road-with-vehicles-during-night-time-112",
+    "usage": "Command Center — Night Flow Corridors"
+  },
+  {
+    "id": "road_arterial_network_03",
+    "filename": "road-arterial-network-03.webp",
+    "url": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80",
+    "category": "road_network_signal",
+    "author": "Sean Pollock",
+    "platform": "Unsplash",
+    "license": "Unsplash License",
+    "source_url": "https://unsplash.com/photos/modern-city-infrastructure-street-view-6612",
+    "usage": "Digital Twin — Urban Corridor Macro Grid"
   }
 ]
 

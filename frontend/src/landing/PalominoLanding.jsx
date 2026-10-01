@@ -105,9 +105,6 @@ export default function PalominoLanding({ onEnterCommandCenter }) {
         position: 'relative'
       }}
     >
-      {/* 01. FIXED NAVIGATION HEADER (Horizontal letter roll variants) */}
-      <LandingHeader onEnterCommandCenter={onEnterCommandCenter} />
-
       {/* 02. HERO SECTION (1.60x scale contraction, deterministic scroll linkage) */}
       <Hero videoSrc="/api/videos/file/cam04_collision.mp4" />
 

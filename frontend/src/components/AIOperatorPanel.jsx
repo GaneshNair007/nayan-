@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Bot, 
   Sparkles, 
@@ -8,11 +8,7 @@ import {
   Ambulance, 
   Check, 
   Loader2,
-  ShieldCheck,
-  Info,
-  Clock,
-  KeyRound,
-  FileQuestion
+  ShieldCheck
 } from 'lucide-react';
 
 const ANALYSIS_STAGES = [
